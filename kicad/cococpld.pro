@@ -1,8 +1,6 @@
-update=4/20/2013 10:05:12 AM
+update=5/4/2013 5:24:31 PM
 version=1
-last_client=eeschema
-[general]
-version=1
+last_client=kicad
 [cvpcb]
 version=1
 NetIExt=net
@@ -101,3 +99,5 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=colorcomputer
+[general]
+version=1
