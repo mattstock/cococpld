@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.1</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
+    <ProjectGuid>{e31df9d9-e3ed-4df5-a539-4cae14c0dcaa}</ProjectGuid>
+    <avrdevice>ATmega2560</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>CPP</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>firmware2</AssemblyName>
+    <Name>firmware2</Name>
+    <RootNamespace>firmware2</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <OverrideVtorValue>
+    </OverrideVtorValue>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <CacheFlash>true</CacheFlash>
+    <UncachedRange />
+    <BootSegment>0</BootSegment>
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.7.2" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolinterface />
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName xmlns="">Simulator</ToolName>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <Channel xmlns="">
+        <host>127.0.0.1</host>
+        <port>52367</port>
+        <ssl>False</ssl>
+      </Channel>
+    </com_atmel_avrdbg_tool_simulator>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGccCpp>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcccpp.compiler.symbols.DefSymbols>
+        <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
+        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+        <avrgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+            <Value>libprintf_flt</Value>
+            <Value>libarduino2560.a</Value>
+          </ListValues>
+        </avrgcccpp.linker.libraries.Libraries>
+        <avrgcccpp.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560\Debug</Value>
+          </ListValues>
+        </avrgcccpp.linker.libraries.LibrarySearchPaths>
+        <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>
+      </AvrGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGccCpp>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../AdafruitRGBLCD</Value>
+      <Value>../SD</Value>
+      <Value>../SD/utility</Value>
+      <Value>../Wire</Value>
+      <Value>../Wire/utility</Value>
+      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -DARDUINO=100 -DF_CPU=16000000</avrgcc.compiler.miscellaneous.OtherFlags>
+  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+    </ListValues>
+  </avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../AdafruitRGBLCD</Value>
+      <Value>../SD</Value>
+      <Value>../SD/utility</Value>
+      <Value>../Wire</Value>
+      <Value>../Wire/utility</Value>
+      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560</Value>
+    </ListValues>
+  </avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.miscellaneous.OtherFlags>-DARDUINO=100 -DF_CPU=16000000</avrgcccpp.compiler.miscellaneous.OtherFlags>
+  <avrgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+      <Value>libprintf_flt</Value>
+      <Value>libarduino2560.a</Value>
+    </ListValues>
+  </avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560\Debug</Value>
+    </ListValues>
+  </avrgcccpp.linker.libraries.LibrarySearchPaths>
+  <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>
+  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+</AvrGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AdafruitRGBLCD\Adafruit_MCP23017.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="AdafruitRGBLCD\Adafruit_MCP23017.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="AdafruitRGBLCD\Adafruit_RGBLCDShield.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="AdafruitRGBLCD\Adafruit_RGBLCDShield.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="AdafruitRGBLCD\Adafruit_RGBLCDShield.h" />
+    <Compile Include="busio.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="busio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="firmware2.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="firmware2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="rom.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="rom.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\File.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\SD.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\SD.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\FatStructs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\Sd2Card.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\Sd2Card.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\Sd2PinMap.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdFat.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdFatmainpage.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdFatUtil.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdFile.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdInfo.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD\utility\SdVolume.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Wire\utility\twi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Wire\utility\twi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Wire\Wire.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Wire\Wire.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AdafruitRGBLCD\" />
+    <Folder Include="AdafruitRGBLCD\" />
+    <Folder Include="SD\" />
+    <Folder Include="SD\" />
+    <Folder Include="SD\utility\" />
+    <Folder Include="Wire\" />
+    <Folder Include="Wire\utility\" />
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>
