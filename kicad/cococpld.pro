@@ -1,6 +1,6 @@
-update=5/4/2013 5:24:31 PM
+update=5/6/2013 7:44:21 AM
 version=1
-last_client=kicad
+last_client=eeschema
 [cvpcb]
 version=1
 NetIExt=net
@@ -36,6 +36,8 @@ LibName8=valves
 LibName9=led
 LibName10=dip_sockets
 LibName11=colorcomputer
+[general]
+version=1
 [eeschema]
 version=1
 LibDir=../../cocobus
@@ -99,5 +101,3 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=colorcomputer
-[general]
-version=1
