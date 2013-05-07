@@ -1,4 +1,5 @@
-module diskemu (c_power, a_power, status, banksw, busreq, a_busen, c_dataen, c_busen, ard_rw, ard_sel, ard_busmaster, wee, een, eclk, cts, scs, coco_rw, coco_addr, bank, ard_een);
+module diskemu (c_power, a_power, led_rw, led_cbus, led_cts, led_scs, led_s, banksw, busreq, a_busen, c_dataen, c_busen, ard_rw, ard_sel, ard_busmaster, 
+                wee, een, eclk, cts, scs, coco_rw, coco_addr, bank, ard_een, slenb, special);
 
 input c_power;
 input a_power;
@@ -8,15 +9,17 @@ input eclk;
 inout [1:0] banksw;
 input busreq;
 input coco_rw;
-input [15:13] coco_addr;
+input [14:13] coco_addr;
 output ard_busmaster;
 output a_busen;
 output c_busen;
 output c_dataen;
-output [2:0] status;
+output led_rw, led_cbus, led_cts, led_scs, led_s;
 output een;
 output wee;
+output slenb;
 output [1:0] bank;
+input special;
 inout ard_rw;
 input ard_een;
 output ard_sel;
@@ -40,9 +43,14 @@ assign wee = a_power ? ard_rw : 1'b1;
 // EEPROM output enable
 assign een = !c_busen ? cts : ard_een;
 
+// Keep this out of the way for now
+assign slenb = 1'b1;
+
 // Blinkenlights
-assign status[0] = busreq; 
-assign status[1] = ard_sel;
-assign status[2] = !c_dataen;
+assign led_rw = !wee; 
+assign led_cbus = !c_busen;
+assign led_cts = !cts;
+assign led_scs = !scs;
+assign led_s = !c_dataen;
 
 endmodule

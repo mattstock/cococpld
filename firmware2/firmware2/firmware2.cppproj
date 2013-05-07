@@ -18,8 +18,7 @@
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
-    <OverrideVtorValue>
-    </OverrideVtorValue>
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <ProgFlashFromRam>true</ProgFlashFromRam>
     <RamSnippetAddress>0x20000000</RamSnippetAddress>
@@ -40,13 +39,13 @@
     <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
     <avrtoolinterface />
     <com_atmel_avrdbg_tool_simulator>
-      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
-      <ToolName xmlns="">Simulator</ToolName>
-      <ToolNumber xmlns="">
+      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName>Simulator</ToolName>
+      <ToolNumber>
       </ToolNumber>
-      <Channel xmlns="">
+      <Channel>
         <host>127.0.0.1</host>
-        <port>52367</port>
+        <port>54738</port>
         <ssl>False</ssl>
       </Channel>
     </com_atmel_avrdbg_tool_simulator>
@@ -117,7 +116,7 @@
       <Value>../SD/utility</Value>
       <Value>../Wire</Value>
       <Value>../Wire/utility</Value>
-      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560</Value>
+      <Value>C:\Users\stock\git\cococpld\arduino2560\arduino2560</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -140,7 +139,7 @@
       <Value>../SD/utility</Value>
       <Value>../Wire</Value>
       <Value>../Wire/utility</Value>
-      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560</Value>
+      <Value>C:\Users\stock\git\cococpld\arduino2560\arduino2560</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -158,7 +157,7 @@
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
     <ListValues>
-      <Value>C:\Users\stock\git\cocobus\cococpld\arduino2560\arduino2560\Debug</Value>
+      <Value>C:\Users\stock\git\cococpld\arduino2560\arduino2560\Debug</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>

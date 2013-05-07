@@ -2,7 +2,7 @@
 #include <avr/io.h>
 
 const int dataPins[] = { 48, 47, 46, 45, 44, 43, 42, 41 };
-const int addrPins[] = { 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 25, 22 };
+const int addrPins[] = { 22, 23, 24, 25, 26, 27, 28, 29, 37, 36, 35, 34, 33, 32, 31 };
 
 void setDataDir(uint8_t mode) {
 	for (int i=0; i < 8; i++)
@@ -22,8 +22,8 @@ void io_setup() {
 	pinMode(ETHSELECT_PIN, OUTPUT);
 	digitalWrite(ETHSELECT_PIN, HIGH); // disable ethernet for now
 	pinMode(SDSELECT_PIN, OUTPUT);
-	pinMode(ECLK_PIN, INPUT);
-	pinMode(SCS_PIN, INPUT_PULLUP);
+	pinMode(ABUSMASTER_PIN, INPUT);
+	pinMode(ABUSEN_PIN, INPUT);
 	
 	// Set everything as inputs to start
 	pinMode(ARDRW_PIN, INPUT);

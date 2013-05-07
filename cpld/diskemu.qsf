@@ -71,10 +71,13 @@ set_location_assignment PIN_44 -to scs
 set_location_assignment PIN_21 -to bank[0]
 set_location_assignment PIN_22 -to bank[1]
 set_location_assignment PIN_31 -to c_dataen
-set_location_assignment PIN_6 -to status[0]
-set_location_assignment PIN_10 -to status[1]
-set_location_assignment PIN_8 -to status[2]
-set_location_assignment PIN_42 -to coco_addr[15]
 set_location_assignment PIN_2 -to ard_sel
 set_location_assignment PIN_38 -to eclk
 set_location_assignment PIN_34 -to ard_een
+set_location_assignment PIN_3 -to led_rw
+set_location_assignment PIN_5 -to led_cbus
+set_location_assignment PIN_6 -to led_cts
+set_location_assignment PIN_8 -to led_scs
+set_location_assignment PIN_10 -to led_s
+set_location_assignment PIN_12 -to slenb
+set_location_assignment PIN_23 -to special
