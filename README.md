@@ -3,6 +3,9 @@ cococpld
 
 A complete bus interface design for the Tandy Color Computer for Arduino/AVR!
 
+The SPI branch is intended to replace the parallel interface to the uC with an
+SPI interface.  It would act like a 64k serial memory chip.
+
 This is a combined open source/open hardware project to design a development board for a variety of 8- and 16-bit
 computers, starting with the Tandy/TRS-80 Color Computer.
 
