@@ -1,4 +1,7 @@
-module cocofdc (c_power, a_power, eclk, cts_n, scs_n, c_databus, reset_n, c_addrbus, c_rw, a_databus, a_addrbus, a_rw, a_busreq, a_een_n, e_rw, e_oe_n, e_addrbus, e_databus);
+`timescale 1ns/1ns
+
+module cocofdc (c_power, a_power, eclk, cts_n, scs_n, c_databus, nmi_n, halt_n, reset_n, c_addrbus, c_rw, a_databus, a_addrbus, a_rw, a_brpin, a_een_n,
+					e_cs_n, s_cs_n, m_rw, m_oe_n, m_addrbus, m_databus, slenb_n, a_busmaster, a_regint, led);
 
 input c_power;  // 1 = Coco power on
 input a_power; // 1 = AVR power on
@@ -7,46 +10,72 @@ inout [7:0] c_databus; // Coco data bus
 input scs_n; // 0 = Coco register read/write 
 input cts_n; // 0 = Coco ROM read
 input eclk; // 1 = memory half of Coco bus cycle
+output slenb_n;
+output nmi_n;
 input c_rw; // Coco read/write
 input reset_n; // 0 = Coco reset
 inout [7:0] a_databus; // AVR data bus
-input [14:0] a_addrbus; // AVR address bus
+input [15:0] a_addrbus; // AVR address bus
 input a_rw; // AVR read/write
-input a_busreq; // 1 = AVR controls bus (Coco isolated)
+input a_brpin; // 1 = AVR wants bus (Coco isolated)
 input a_een_n; // When AVR has bus control, also control the EEPROM output
-output[14:0] e_addrbus;
-inout [7:0] e_databus;
-output e_rw;
-output e_oe_n;
+output[14:0] m_addrbus;
+inout [7:0] m_databus;
+output reg [2:0] led;
+output m_rw;
+output m_oe_n;
+output s_cs_n; // SRAM chip select
+output e_cs_n; // EEPROM chip select
+output reg halt_n;
+output reg a_busmaster; // indicate that AVR has the bus
+output reg a_regint;
 
-wire c_busen_n;
-wire c_busreq_n;
-wire c_reg;
-tri [14:0] commonaddr;
-tri [7:0] commondata;
+reg [3:0]count; // used to count eclk cycles
 
-// Coco bus controls
-assign c_busen_n = (c_power ? a_power & a_busreq : 1'b1); // If coco is on, let it control the address bus unless arduino wants it (neg)
-assign c_busreq_n = (cts_n & scs_n) | c_busen_n; // Coco bus request (neg)
-assign c_databus = (~c_busreq_n & c_rw) ? commondata : 8'bz;
+wire a_busreq = a_power & a_brpin; // might be floating, so we check power too
+wire c_busreq_n = (cts_n & scs_n) | ~eclk; // Coco bus request
 
-// EEPROM bus controls
-assign e_addrbus = commonaddr;
-assign e_databus = e_oe_n ? commondata : 8'bz;
-assign e_oe_n = ~c_busen_n ? cts_n : a_een_n;
-assign e_rw = a_power ? a_rw : 1'b1;
+// Memory bus controls
+assign m_addrbus = a_busmaster ? a_addrbus[14:0] : c_addrbus;
+assign m_databus = (~a_busmaster & ~c_rw) ? c_databus : 8'bz;
+assign c_databus = (~a_busmaster & c_rw) ? m_databus : 8'bz;
+assign m_databus = (a_busmaster & ~a_rw) ? a_databus : 8'bz;
+assign a_databus = (a_busmaster & a_rw)? m_databus : 8'bz;
+assign m_oe_n = a_busmaster ? a_een_n : c_busreq_n;
+assign s_cs_n = a_busmaster ? a_addrbus[15] : scs_n;  // SRAM low 32K to AVR
+assign e_cs_n = a_busmaster ? ~a_addrbus[15] : cts_n; // EEPROM high 32K to AVR
+assign m_rw = a_busmaster ? a_rw : c_rw;
 
-// AVR bus controls
-assign a_databus = (a_busreq & a_rw)? commondata : 8'bz;
+// Hardcode outputs for now
+assign slenb_n = 1'bz;
+assign nmi_n = 1'bz;
 
-// Register access signals
-assign c_reg = ~c_busen_n & ~scs_n;
+always @(posedge eclk) begin
+  if (~a_busreq) begin // AVR doesn't want the bus
+    count <= 4'b0;
+	 halt_n <= 1'bz;
+	 a_busmaster <= ~c_power;
+  end else begin // Initiate halt process
+    count <= count + 4'b1;
+	 halt_n <= 1'b0;
+  end
+  // check to make sure we're in a halt state
+  // if cts or scs are asserted, we wait another
+  // 16 clock cycles and try again (count rollover)
+  // we're stuck in this loop until reset or the bus clears
+  led <= count[2:0];
+  if ((count == 3) && cts_n && scs_n)
+    a_busmaster <= 1'b1;
+end
 
-// Common (in CPLD) bus inputs
-assign commonaddr = ~c_busen_n ? c_addrbus : 15'bz;
-assign commonaddr = a_busreq ? a_addrbus : 15'bz;
-assign commondata = (~c_busreq_n & ~c_rw) ? c_databus : 8'bz;
-assign commondata = (a_busreq & ~a_rw) ? a_databus : 8'bz;
-assign commondata = ~e_oe_n ? e_databus : 8'bz;
+always @(posedge eclk) begin
+  if (eclk)
+    if (!scs_n && c_power && !c_rw)
+	   a_regint <= 1'b1;
+  else if (a_busreq)
+    a_regint <= 1'b0;
+end
+
+
 
 endmodule

@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 5/5/2013 11:17:22 AM
+EESchema Schematic File Version 2  date Tue 07 May 2013 02:44:39 PM EDT
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr User 14000 8500
 encoding utf-8
 Sheet 2 3
 Title "Color Computer Bus Interface"
-Date "5 may 2013"
+Date "7 may 2013"
 Rev "1.3"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -129,7 +129,7 @@ L R R5
 U 1 1 517C6087
 P 1900 3450
 F 0 "R5" V 1980 3450 50  0000 C CNN
-F 1 "330" V 1900 3450 50  0000 C CNN
+F 1 "150" V 1900 3450 50  0000 C CNN
 	1    1900 3450
 	1    0    0    -1  
 $EndComp

@@ -7,12 +7,14 @@ derive_pll_clocks -create_base_clocks
 
 set_input_delay -clock "eclk" -max 802ns [get_ports {c_addrbus[*]}] -clock_fall
 set_input_delay -clock "eclk" -min 110.000ns [get_ports {c_addrbus[*]}] -clock_fall
+set_input_delay -clock "eclk" -max 802ns [get_ports {a_addrbus[*]}] -clock_fall
+set_input_delay -clock "eclk" -min 110.000ns [get_ports {a_addrbus[*]}] -clock_fall
 
 
 # tco constraints
 
-set_output_delay -clock "eclk" -max 802ns [get_ports {c_addrbus[*]}] -clock_fall
-set_output_delay -clock "eclk" -min -295.000ns [get_ports {c_addrbus[*]}] -clock_fall
+#set_output_delay -clock "eclk" -max 802ns [get_ports {m_addrbus[*]}] -clock_fall
+#set_output_delay -clock "eclk" -min -295.000ns [get_ports {m_addrbus[*]}] -clock_fall
 
 
 # tpd constraints

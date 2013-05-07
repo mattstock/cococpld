@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/5/2013 11:10:02 AM
+Cmp-Mod V01 Created by CvPCB (2011-05-25)-stable date = Tue 07 May 2013 02:23:02 PM EDT
 
 BeginCmp
 TimeStamp = /517C52EC/517C532E;
@@ -78,9 +78,30 @@ IdModule  = LED-1206;
 EndCmp
 
 BeginCmp
+TimeStamp = /517C52EC/5189459E;
+Reference = D3;
+ValeurCmp = S0;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
 TimeStamp = /5156E0F9/517C6089;
 Reference = D4;
 ValeurCmp = A_PWR;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/5189453D;
+Reference = D5;
+ValeurCmp = S1;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/518945A4;
+Reference = D6;
+ValeurCmp = S2;
 IdModule  = LED-1206;
 EndCmp
 
@@ -89,6 +110,13 @@ TimeStamp = /5156E0F9/516FEC3D;
 Reference = D9;
 ValeurCmp = DIODESCH;
 IdModule  = SM1206POL-mds;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/518933D0;
+Reference = JP1;
+ValeurCmp = CART_BOOT;
+IdModule  = PIN_ARRAY_2X1;
 EndCmp
 
 BeginCmp
@@ -178,7 +206,21 @@ EndCmp
 BeginCmp
 TimeStamp = /517C52EC/5185B493;
 Reference = R2;
-ValeurCmp = 330;
+ValeurCmp = 150;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/5189459F;
+Reference = R3;
+ValeurCmp = 150;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/51894537;
+Reference = R4;
+ValeurCmp = 150;
 IdModule  = SM0805;
 EndCmp
 
@@ -193,6 +235,13 @@ BeginCmp
 TimeStamp = /5156E0F9/517C5468;
 Reference = R6;
 ValeurCmp = 47K;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /517C52EC/518945A3;
+Reference = R7;
+ValeurCmp = 150;
 IdModule  = SM0805;
 EndCmp
 

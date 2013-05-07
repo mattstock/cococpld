@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  5/5/2013 11:17:27 AM
+# EESchema Netlist Version 1.1 created  Tue 07 May 2013 02:41:56 PM EDT
 (
  ( /51846E14 $noname  C2 0.1uF {Lib=C}
   (    1 +5V )
@@ -97,13 +97,13 @@
   (    1 N-000076 )
   (    2 GND )
  )
- ( /5156E0F9/517C6087 $noname  R5 330 {Lib=R}
-  (    1 /CPLD/A_POWER )
+ ( /5156E0F9/517C6087 $noname  R5 150 {Lib=R}
+  (    1 /Arduino_Buffers/A_POWER )
   (    2 N-000076 )
  )
  ( /5156E0F9/517C5468 $noname  R6 47K {Lib=R}
   (    1 GND )
-  (    2 /CPLD/A_POWER )
+  (    2 /Arduino_Buffers/A_POWER )
  )
  ( /5156E0F9/5175D312 $noname  R12 1K {Lib=R}
   (    1 +5V )
@@ -120,7 +120,7 @@
  ( /5156E0F9/5174AD98 $noname  P10 LCD {Lib=CONN_4}
   (    1 /Arduino_Buffers/SCL )
   (    2 /Arduino_Buffers/SCA )
-  (    3 /CPLD/A_POWER )
+  (    3 /Arduino_Buffers/A_POWER )
   (    4 GND )
  )
  ( /5156E0F9/5171F854 $noname  P9 ARDUINO_COMM {Lib=CONN_6}
@@ -139,10 +139,10 @@
   (    5 ? )
   (    6 ? )
   (    7 /Arduino_Buffers/SPI_SEL )
-  (    8 /Arduino_Buffers/A_REGINT )
+  (    8 /CPLD/A_REGINT )
  )
  ( /5156E0F9/516FEC3D $noname  D9 DIODESCH {Lib=DIODESCH}
-  (    1 /CPLD/A_POWER )
+  (    1 /Arduino_Buffers/A_POWER )
   (    2 +5V )
  )
  ( /5156E0F9/516970CB $noname  R10 1K {Lib=R}
@@ -150,8 +150,8 @@
   (    2 /CPLD/A_RW )
  )
  ( /5156E0F9/5156E4FF $noname  P3 ARDUINO_MEGA_D {Lib=CONN_18X2}
-  (    1 /CPLD/A_POWER )
-  (    2 /CPLD/A_POWER )
+  (    1 /Arduino_Buffers/A_POWER )
+  (    2 /Arduino_Buffers/A_POWER )
   (    3 /Arduino_Buffers/A1 )
   (    4 /Arduino_Buffers/A0 )
   (    5 /Arduino_Buffers/A3 )
@@ -169,7 +169,7 @@
   (   17 /Arduino_Buffers/A8 )
   (   18 /Arduino_Buffers/A9 )
   (   19 ? )
-  (   20 /CPLD/A_BUSREQ )
+  (   20 /Arduino_Buffers/A_BUSREQ )
   (   21 /CPLD/A_D7 )
   (   22 ? )
   (   23 /CPLD/A_D5 )
@@ -186,6 +186,32 @@
   (   34 /Arduino_Buffers/SCK )
   (   35 GND )
   (   36 GND )
+ )
+ ( /517C52EC/51894A44 $noname  RP1 150 {Lib=R_PACK4}
+  (    1 N-000100 )
+  (    2 N-000099 )
+  (    3 N-000101 )
+  (    4 N-000105 )
+  (    5 /CPLD/C_POWER )
+  (    6 /CPLD/LED2 )
+  (    7 /CPLD/LED1 )
+  (    8 /CPLD/LED0 )
+ )
+ ( /517C52EC/518945A4 $noname  D6 S2 {Lib=LED}
+  (    1 N-000101 )
+  (    2 GND )
+ )
+ ( /517C52EC/5189459E $noname  D3 S0 {Lib=LED}
+  (    1 N-000100 )
+  (    2 GND )
+ )
+ ( /517C52EC/5189453D $noname  D5 S1 {Lib=LED}
+  (    1 N-000099 )
+  (    2 GND )
+ )
+ ( /517C52EC/518933D0 $noname  JP1 CART_BOOT {Lib=JUMPER}
+  (    1 /CPLD/C_QCLK )
+  (    2 /CPLD/C_~CART )
  )
  ( /517C52EC/5185B499 $noname  D1 DIODE {Lib=DIODESCH}
   (    1 /CPLD/C_POWER )
@@ -230,19 +256,15 @@
   (   36 /CPLD/C_~SCS )
   (   37 /CPLD/C_A13 )
   (   38 /CPLD/C_A14 )
-  (   39 /CPLD/C_A15 )
+  (   39 ? )
   (   40 /CPLD/C_~SLENB )
  )
  ( /517C52EC/5185B495 $noname  R1 47K {Lib=R}
   (    1 GND )
   (    2 /CPLD/C_POWER )
  )
- ( /517C52EC/5185B493 $noname  R2 330 {Lib=R}
-  (    1 /CPLD/C_POWER )
-  (    2 N-000120 )
- )
  ( /517C52EC/5185B492 $noname  D2 C_PWR {Lib=LED}
-  (    1 N-000120 )
+  (    1 N-000105 )
   (    2 GND )
  )
  ( /517C52EC/51850418 $noname  C6 0.1uF {Lib=C}
@@ -256,7 +278,7 @@
  ( /517C52EC/5185028D $noname  U3 EPM3128A-TQFP144 {Lib=EPM3128A-TQFP144}
   (    3 GND )
   (    4 /CPLD/TDI )
-  (    5 /CPLD/C_~CART )
+  (    5 /CPLD/LED0 )
   (    6 /CPLD/C_D0 )
   (    7 /CPLD/C_D1 )
   (    8 /CPLD/C_D2 )
@@ -286,10 +308,10 @@
   (   37 /CPLD/C_A11 )
   (   38 /CPLD/C_A12 )
   (   39 /CPLD/C_~CTS )
-  (   40 /CPLD/C_~SCS )
+  (   40 /CPLD/LED2 )
   (   41 /CPLD/C_A13 )
   (   42 /CPLD/C_A14 )
-  (   44 /CPLD/C_A15 )
+  (   44 /CPLD/LED1 )
   (   45 /CPLD/C_~SLENB )
   (   51 +3.3V )
   (   52 GND )
@@ -327,11 +349,11 @@
   (   88 /CPLD/S_~CS )
   (   89 /CPLD/TCK )
   (   91 /CPLD/E_~CS )
-  (   92 /CPLD/A_POWER )
+  (   92 /Arduino_Buffers/A_POWER )
   (   93 /CPLD/C_POWER )
   (   94 GND )
-  (   96 /CPLD/A_BUSREQ )
-  (   97 /Arduino_Buffers/A_REGINT )
+  (   96 /Arduino_Buffers/A_BUSREQ )
+  (   97 ? )
   (   98 /CPLD/A_D0 )
   (   99 /CPLD/A_D1 )
   (  100 /CPLD/A_D2 )
@@ -356,7 +378,7 @@
   (  125 /CPLD/C_ECLK )
   (  126 /Arduino_Buffers/A6 )
   (  127 /Arduino_Buffers/A7 )
-  (  128 /CPLD/C_QCLK )
+  (  128 /CPLD/C_~SCS )
   (  129 GND )
   (  130 +3.3V )
   (  131 /Arduino_Buffers/A8 )
@@ -371,7 +393,7 @@
   (  140 /CPLD/C_~HALT )
   (  141 /CPLD/C_~NMI )
   (  142 /CPLD/C_~RESET )
-  (  143 ? )
+  (  143 /CPLD/A_REGINT )
  )
  ( /517C52EC/517C55E0 $noname  P2 JTAG {Lib=CONN_5X2}
   (    1 /CPLD/TCK )
@@ -432,21 +454,18 @@ $component R5
  SM0603
  SM0805
  R?-*
- SM1206
 $endlist
 $component R6
  R?
  SM0603
  SM0805
  R?-*
- SM1206
 $endlist
 $component R12
  R?
  SM0603
  SM0805
  R?-*
- SM1206
 $endlist
 $component D9
  D?
@@ -457,7 +476,33 @@ $component R10
  SM0603
  SM0805
  R?-*
- SM1206
+$endlist
+$component D6
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component D3
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component D5
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
 $endlist
 $component D1
  D?
@@ -468,14 +513,6 @@ $component R1
  SM0603
  SM0805
  R?-*
- SM1206
-$endlist
-$component R2
- R?
- SM0603
- SM0805
- R?-*
- SM1206
 $endlist
 $component D2
  LED-3MM
@@ -518,285 +555,288 @@ $endfootprintlist
 }
 { Pin List by Nets
 Net 1 "+5V" "+5V"
- R12 1
- D1 2
+ C7 1
  C8 1
- P11 5
- U1 1
- U6 28
  D9 2
  R10 1
+ R12 1
+ P11 5
+ U1 1
+ D1 2
  C2 1
+ U6 28
  U2 28
- C7 1
 Net 2 "GND" "GND"
- C6 1
  P2 10
- U3 129
- C5 2
- U3 3
- U3 77
- C8 2
+ U3 114
+ U3 124
+ U3 105
+ R6 1
+ U3 135
  C9 2
- U2 14
- U3 59
- P2 2
- C1 2
- C4 2
+ C8 2
  U3 52
  U3 13
- P11 6
- R6 1
- P10 4
+ U3 85
+ U3 33
  D4 2
+ P2 2
+ C5 2
+ D5 2
+ P10 4
+ U3 129
+ C1 2
+ C4 2
+ U3 3
+ P11 6
+ U3 64
+ U3 26
+ P1 34
+ U3 17
+ U3 57
+ P1 33
+ U3 77
+ C3 2
+ U3 59
+ D6 2
+ D2 2
+ D3 2
+ U3 94
  P3 36
  P3 35
- U3 135
- U3 33
- U3 64
- U3 85
- U3 26
- U3 17
- U3 94
+ U6 14
  P4 1
  P6 1
  P5 1
- U6 14
- U1 2
- D2 2
- U3 105
- P1 34
  R1 1
- C7 2
- U3 114
- U3 124
- P1 33
- C3 2
- U3 57
+ C6 1
  C2 2
+ U2 14
+ C7 2
+ U1 2
  P7 1
 Net 3 "/CPLD/S_~CS" "S_~CS"
  U2 20
  U3 88
 Net 4 "+3.3V" "+3.3V"
- U3 51
- U3 24
- C9 1
- P2 4
- U1 3
- U3 130
  C6 2
- U3 123
+ U3 51
  C5 1
- C3 1
  U3 58
- C4 1
  C1 1
+ C4 1
+ U3 123
+ P2 4
+ U3 130
+ C9 1
+ U3 24
+ U1 3
+ C3 1
 Net 5 "/CPLD/M_A12" "M_A12"
- U3 84
- U2 8
  U6 2
+ U2 8
+ U3 84
 Net 6 "/CPLD/M_D0" "M_D0"
  U3 53
  U6 11
  U2 11
 Net 7 "/CPLD/E_~CS" "E_~CS"
- U6 20
  U3 91
+ U6 20
 Net 8 "/CPLD/M_A0" "M_A0"
  U2 21
  U3 68
  U6 10
 Net 9 "/CPLD/M_A1" "M_A1"
  U6 9
- U3 69
  U2 23
+ U3 69
 Net 10 "/CPLD/M_A2" "M_A2"
  U6 8
- U3 70
  U2 24
+ U3 70
 Net 11 "/CPLD/M_A3" "M_A3"
- U2 25
  U6 7
+ U2 25
  U3 71
 Net 12 "/CPLD/M_A4" "M_A4"
- U6 6
  U2 26
+ U6 6
  U3 72
 Net 13 "/CPLD/M_A5" "M_A5"
- U3 74
- U2 1
  U6 5
+ U2 1
+ U3 74
 Net 14 "/CPLD/M_A6" "M_A6"
- U3 78
  U2 2
  U6 4
+ U3 78
 Net 15 "/CPLD/M_A7" "M_A7"
- U2 3
  U6 3
  U3 79
+ U2 3
 Net 16 "/CPLD/M_A10" "M_A10"
+ U2 6
  U3 82
  U6 21
- U2 6
 Net 17 "/CPLD/M_A14" "M_A14"
- U6 1
  U3 87
+ U6 1
  U2 10
 Net 18 "/CPLD/M_D5" "M_D5"
  U2 17
- U6 17
  U3 61
+ U6 17
 Net 19 "/CPLD/M_D7" "M_D7"
  U3 63
  U6 19
  U2 19
 Net 20 "/CPLD/M_D6" "M_D6"
- U3 62
  U6 18
  U2 18
+ U3 62
 Net 21 "/CPLD/M_A13" "M_A13"
- U6 26
  U2 9
+ U6 26
  U3 86
 Net 22 "/CPLD/M_D4" "M_D4"
- U2 16
- U6 16
  U3 60
+ U6 16
+ U2 16
 Net 23 "/CPLD/M_A8" "M_A8"
+ U2 4
  U3 80
  U6 25
- U2 4
 Net 24 "/CPLD/M_A9" "M_A9"
- U6 24
  U2 5
+ U6 24
  U3 81
 Net 25 "/CPLD/M_A11" "M_A11"
  U3 83
- U2 7
  U6 23
+ U2 7
 Net 26 "/CPLD/M_D2" "M_D2"
+ U2 13
  U6 13
  U3 55
- U2 13
 Net 27 "/CPLD/M_D1" "M_D1"
  U6 12
- U3 54
  U2 12
+ U3 54
 Net 28 "/CPLD/M_RW" "M_RW"
- U3 65
  U6 27
  U2 27
+ U3 65
 Net 29 "/CPLD/M_D3" "M_D3"
+ U2 15
  U6 15
  U3 56
- U2 15
 Net 30 "/CPLD/M_~OE" "M_~OE"
- U3 67
  U6 22
  U2 22
-Net 31 "/Arduino Buffers/A13" "A13"
- U3 137
- P3 14
-Net 32 "/Arduino Buffers/A14" "A14"
+ U3 67
+Net 31 "/Arduino Buffers/A14" "A14"
  U3 138
  P3 11
-Net 34 "/CPLD/A_D0" "A_D0"
+Net 33 "/CPLD/A_D0" "A_D0"
  U3 98
  P3 30
-Net 35 "/CPLD/A_D1" "A_D1"
- P3 27
+Net 34 "/CPLD/A_D1" "A_D1"
  U3 99
-Net 36 "/CPLD/A_D2" "A_D2"
- P3 28
+ P3 27
+Net 35 "/CPLD/A_D2" "A_D2"
  U3 100
-Net 37 "/CPLD/A_D3" "A_D3"
- P3 25
+ P3 28
+Net 36 "/CPLD/A_D3" "A_D3"
  U3 101
-Net 38 "/CPLD/A_D4" "A_D4"
- U3 102
+ P3 25
+Net 37 "/CPLD/A_D4" "A_D4"
  P3 26
-Net 39 "/CPLD/A_D5" "A_D5"
- P3 23
- U3 106
-Net 40 "/CPLD/A_D7" "A_D7"
- U3 109
- P3 21
-Net 41 "/CPLD/A_POWER" "A_POWER"
- P3 2
- P10 3
- D9 1
- P3 1
- R5 1
- R6 2
- U3 92
-Net 42 "/Arduino Buffers/A10" "A10"
- U3 133
- P3 15
-Net 43 "/Arduino Buffers/A11" "A11"
- U3 134
- P3 16
-Net 44 "/Arduino Buffers/A12" "A12"
- P3 13
- U3 136
-Net 45 "/CPLD/A_BUSREQ" "A_BUSREQ"
- P3 20
- U3 96
-Net 46 "/CPLD/A_EEN" "A_EEN"
- U3 111
- P3 29
-Net 47 "/Arduino Buffers/A_REGINT" "A_REGINT"
- P8 8
- U3 97
-Net 48 "/CPLD/A_RW" "A_RW"
- U3 110
- R10 2
- P3 12
-Net 49 "/CPLD/A_D6" "A_D6"
+ U3 102
+Net 38 "/CPLD/A_D6" "A_D6"
  U3 107
  P3 24
+Net 39 "/CPLD/A_D7" "A_D7"
+ U3 109
+ P3 21
+Net 40 "/Arduino Buffers/A_POWER" "A_POWER"
+ U3 92
+ R6 2
+ P10 3
+ R5 1
+ P3 2
+ P3 1
+ D9 1
+Net 41 "/Arduino Buffers/A10" "A10"
+ P3 15
+ U3 133
+Net 42 "/Arduino Buffers/A11" "A11"
+ U3 134
+ P3 16
+Net 43 "/Arduino Buffers/A12" "A12"
+ P3 13
+ U3 136
+Net 44 "/Arduino Buffers/A_BUSREQ" "A_BUSREQ"
+ P3 20
+ U3 96
+Net 45 "/CPLD/A_RW" "A_RW"
+ R10 2
+ U3 110
+ P3 12
+Net 46 "/CPLD/A_EEN" "A_EEN"
+ P3 29
+ U3 111
+Net 47 "/CPLD/A_REGINT" "A_REGINT"
+ U3 143
+ P8 8
+Net 48 "/Arduino Buffers/A13" "A13"
+ U3 137
+ P3 14
+Net 49 "/CPLD/A_D5" "A_D5"
+ U3 106
+ P3 23
 Net 50 "/Arduino Buffers/A9" "A9"
  U3 132
  P3 18
-Net 51 "/Arduino Buffers/A8" "A8"
- P3 17
- U3 131
-Net 52 "/Arduino Buffers/A7" "A7"
- U3 127
- P3 9
-Net 53 "/Arduino Buffers/A6" "A6"
- U3 126
- P3 10
-Net 54 "/Arduino Buffers/A5" "A5"
- U3 119
- P3 7
-Net 55 "/Arduino Buffers/A4" "A4"
- U3 118
- P3 8
-Net 56 "/Arduino Buffers/A3" "A3"
- U3 117
- P3 5
-Net 57 "/Arduino Buffers/A2" "A2"
- U3 116
- P3 6
-Net 58 "/Arduino Buffers/A1" "A1"
- P3 3
- U3 113
-Net 59 "/Arduino Buffers/A0" "A0"
+Net 51 "/Arduino Buffers/A0" "A0"
  P3 4
  U3 112
-Net 70 "/Arduino Buffers/MISO" "MISO"
- P3 32
+Net 52 "/Arduino Buffers/A1" "A1"
+ P3 3
+ U3 113
+Net 53 "/Arduino Buffers/A2" "A2"
+ U3 116
+ P3 6
+Net 54 "/Arduino Buffers/A3" "A3"
+ U3 117
+ P3 5
+Net 55 "/Arduino Buffers/A4" "A4"
+ P3 8
+ U3 118
+Net 56 "/Arduino Buffers/A5" "A5"
+ U3 119
+ P3 7
+Net 57 "/Arduino Buffers/A6" "A6"
+ P3 10
+ U3 126
+Net 58 "/Arduino Buffers/A7" "A7"
+ U3 127
+ P3 9
+Net 59 "/Arduino Buffers/A8" "A8"
+ U3 131
+ P3 17
+Net 71 "/Arduino Buffers/MISO" "MISO"
  P11 3
-Net 72 "/Arduino Buffers/SCK" "SCK"
- P3 34
+ P3 32
+Net 73 "/Arduino Buffers/SCK" "SCK"
  P11 1
+ P3 34
 Net 75 "/Arduino Buffers/MOSI" "MOSI"
- P11 4
  P3 31
+ P11 4
 Net 76 "" ""
- R5 2
  D4 1
+ R5 2
 Net 77 "/Arduino Buffers/SCA" "SCA"
  P9 2
  P10 2
@@ -804,131 +844,146 @@ Net 78 "/Arduino Buffers/SCL" "SCL"
  P10 1
  P9 1
 Net 79 "/Arduino Buffers/SPI_SEL" "SPI_SEL"
- R12 2
- P11 2
  P8 7
-Net 80 "/CPLD/C_A14" "C_A14"
- U3 42
- P1 38
-Net 81 "/CPLD/C_A13" "C_A13"
- P1 37
- U3 41
-Net 82 "/CPLD/C_~SCS" "C_~SCS"
+ P11 2
+ R12 2
+Net 80 "/CPLD/LED2" "LED2"
+ RP1 6
  U3 40
- P1 36
-Net 83 "/CPLD/C_~SLENB" "C_~SLENB"
- P1 40
- U3 45
-Net 87 "/CPLD/TDI" "TDI"
- U3 4
- P2 9
-Net 88 "/CPLD/TMS" "TMS"
- U3 20
- P2 5
-Net 89 "/CPLD/TDO" "TDO"
- P2 3
- U3 104
-Net 90 "/CPLD/TCK" "TCK"
- U3 89
- P2 1
-Net 91 "/CPLD/C_~CTS" "C_~CTS"
- P1 32
- U3 39
-Net 93 "/CPLD/C_~RESET" "C_~RESET"
- U3 142
- P1 5
-Net 94 "/CPLD/C_~NMI" "C_~NMI"
- P1 4
- U3 141
-Net 95 "/CPLD/C_~HALT" "C_~HALT"
- P1 3
- U3 140
-Net 98 "/CPLD/C_ECLK" "C_ECLK"
- U3 125
- P1 6
-Net 99 "/CPLD/C_D7" "C_D7"
- P1 17
- U3 15
-Net 100 "/CPLD/C_A7" "C_A7"
- P1 26
- U3 29
-Net 101 "/CPLD/C_D6" "C_D6"
- P1 16
- U3 14
-Net 103 "/CPLD/C_A6" "C_A6"
- U3 28
- P1 25
-Net 104 "/CPLD/C_D5" "C_D5"
- U3 11
- P1 15
-Net 105 "/CPLD/C_A5" "C_A5"
- U3 27
- P1 24
-Net 106 "/CPLD/C_D4" "C_D4"
- U3 10
- P1 14
-Net 107 "/CPLD/C_A4" "C_A4"
- P1 23
- U3 25
-Net 108 "/CPLD/C_D3" "C_D3"
- P1 13
- U3 9
-Net 109 "/CPLD/C_A3" "C_A3"
- P1 22
- U3 23
-Net 110 "/CPLD/C_D2" "C_D2"
- U3 8
- P1 12
-Net 111 "/CPLD/C_A12" "C_A12"
- P1 31
- U3 38
-Net 112 "/CPLD/C_A2" "C_A2"
- P1 21
- U3 22
-Net 113 "/CPLD/C_D1" "C_D1"
- P1 11
- U3 7
-Net 114 "/CPLD/C_A11" "C_A11"
- U3 37
- P1 30
-Net 115 "/CPLD/C_A1" "C_A1"
- U3 21
- P1 20
-Net 116 "/CPLD/C_D0" "C_D0"
- U3 6
- P1 10
-Net 117 "/CPLD/C_~CART" "C_~CART"
- U3 5
- P1 8
-Net 118 "/CPLD/C_QCLK" "C_QCLK"
- U3 128
- P1 7
-Net 119 "/CPLD/C_A8" "C_A8"
- P1 27
+Net 81 "/CPLD/C_A8" "C_A8"
  U3 30
-Net 120 "" ""
- R2 2
- D2 1
-Net 121 "/CPLD/C_POWER" "C_POWER"
- D1 1
- U3 93
- R2 1
- R1 2
- P1 9
-Net 122 "/CPLD/C_A15" "C_A15"
- U3 44
- P1 39
-Net 123 "/CPLD/C_A10" "C_A10"
- U3 32
- P1 29
-Net 124 "/CPLD/C_A0" "C_A0"
- U3 18
- P1 19
-Net 125 "/CPLD/C_A9" "C_A9"
+ P1 27
+Net 82 "/CPLD/C_A9" "C_A9"
  U3 31
  P1 28
-Net 126 "/CPLD/C_R/~W" "C_R/~W"
+Net 83 "/CPLD/C_A13" "C_A13"
+ U3 41
+ P1 37
+Net 84 "/CPLD/C_A14" "C_A14"
+ P1 38
+ U3 42
+Net 85 "/CPLD/C_A10" "C_A10"
+ U3 32
+ P1 29
+Net 86 "/CPLD/TDO" "TDO"
+ P2 3
+ U3 104
+Net 88 "/CPLD/TDI" "TDI"
+ U3 4
+ P2 9
+Net 91 "/CPLD/TMS" "TMS"
+ U3 20
+ P2 5
+Net 92 "/CPLD/TCK" "TCK"
+ P2 1
+ U3 89
+Net 93 "/CPLD/C_~SCS" "C_~SCS"
+ U3 128
+ P1 36
+Net 95 "/CPLD/C_~CTS" "C_~CTS"
+ P1 32
+ U3 39
+Net 96 "/CPLD/C_A12" "C_A12"
+ P1 31
+ U3 38
+Net 97 "/CPLD/C_A11" "C_A11"
+ U3 37
+ P1 30
+Net 98 "/CPLD/C_~CART" "C_~CART"
+ P1 8
+ JP1 2
+Net 99 "" ""
+ D5 1
+ RP1 2
+Net 100 "" ""
+ D3 1
+ RP1 1
+Net 101 "" ""
+ D6 1
+ RP1 3
+Net 102 "/CPLD/LED0" "LED0"
+ RP1 8
+ U3 5
+Net 103 "/CPLD/LED1" "LED1"
+ U3 44
+ RP1 7
+Net 104 "/CPLD/C_POWER" "C_POWER"
+ D1 1
+ R1 2
+ U3 93
+ P1 9
+ RP1 5
+Net 105 "" ""
+ D2 1
+ RP1 4
+Net 106 "/CPLD/C_QCLK" "C_QCLK"
+ P1 7
+ JP1 1
+Net 107 "/CPLD/C_A1" "C_A1"
+ U3 21
+ P1 20
+Net 108 "/CPLD/C_D0" "C_D0"
+ P1 10
+ U3 6
+Net 109 "/CPLD/C_ECLK" "C_ECLK"
+ U3 125
+ P1 6
+Net 110 "/CPLD/C_~RESET" "C_~RESET"
+ P1 5
+ U3 142
+Net 111 "/CPLD/C_~NMI" "C_~NMI"
+ U3 141
+ P1 4
+Net 112 "/CPLD/C_~HALT" "C_~HALT"
+ U3 140
+ P1 3
+Net 115 "/CPLD/C_~SLENB" "C_~SLENB"
+ U3 45
+ P1 40
+Net 116 "/CPLD/C_A6" "C_A6"
+ U3 28
+ P1 25
+Net 118 "/CPLD/C_A0" "C_A0"
+ P1 19
+ U3 18
+Net 119 "/CPLD/C_R/~W" "C_R/~W"
  U3 16
  P1 18
+Net 120 "/CPLD/C_D7" "C_D7"
+ U3 15
+ P1 17
+Net 121 "/CPLD/C_A7" "C_A7"
+ U3 29
+ P1 26
+Net 122 "/CPLD/C_D6" "C_D6"
+ U3 14
+ P1 16
+Net 124 "/CPLD/C_D5" "C_D5"
+ U3 11
+ P1 15
+Net 125 "/CPLD/C_A5" "C_A5"
+ P1 24
+ U3 27
+Net 126 "/CPLD/C_D4" "C_D4"
+ P1 14
+ U3 10
+Net 127 "/CPLD/C_A4" "C_A4"
+ U3 25
+ P1 23
+Net 128 "/CPLD/C_D3" "C_D3"
+ U3 9
+ P1 13
+Net 129 "/CPLD/C_A3" "C_A3"
+ U3 23
+ P1 22
+Net 130 "/CPLD/C_D2" "C_D2"
+ U3 8
+ P1 12
+Net 131 "/CPLD/C_A2" "C_A2"
+ P1 21
+ U3 22
+Net 132 "/CPLD/C_D1" "C_D1"
+ P1 11
+ U3 7
 }
 #End
