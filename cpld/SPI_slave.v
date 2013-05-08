@@ -56,7 +56,7 @@ always @(posedge clk)
 if(SSEL_active)
 begin
   if(SSEL_startmessage)
-    byte_data_sent <= cnt;  // first byte sent in a message is the message count
+    byte_data_sent <= byte_data_tosend;
   else
   if(SCK_fallingedge)
   begin

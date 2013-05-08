@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module cocofdc (c_power, a_power, eclk, cts_n, scs_n, c_databus, nmi_n, halt_n, reset_n, c_addrbus, c_rw, a_databus, a_addrbus, a_rw, a_brpin, a_een_n,
+module cocofdc (c_power, a_power, eclk, cts_n, scs_n, c_databus, nmi_n, halt_n, reset_n, c_addrbus, c_rw, a_miso, a_mosi, a_sclk, a_sel,
 					e_cs_n, s_cs_n, m_rw, m_oe_n, m_addrbus, m_databus, slenb_n, a_busmaster, a_regint, led);
 
 input c_power;  // 1 = Coco power on
@@ -14,11 +14,6 @@ output slenb_n;
 output nmi_n;
 input c_rw; // Coco read/write
 input reset_n; // 0 = Coco reset
-inout [7:0] a_databus; // AVR data bus
-input [15:0] a_addrbus; // AVR address bus
-input a_rw; // AVR read/write
-input a_brpin; // 1 = AVR wants bus (Coco isolated)
-input a_een_n; // When AVR has bus control, also control the EEPROM output
 output[14:0] m_addrbus;
 inout [7:0] m_databus;
 output reg [2:0] led;
@@ -29,10 +24,20 @@ output e_cs_n; // EEPROM chip select
 output reg halt_n;
 output reg a_busmaster; // indicate that AVR has the bus
 output reg a_regint;
+input a_sclk;
+input a_mosi;
+input a_sel;
+output a_miso;
 
-reg [3:0]count; // used to count eclk cycles
+SPI_slave u0(eclk, a_sclk, a_mosi, a_miso, a_sel);
 
-wire a_busreq = a_power & a_brpin; // might be floating, so we check power too
+reg [3:0] count; // used to count eclk cycles
+reg a_busreq;
+reg a_rw;
+reg a_een_n;
+reg [15:0] a_addrbus;
+reg [7:0] a_databus;
+
 wire c_busreq_n = (cts_n & scs_n) | ~eclk; // Coco bus request
 
 // Memory bus controls
@@ -40,7 +45,7 @@ assign m_addrbus = a_busmaster ? a_addrbus[14:0] : c_addrbus;
 assign m_databus = (~a_busmaster & ~c_rw) ? c_databus : 8'bz;
 assign c_databus = (~a_busmaster & c_rw) ? m_databus : 8'bz;
 assign m_databus = (a_busmaster & ~a_rw) ? a_databus : 8'bz;
-assign a_databus = (a_busmaster & a_rw)? m_databus : 8'bz;
+//assign a_databus = (a_busmaster & a_rw)? m_databus : 8'bz;
 assign m_oe_n = a_busmaster ? a_een_n : c_busreq_n;
 assign s_cs_n = a_busmaster ? a_addrbus[15] : scs_n;  // SRAM low 32K to AVR
 assign e_cs_n = a_busmaster ? ~a_addrbus[15] : cts_n; // EEPROM high 32K to AVR
