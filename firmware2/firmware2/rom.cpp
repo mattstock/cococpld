@@ -2,9 +2,18 @@
 #include "busio.h"
 #include "firmware2.h"
 
+// Assumes that the address pins are outputs already and RW is high.
+void checkFail() {
+	digitalWrite(EEN_PIN, HIGH);
+	setAddress(0x83f);
+	digitalWrite(EEN_PIN, LOW);
+	if (readData() != 0x87)
+		Serial.println("bodged");	
+}
+
 void verifyROM(File dataFile) {
-	uint16_t address;
-	uint8_t stored;
+	volatile uint16_t address;
+	volatile uint8_t stored;
 	uint8_t disk;
 	lcd.clear();
 
@@ -14,23 +23,26 @@ void verifyROM(File dataFile) {
 	}
 
 	digitalWrite(BUSREQ_PIN, HIGH);
-	pinMode(ARDRW_PIN, OUTPUT);
 	digitalWrite(ARDRW_PIN, HIGH);
 	
 	setDataDir(INPUT);
 	setAddrDir(OUTPUT);	
-	
+		
 	if (dataFile.size() <= 16*1024)
 	address = 0x4000;
 	else
 	address = 0x0000;
 	while (dataFile.available()) {
 		disk = dataFile.read();
-		
+	
+		checkFail();
+			
 		if (address % 0x100 == 0) {
 			lcd.clear();
 			lcd.print(address, HEX);
 		}
+		
+		
 		setAddress(address);
 		digitalWrite(EEN_PIN, LOW);  // Enable output of eeprom
 		stored = readData();
@@ -47,11 +59,9 @@ void verifyROM(File dataFile) {
 		address++;
 	}
 
-	setAddrDir(INPUT);
-	
-	digitalWrite(BUSREQ_PIN, LOW);
 	digitalWrite(EEN_PIN, HIGH);
-	pinMode(ARDRW_PIN, INPUT);
+	setAddrDir(INPUT);	
+	digitalWrite(BUSREQ_PIN, LOW);
 
 	dataFile.close();
 
@@ -60,7 +70,6 @@ void verifyROM(File dataFile) {
 	delay(2000);
 }
 
-// assumes the een is low, 
 void programByte(uint16_t addr, uint8_t data) {
 	int retry = 100;
 	
@@ -74,7 +83,7 @@ void programByte(uint16_t addr, uint8_t data) {
 	// Check
 	setDataDir(INPUT);
 	digitalWrite(EEN_PIN, LOW);
-	
+
 	while ((retry != 0) & (readData() != data)) {
 		retry--;
 		digitalWrite(EEN_PIN, HIGH);
@@ -82,6 +91,9 @@ void programByte(uint16_t addr, uint8_t data) {
 		digitalWrite(EEN_PIN, LOW);
 	}
 
+	if (addr > 0x83f)
+		checkFail();
+	
 	if (retry == 0) {
 		lcd.clear();
 		lcd.print("Err: 0x");
@@ -95,7 +107,6 @@ void programByte(uint16_t addr, uint8_t data) {
 void eraseROM() {
 	
 	digitalWrite(BUSREQ_PIN, HIGH);
-	pinMode(ARDRW_PIN, OUTPUT);
 	digitalWrite(ARDRW_PIN, HIGH);
 	digitalWrite(EEN_PIN, LOW);
 
@@ -113,11 +124,9 @@ void eraseROM() {
 		address++;
 	}
 
-	setAddrDir(INPUT);
-	pinMode(ARDRW_PIN, INPUT);
-
-	digitalWrite(BUSREQ_PIN, LOW);
 	digitalWrite(EEN_PIN, HIGH);
+	setAddrDir(INPUT);
+	digitalWrite(BUSREQ_PIN, LOW);
 	
 	lcd.clear();
 	lcd.print("eeprom erased");
@@ -126,7 +135,6 @@ void eraseROM() {
 
 void viewROM() {
 	digitalWrite(BUSREQ_PIN, HIGH); // disable coco addr lines
-	pinMode(ARDRW_PIN, OUTPUT);
 	digitalWrite(ARDRW_PIN, HIGH);
 	
 	setAddrDir(OUTPUT);
@@ -197,7 +205,6 @@ void programROM(File dataFile) {
 	}
 	
 	digitalWrite(BUSREQ_PIN, HIGH); // disable coco address bus
-	pinMode(ARDRW_PIN, OUTPUT);
 	digitalWrite(ARDRW_PIN, HIGH);
 	digitalWrite(EEN_PIN, LOW);
 	
@@ -223,11 +230,11 @@ void programROM(File dataFile) {
 		address++;
 	}
 
-	setAddrDir(INPUT);
-	pinMode(ARDRW_PIN, INPUT);
-
-	digitalWrite(BUSREQ_PIN, LOW);
+	checkFail();
+	
 	digitalWrite(EEN_PIN, HIGH);
+	setAddrDir(INPUT);
+	digitalWrite(BUSREQ_PIN, LOW);
 
 	dataFile.close();
 	

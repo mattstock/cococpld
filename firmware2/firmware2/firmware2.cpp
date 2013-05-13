@@ -14,7 +14,7 @@
 
 Adafruit_RGBLCDShield lcd;
 
-const char menu[][20] = { "program", "view", "verify", "erase", "slave", "bits" };
+const char menu[][20] = { "program", "view", "verify", "erase", "check", "bits" };
 const int menuCount = 6;
 
 // Keep a list of the files on the sdcard
@@ -25,23 +25,7 @@ char names[MAX_FILES][13];
 // Menu navigation
 int menuIndex;
 
-volatile uint8_t pl, pg, pc, pa, pd, ddrg, ddrd;
 volatile bool newstuff = false;
-
-ISR(PCINT2_vect) {
-	if (newstuff) // only want rising edge
-	  return;
-	  
-	// Quick grab of all of the relevant IO ports.  We can sort and rearrange them later.
-	pl = PINL;
-	pg = PING;
-	ddrg = DDRG;
-	ddrd = DDRD;
-	pc = PINC;
-	pd = PIND;
-	pa = PINA;
-	newstuff = true;	
-}
 
 void displayMenu() {
 	lcd.setCursor(0,0);
@@ -148,59 +132,86 @@ void printAddress(uint16_t val) {
 	}
 }
 
-void bitfiddler() {
-}
-
-void slaveMode() {
-	char address[30];
+uint16_t selectHex(int n) {
 	uint8_t buttons;
-	uint8_t d;
-	uint16_t a;
-	uint16_t count;
+	int digit = 2*n-1;
+	uint16_t result;
+	uint8_t vals[4] = {0,0,0,0};
 	
-	// Should already be like this, but just in case...
-	pinMode(ARDRW_PIN, INPUT);
-	digitalWrite(EEN_PIN, HIGH);
-	digitalWrite(BUSREQ_PIN, LOW);
- 	setDataDir(INPUT);
- 	setAddrDir(INPUT);
+	while (lcd.readButtons());
 
-	lcd.clear();
-	newstuff = false;
-	count = 0xff40;
+	lcd.cursor();
 	
-	PCMSK2 |= 0x80;
-	PCICR |= 0x04;
-	
+	lcd.setCursor(0,1);
+	for (int i=0; i < n; i++)
+		lcd.print("00");
+	  
 	while (1) {
 		buttons = lcd.readButtons();
 		if (buttons & BUTTON_SELECT)
 			break;
-		if (newstuff) {
-			d = (pl >> 1) | ((pg & 0x01) << 7); // What a mess
-			lcd.print(d, HEX);
-			a =  (pc << 3) & 0b00011000;
-			a |= (pd >> 5) & 0b00000100;
-			a |= (pg >> 1) & 0b00000011;
-			sprintf(address, "%04x =? %04x", a, count & 0b00011111);
-			Serial.println(address);
-			/*
-			lcd.setCursor(0,1);
-			lcd.print(address);
-			lcd.setCursor(8,0);
-			lcd.print(count++, HEX);
-			lcd.setCursor(0,0);
-			*/
-			count++;
-			newstuff = false;
+		if (buttons & BUTTON_LEFT) {
+			if (digit == 2*n-1)
+				digit = 0;
+			else
+				digit++;
+		}				
+		if (buttons & BUTTON_RIGHT) {
+			if (digit == 0)	
+				digit = 2*n-1;
+			else
+				digit--;
+		}			
+		if (buttons & BUTTON_DOWN) {
+			if (vals[digit] == 0)
+				vals[digit] = 0xf;
+			else
+				vals[digit]--;
+			lcd.print(vals[digit], HEX);
 		}
+		if (buttons & BUTTON_UP) {
+			if (vals[digit] == 15)
+				vals[digit] = 0;
+			else
+				vals[digit]++;
+			lcd.print(vals[digit], HEX);
+		}			
+		lcd.setCursor(2*n-1-digit,1);
+		delay(100);
 	}
 	
-	PCICR &= !(0x04);
+	result = 0;
+	for (int i=0; i < 2*n; i++)
+	  result = result | (vals[i] << i*4);
+	  
+	lcd.noCursor();	
 	
+	return result;
+}
+
+void bitfiddler() {
 	lcd.clear();
-	lcd.print("slave quit");
-	delay(2000);
+	lcd.print("Address:");
+	uint16_t a = selectHex(2);
+	lcd.clear();
+	lcd.print("Data:");
+	uint8_t d = selectHex(1);
+	
+	digitalWrite(BUSREQ_PIN, HIGH); // disable coco address bus
+	pinMode(ARDRW_PIN, OUTPUT);
+	digitalWrite(ARDRW_PIN, HIGH);
+	digitalWrite(EEN_PIN, LOW);
+	
+	setAddrDir(OUTPUT);
+	setDataDir(OUTPUT);
+
+	programByte(a, d);
+
+	setAddrDir(INPUT);
+	pinMode(ARDRW_PIN, INPUT);
+
+	digitalWrite(BUSREQ_PIN, LOW);
+	digitalWrite(EEN_PIN, HIGH);
 }
 
 void loop() {
@@ -237,7 +248,7 @@ void loop() {
 				eraseROM();
 				break;
 			case 4:
-				slaveMode();
+				checkFail();
 				break;
 			case 5:
 				bitfiddler();

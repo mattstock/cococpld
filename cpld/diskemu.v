@@ -20,37 +20,36 @@ output wee;
 output slenb;
 output [1:0] bank;
 input special;
-inout ard_rw;
+input ard_rw;
 input ard_een;
 output ard_sel;
 
 // Bus flow controls
 assign c_busen = (c_power ? a_power & busreq : 1'b1); // If coco is on, let it control the address bus (neg)
-assign a_busen = !a_power; // always enabled when arduino is connected (neg)
+assign a_busen = ~a_power; // always enabled when arduino is connected (neg)
 assign c_dataen = (cts & scs) | c_busen;
-assign ard_busmaster = !c_busen; // Arduino controls address lines on bus if it asks (neg)
-assign ard_sel = (a_power & c_power & !scs & eclk);
+assign ard_busmaster = ~c_busen; // Arduino controls address lines on bus if it asks (neg)
+assign ard_sel = (a_power & c_power & ~scs & eclk);
 
 // Bank controls
 assign banksw[1:0] = ard_sel ? coco_addr[14:13] : 2'bz;
-assign bank[1] = !c_busen ? coco_addr[14] : banksw[1];
-assign bank[0] = !c_busen ? coco_addr[13] : banksw[0];
+assign bank[1] = ~c_busen ? coco_addr[14] : banksw[1];
+assign bank[0] = ~c_busen ? coco_addr[13] : banksw[0];
 
 // Write controls
-assign ard_rw = ard_sel ? coco_rw : 1'bz; // if both units online and scs is active, ard_rw is an output
 assign wee = a_power ? ard_rw : 1'b1;
 
 // EEPROM output enable
-assign een = !c_busen ? cts : ard_een;
+assign een = ~c_busen ? cts : ard_een;
 
 // Keep this out of the way for now
-assign slenb = 1'b1;
+assign slenb = special;
 
 // Blinkenlights
-assign led_rw = !wee; 
-assign led_cbus = !c_busen;
-assign led_cts = !cts;
-assign led_scs = !scs;
-assign led_s = !c_dataen;
+assign led_rw = ~wee; 
+assign led_cbus = ~c_busen;
+assign led_cts = ~cts;
+assign led_scs = ~scs;
+assign led_s = special;
 
 endmodule

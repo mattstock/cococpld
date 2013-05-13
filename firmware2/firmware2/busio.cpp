@@ -2,7 +2,7 @@
 #include <avr/io.h>
 
 const int dataPins[] = { 48, 47, 46, 45, 44, 43, 42, 41 };
-const int addrPins[] = { 22, 23, 24, 25, 26, 27, 28, 29, 37, 36, 35, 34, 33, 32, 31 };
+const int addrPins[] = { 22, 23, 24, 25, 26, 27, 28, 29, 37, 36, 35, 34, 33, 32, 31 }; // PORTA, PORTC
 
 void setDataDir(uint8_t mode) {
 	for (int i=0; i < 8; i++)
@@ -26,14 +26,15 @@ void io_setup() {
 	pinMode(ABUSEN_PIN, INPUT);
 	
 	// Set everything as inputs to start
-	pinMode(ARDRW_PIN, INPUT);
+	pinMode(ARDRW_PIN, OUTPUT);
+	digitalWrite(ARDRW_PIN, HIGH);
 	setDataDir(INPUT);
 	setAddrDir(INPUT);
 }
 
 uint16_t readAddress() {
 	uint16_t a = 0;
-	
+
 	for (int i=0; i < 15; i++) {
 		a = a + (digitalRead(addrPins[i]) << i);
 	}
