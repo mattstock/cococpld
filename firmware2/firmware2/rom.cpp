@@ -13,17 +13,13 @@ void verifyROM(File dataFile) {
 		return;
 	}
 
-	digitalWrite(BUSREQ_PIN, HIGH);
-	pinMode(ARDRW_PIN, OUTPUT);
-	digitalWrite(ARDRW_PIN, HIGH);
-	
-	setDataDir(INPUT);
-	setAddrDir(OUTPUT);	
+	takeBus();
 	
 	if (dataFile.size() <= 16*1024)
-	address = 0x4000;
+		address = 0x4000;
 	else
-	address = 0x0000;
+		address = 0x0000;
+	setAddress(address);
 	while (dataFile.available()) {
 		disk = dataFile.read();
 		
@@ -31,10 +27,7 @@ void verifyROM(File dataFile) {
 			lcd.clear();
 			lcd.print(address, HEX);
 		}
-		setAddress(address);
-		digitalWrite(EEN_PIN, LOW);  // Enable output of eeprom
 		stored = readData();
-		digitalWrite(EEN_PIN, HIGH);
 		if (stored != disk) {
 			lcd.clear();
 			lcd.print(address, HEX);
@@ -47,12 +40,8 @@ void verifyROM(File dataFile) {
 		address++;
 	}
 
-	setAddrDir(INPUT);
+	giveBus();	
 	
-	digitalWrite(BUSREQ_PIN, LOW);
-	digitalWrite(EEN_PIN, HIGH);
-	pinMode(ARDRW_PIN, INPUT);
-
 	dataFile.close();
 
 	lcd.clear();
@@ -60,77 +49,29 @@ void verifyROM(File dataFile) {
 	delay(2000);
 }
 
-// assumes the een is low, 
-void programByte(uint16_t addr, uint8_t data) {
-	int retry = 100;
+void eraseROM() {	
 	
-	digitalWrite(EEN_PIN, HIGH);
-	setAddress(addr);
-	digitalWrite(ARDRW_PIN, LOW); // Latch address
-	setDataDir(OUTPUT);
-	setData(data);
-	digitalWrite(ARDRW_PIN, HIGH); // Latch data
-	
-	// Check
-	setDataDir(INPUT);
-	digitalWrite(EEN_PIN, LOW);
-	
-	while ((retry != 0) & (readData() != data)) {
-		retry--;
-		digitalWrite(EEN_PIN, HIGH);
-		delay(1);
-		digitalWrite(EEN_PIN, LOW);
-	}
-
-	if (retry == 0) {
-		lcd.clear();
-		lcd.print("Err: 0x");
-		lcd.print(addr, HEX);
-		lcd.print(": ");
-		lcd.print(data, HEX);
-		delay(500);
-	}
-}
-
-void eraseROM() {
-	
-	digitalWrite(BUSREQ_PIN, HIGH);
-	pinMode(ARDRW_PIN, OUTPUT);
-	digitalWrite(ARDRW_PIN, HIGH);
-	digitalWrite(EEN_PIN, LOW);
-
-	setAddrDir(OUTPUT);
-	setDataDir(OUTPUT);
+	takeBus();
 		
+	lcd.clear();
+	lcd.print("Erasing...");
+
 	uint16_t address = 0x0000;
+	setAddress(address);
 	while (address < 0x8000) {
-		if (address % 0x100 == 0) {
-			lcd.clear();
-			lcd.print("Erasing: 0x");
-			lcd.print(address, HEX);
-		}
-		programByte(address, 0xff);
+		setData(0x00);
 		address++;
 	}
 
-	setAddrDir(INPUT);
-	pinMode(ARDRW_PIN, INPUT);
-
-	digitalWrite(BUSREQ_PIN, LOW);
-	digitalWrite(EEN_PIN, HIGH);
+	giveBus();
 	
 	lcd.clear();
-	lcd.print("eeprom erased");
+	lcd.print("Erase complete");
 	delay(2000);
 }
 
 void viewROM() {
-	digitalWrite(BUSREQ_PIN, HIGH); // disable coco addr lines
-	pinMode(ARDRW_PIN, OUTPUT);
-	digitalWrite(ARDRW_PIN, HIGH);
-	
-	setAddrDir(OUTPUT);
-	setDataDir(INPUT);
+	takeBus();
 
 	lcd.clear();
 	lcd.print("0000");
@@ -150,12 +91,10 @@ void viewROM() {
 		
 		lcd.setCursor(0,1);
 		lcd.print("0000000000000000");
+		setAddress(address);
 		for (int i=0; i < 8; i++) {
-			setAddress(address+i);
-			digitalWrite(EEN_PIN, LOW);  // latch address
 			lcd.setCursor(i*2,1);
 			lcd.print(readData(), HEX);
-			digitalWrite(EEN_PIN, HIGH);
 		}
 		
 		while (1) {
@@ -163,25 +102,23 @@ void viewROM() {
 
 			if (buttons) {
 				if (buttons & BUTTON_SELECT) {
-					setAddrDir(INPUT);
-					digitalWrite(BUSREQ_PIN, LOW);
+					SPI.transfer(0x05);
 					return;
 				}
 				if (buttons & BUTTON_UP)
-				address += 0x1000;
+					address += 0x1000;
 				if (buttons & BUTTON_RIGHT)
-				address += 8;
+					address += 8;
 				if (buttons & BUTTON_LEFT)
-				address -= 8;
+					address -= 8;
 				if (buttons & BUTTON_DOWN)
-				address -= 0x1000;
+					address -= 0x1000;
 				break;
 			}
 		}
 	}
 	
-	setAddrDir(INPUT);
-	digitalWrite(BUSREQ_PIN, LOW);
+	giveBus();
 	
 	lcd.clear();
 }
@@ -196,18 +133,13 @@ void programROM(File dataFile) {
 		return;
 	}
 	
-	digitalWrite(BUSREQ_PIN, HIGH); // disable coco address bus
-	pinMode(ARDRW_PIN, OUTPUT);
-	digitalWrite(ARDRW_PIN, HIGH);
-	digitalWrite(EEN_PIN, LOW);
-	
-	setAddrDir(OUTPUT);
-	setDataDir(OUTPUT);
+	takeBus();
 
 	if (dataFile.size() <= 16*1024)
 	address = 0x4000;
 	else
-	address = 0x0000;
+	address = 0x0000;	
+	setAddress(address);
 	
 	while (dataFile.available()) {
 		uint8_t d = dataFile.read();
@@ -219,15 +151,11 @@ void programROM(File dataFile) {
 			lcd.print(": ");
 			lcd.print(d, HEX);
 		}
-		programByte(address, d);
+		setData(d);
 		address++;
 	}
 
-	setAddrDir(INPUT);
-	pinMode(ARDRW_PIN, INPUT);
-
-	digitalWrite(BUSREQ_PIN, LOW);
-	digitalWrite(EEN_PIN, HIGH);
+	giveBus();
 
 	dataFile.close();
 	

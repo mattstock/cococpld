@@ -4,10 +4,12 @@
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include <Adafruit_RGBLCDShield.h>
+#include <SPI.h>
 #include <SD.h>
 
 // How many filenames we will be able to store
-#define MAX_FILES 100
+#define MAX_FILES 30
+#define SDSELECT_PIN 8
 
 extern Adafruit_RGBLCDShield lcd;
 #endif
