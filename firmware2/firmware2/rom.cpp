@@ -1,6 +1,7 @@
 ﻿#include "rom.h"
 #include "busio.h"
 #include "firmware2.h"
+#include "error.h"
 
 void verifyROM(File dataFile) {
 	uint16_t address;
@@ -9,16 +10,16 @@ void verifyROM(File dataFile) {
 	lcd.clear();
 
 	if (!dataFile) {
-		lcd.print("Open failed");
+		lcd.print(errorMsg[OPEN_FAILED]);
 		return;
 	}
 
 	takeBus();
 	
 	if (dataFile.size() <= 16*1024)
-		address = 0x4000;
+		address = 0xc000;
 	else
-		address = 0x0000;
+		address = 0x8000;
 	setAddress(address);
 	while (dataFile.available()) {
 		disk = dataFile.read();
@@ -45,7 +46,8 @@ void verifyROM(File dataFile) {
 	dataFile.close();
 
 	lcd.clear();
-	lcd.print("Verify complete");
+	lcd.print(errorMsg[VERIFY]);
+	lcd.print(errorMsg[COMPLETE]);
 	delay(2000);
 }
 
@@ -54,11 +56,11 @@ void eraseROM() {
 	takeBus();
 		
 	lcd.clear();
-	lcd.print("Erasing...");
+	lcd.print(errorMsg[ERASE]);
 
 	uint16_t address = 0x0000;
 	setAddress(address);
-	while (address < 0x8000) {
+	while (address != 0xffff) {
 		setData(0x00);
 		address++;
 	}
@@ -66,7 +68,8 @@ void eraseROM() {
 	giveBus();
 	
 	lcd.clear();
-	lcd.print("Erase complete");
+	lcd.print(errorMsg[ERASE]);
+	lcd.print(errorMsg[COMPLETE]);
 	delay(2000);
 }
 
@@ -77,7 +80,7 @@ void viewROM() {
 	lcd.print("0000");
 	
 	uint16_t address = 0x0000;
-	while (address < 0x8000) {
+	while (true) {
 		if (address < 0x10)
 		lcd.setCursor(3,0);
 		else if (address < 0x100)
@@ -129,16 +132,16 @@ void programROM(File dataFile) {
 	lcd.clear();
 
 	if (!dataFile) {
-		lcd.print("Open failed");
+		lcd.print(errorMsg[OPEN_FAILED]);
 		return;
 	}
 	
 	takeBus();
 
 	if (dataFile.size() <= 16*1024)
-	address = 0x4000;
+	address = 0xc000;
 	else
-	address = 0x0000;	
+	address = 0x8000;	
 	setAddress(address);
 	
 	while (dataFile.available()) {
@@ -160,6 +163,7 @@ void programROM(File dataFile) {
 	dataFile.close();
 	
 	lcd.clear();
-	lcd.print("Program complete");
+	lcd.print(errorMsg[PROGRAMMING]);
+	lcd.print(errorMsg[COMPLETE]);
 	delay(2000);
 }

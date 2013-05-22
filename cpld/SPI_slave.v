@@ -1,9 +1,13 @@
-module SPI_slave(clk, SCK, MOSI, MISO, SSEL);
+module SPI_slave(clk, SCK, MOSI, MISO, SSEL, byte_received, byte_data_received, byte_send_ready, byte_send);
 
 input clk;
 input SCK;
 input SSEL;
 input MOSI;
+input byte_send_ready;
+input [7:0] byte_send;
+output byte_received;
+output [7:0] byte_data_received;
 output tri MISO;
 
 // sync SCK to the FPGA clock using a 3-bits shift register
@@ -17,7 +21,7 @@ reg [2:0] SSELr;
 always @(posedge clk) SSELr <= {SSELr[1:0], SSEL};
 wire SSEL_active = ~SSELr[1];  // SSEL is active low
 wire SSEL_startmessage = (SSELr[2:1]==2'b10);  // message starts at falling edge
-wire SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
+// wire SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
 
 // and for MOSI
 reg [1:0] MOSIr;
@@ -49,25 +53,22 @@ always @(posedge clk) byte_received <= SSEL_active && SCK_risingedge && (bitcnt=
 // We need to change all of this to respond to commands
 reg [7:0] byte_data_sent;
 
-reg [7:0] cnt;
-always @(posedge clk) if(SSEL_startmessage) cnt<=cnt+8'h1;  // count the messages
-
 always @(posedge clk)
 if(SSEL_active)
 begin
   if(SSEL_startmessage)
-    byte_data_sent <= byte_data_tosend;
+    byte_data_sent <= 8'h00; // During the first byte read, send what?
   else
   if(SCK_fallingedge)
   begin
     if(bitcnt==3'b000)
-      byte_data_sent <= 8'h00;  // after that, we send 0s
+      byte_data_sent <= byte_send;  // The response - do we need to check the reply flag?
     else
-      byte_data_sent <= {byte_data_sent[6:0], 1'b0};
+      byte_data_sent <= {byte_data_sent[6:0], 1'b0}; 
   end
 end
 
-assign MISO = byte_data_sent[7];  // send MSB first
+assign MISO = (SSEL_active ? byte_data_sent[7] : 1'bz);  // send MSB first
 // we assume that there is only one slave on the SPI bus
 // so we don't bother with a tri-state buffer for MISO
 // otherwise we would need to tri-state MISO when SSEL is inactive

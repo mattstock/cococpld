@@ -10,12 +10,15 @@
 #include <Arduino.h>
 #include "firmware2.h"
 #include "rom.h"
+#include "error.h"
 #include "busio.h"
 
 Adafruit_RGBLCDShield lcd;
 
-const char menu[][20] = { "program", "view", "verify", "erase" };
-const int menuCount = 4;
+PROGMEM const char menu[][20] = { "program", "view", "verify", "erase" };
+PROGMEM const int menuCount = 4;
+PROGMEM const char clearMenu[] = "                ";
+PROGMEM const char errorMsg[][17] = { "Dir failed", "Card failed", "No Files", "Open failed", "Verify ", "Erasing ", "complete", "Prog " };
 
 // Keep a list of the files on the sdcard
 int fileCount;
@@ -27,14 +30,14 @@ int menuIndex;
 
 void displayMenu() {
 	lcd.setCursor(0,0);
-	lcd.print("              ");
+	lcd.print(clearMenu);
 	lcd.setCursor(0,0);
 	lcd.print(menu[menuIndex]);
 }
 
 void displayFilename() {
 	lcd.setCursor(0,1);
-	lcd.print("             ");
+	lcd.print(clearMenu);
 	lcd.setCursor(0,1);
 	lcd.print(names[fileIndex]);
 }
@@ -74,7 +77,7 @@ void loadFiles() {
 	File root = SD.open("/");
 	if (!root) {
 		lcd.clear();
-		lcd.print("Dir failed");
+		lcd.print(errorMsg[DIR_FAILED]);
 		delay(1000);
 		return;
 	}
@@ -113,14 +116,14 @@ void setup() {
 
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
-		lcd.print("Card fail or np");
+		lcd.print(errorMsg[CARD_FAILED]);
 		// don't do anything more:
 		while (1);
 	}
 	loadFiles();
 	if (fileCount == 0) {
 		lcd.setCursor(0,1);
-		lcd.print("no files");
+		lcd.print(errorMsg[NO_FILES]);
 		delay(2000);
 	}
 	
