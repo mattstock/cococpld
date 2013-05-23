@@ -1,10 +1,11 @@
 `timescale 1ns/1ns
 
-module cocofdc (c_eclk, c_cts_n, c_scs_n, c_databus, c_nmi_n, c_halt_n, c_reset_n, c_addrbus, c_rw, miso, mosi, sclk, ss,
-					m_cs1_n, m_cs2_n, m_we_n, m_oe_n, m_addrbus, m_databus, c_slenb_n, c_dataen_n, clock_50, reset, c_cart_n);
+module cocofdc (c_eclk, c_cts_n, c_scs_n, m_databus, c_databus, c_nmi_n, c_halt_n, c_reset_n, addrbus, c_rw, miso, mosi, sclk, ss,
+					m_cs1_n, m_cs2_n, m_we_n, m_oe_n, c_slenb_n, c_busen_n, clock_50, reset, c_cart_n, led);
 
-input [14:0] c_addrbus; // Coco address bus
-inout [7:0] c_databus; // Coco data bus
+inout [14:0] addrbus; // Shared address bus
+inout [7:0] m_databus; // Memory databus
+inout [7:0] c_databus; // 
 input c_scs_n; // 0 = Coco register read/write 
 input c_cts_n; // 0 = Coco ROM read
 input c_eclk; // 1 = memory half of Coco bus cycle
@@ -13,14 +14,13 @@ output c_nmi_n;
 output c_cart_n;
 input c_rw; // Coco read/write
 input c_reset_n; // 0 = Coco reset
-output[14:0] m_addrbus;
-inout [7:0] m_databus;
+output [3:0] led;
 output m_we_n;
 output m_oe_n;
 output m_cs1_n; // SRAM 0x0000-0x7fff chip select
 output m_cs2_n; // SRAM 0x8000-0xffff chip select
 output c_halt_n;
-output c_dataen_n;
+output c_busen_n;
 input sclk;
 input clock_50;
 input mosi;
@@ -48,27 +48,26 @@ reg spi_haltreq;
 reg spi_rw;
 reg [2:0] sram_write_cnt;
 
-assign m_addrbus = (spi_control ? spi_address[14:0] : (c_reset_n ? c_addrbus : 15'b0));
-
+// Basic bus control logic
 assign c_select = ((~c_scs_n & c_eclk) | ~c_cts_n) & c_reset_n;
+assign c_busen_n = ~c_select | spi_control;
+assign addrbus = (spi_control ? spi_address[14:0] : 15'bz);
+
+assign c_databus = (m_we_n & ~c_busen_n ? m_databus : 8'bz);
+assign m_databus = (m_we_n ? 8'bz : (spi_control ? spi_databyte : c_databus));
+
 assign m_cs1_n = ~((spi_control & spi_address[15]) | (c_select & ~c_scs_n));
 assign m_cs2_n = ~m_cs1_n;
 assign m_oe_n = (spi_control ? ~spi_rw : ~(c_select & c_rw));
 assign m_we_n = (spi_control ? spi_rw : 1'b1);
 
+// Safe defaults
 assign c_slenb_n = 1'bz;
 assign c_cart_n = 1'bz;
 assign c_nmi_n = 1'bz;
 assign c_halt_n = 1'bz;
 
-
-assign c_dataen_n =  ~c_select | spi_control;
-assign c_databus = (c_rw ? m_databus[7:0] : 8'bz);
-assign m_databus[7:0] = (m_we_n ? 8'bz : (spi_control ? spi_databyte : c_databus));
-/*
-assign c_databus = (c_select & ~spi_control & c_rw ? m_databus[7:0] : 8'bz);
-assign m_databus = (m_we_n ? 8'bz : (spi_control ? spi_databyte : c_databus));
-*/
+assign led = { ~c_busen_n, state};
 
 task statelogic;
 input [7:0] b;
@@ -78,7 +77,7 @@ begin
 		case (b)
 		  8'h01: state <= 3'h1; // set addr
 		  8'h02: state <= 3'h3; // write byte
-		  8'h03: begin
+		  8'h03: begin // read byte
 		    spi_databyte <= m_databus;
 		    spi_output_flag <= 1'b1;
           state <= 3'h4;

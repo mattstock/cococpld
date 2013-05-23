@@ -56,3 +56,5 @@ set_global_assignment -name DEVICE_FILTER_PIN_COUNT 144
 set_global_assignment -name VERILOG_FILE SPI_slave.v
 set_global_assignment -name VERILOG_FILE cocofdc.v
 set_global_assignment -name SDC_FILE cocofdc.sdc
+set_location_assignment PIN_127 -to reset
+set_location_assignment PIN_125 -to clock_50
