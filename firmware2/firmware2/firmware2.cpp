@@ -103,6 +103,7 @@ void setup() {
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 	SPI.setDataMode(SPI_MODE0);
 
+	pinMode(2, INPUT); // For write flags
 	pinMode(10, OUTPUT);
 	digitalWrite(10, HIGH);
 	pinMode(SDSELECT_PIN, OUTPUT);

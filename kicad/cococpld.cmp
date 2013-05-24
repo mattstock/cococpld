@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/23/2013 2:32:16 PM
+Cmp-Mod V01 Genere par PcbNew le 5/23/2013 7:42:33 PM
 
 BeginCmp
 TimeStamp = /519E5C6F;
@@ -92,6 +92,13 @@ IdModule  = SM0805;
 EndCmp
 
 BeginCmp
+TimeStamp = /519EA6DA;
+Reference = C14;
+ValeurCmp = 0.1uF;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
 TimeStamp = /519E592C;
 Reference = D1;
 ValeurCmp = S0;
@@ -120,6 +127,13 @@ IdModule  = LED-1206;
 EndCmp
 
 BeginCmp
+TimeStamp = /519E7A54;
+Reference = JP1;
+ValeurCmp = CART_BOOT;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
 TimeStamp = /519E5932;
 Reference = P1;
 ValeurCmp = COCOBUS;
@@ -129,8 +143,8 @@ EndCmp
 BeginCmp
 TimeStamp = /519E5BCB;
 Reference = P2;
-ValeurCmp = CONN_3X2;
-IdModule  = pin_array_3x2;
+ValeurCmp = SPI;
+IdModule  = pin_array_4x2;
 EndCmp
 
 BeginCmp
@@ -172,7 +186,7 @@ BeginCmp
 TimeStamp = /519E592A;
 Reference = RP1;
 ValeurCmp = 150;
-IdModule  = ;
+IdModule  = CAY16-J4;
 EndCmp
 
 BeginCmp
@@ -193,7 +207,7 @@ BeginCmp
 TimeStamp = /519E5CBA;
 Reference = U3;
 ValeurCmp = 74LVC164245;
-IdModule  = tssop-28;
+IdModule  = SSOP48;
 EndCmp
 
 BeginCmp
@@ -208,6 +222,13 @@ TimeStamp = /519E593E;
 Reference = U5;
 ValeurCmp = EPM3128A-TQFP144;
 IdModule  = TQFP144;
+EndCmp
+
+BeginCmp
+TimeStamp = /519EA6D5;
+Reference = U6;
+ValeurCmp = 50.00MHz;
+IdModule  = OSC;
 EndCmp
 
 EndListe
