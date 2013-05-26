@@ -1,9 +1,11 @@
 ﻿#include "busio.h"
+#include "rom.h"
 #include <avr/io.h>
 
 void takeBus() {
 	digitalWrite(10, LOW);
 	SPI.transfer(0x04);
+	while (SPI.transfer(0xff));
 	digitalWrite(10, HIGH);
 }
 
@@ -19,6 +21,23 @@ void setAddress(uint16_t addr) {
 	SPI.transfer((addr >> 8) & 0xff);
 	SPI.transfer(addr & 0xff);
 	digitalWrite(10, HIGH);
+}
+
+void setRegisters() {
+	takeBus();
+	for (uint8_t i=0; i < 15; i++) {
+		setAddress(0x7f40 + i);
+		setData(0xa0+i);
+	}
+	giveBus();
+}
+void readRegisters() {
+	takeBus();
+	for (uint8_t i=0; i < 15; i++) {
+		setAddress(0x7f40 + i);  // maps to 0xff40 in register space
+		reg[i] = readData();
+	}
+	giveBus();
 }
 
 uint8_t readData() {

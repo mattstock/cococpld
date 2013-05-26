@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 5/23/2013 7:48:54 PM
+EESchema Schematic File Version 2  date 5/25/2013 9:38:58 AM
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr User 14000 8500
 encoding utf-8
 Sheet 1 1
 Title "Color Computer Bus Interface"
-Date "23 may 2013"
+Date "25 may 2013"
 Rev "1.3"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -45,12 +45,12 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-NoConn ~ 4900 3500
+Wire Wire Line
+	13300 1350 13300 1400
+Wire Wire Line
+	12900 1350 13300 1350
 Wire Wire Line
 	4900 3650 4900 3750
-Connection ~ 12900 1450
-Wire Wire Line
-	12900 1500 12900 1350
 Connection ~ 4650 2450
 Wire Wire Line
 	4650 2350 4650 2550
@@ -245,6 +245,11 @@ Connection ~ 5300 1100
 Connection ~ 5200 1100
 Wire Wire Line
 	5950 3500 5950 3450
+Text Label 12900 1450 0    60   ~ 0
+DIRTY
+Text Label 11950 2500 0    60   ~ 0
+DIRTY
+NoConn ~ 4900 3500
 $Comp
 L +3.3V #PWR01
 U 1 1 519EA714
@@ -625,10 +630,10 @@ Text Label 12100 1350 2    60   ~ 0
 $Comp
 L GND #PWR013
 U 1 1 519E5BE3
-P 12900 1500
-F 0 "#PWR013" H 12900 1500 30  0001 C CNN
-F 1 "GND" H 12900 1430 30  0001 C CNN
-	1    12900 1500
+P 13300 1400
+F 0 "#PWR013" H 13300 1400 30  0001 C CNN
+F 1 "GND" H 13300 1330 30  0001 C CNN
+	1    13300 1400
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1126,7 +1131,7 @@ P 7800 7050
 F 0 "RP1" H 7800 7500 40  0000 C CNN
 F 1 "150" H 7800 7000 40  0000 C CNN
 	1    7800 7050
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 Text Label 4850 6850 0    60   ~ 0
 M_~OE

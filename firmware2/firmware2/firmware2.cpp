@@ -15,10 +15,10 @@
 
 Adafruit_RGBLCDShield lcd;
 
-PROGMEM const char menu[][20] = { "program", "view", "verify", "erase" };
-PROGMEM const int menuCount = 4;
-PROGMEM const char clearMenu[] = "                ";
-PROGMEM const char errorMsg[][17] = { "Dir failed", "Card failed", "No Files", "Open failed", "Verify ", "Erasing ", "complete", "Prog " };
+const char menu[][20] = { "program", "view", "verify", "erase", "regs" };
+const int menuCount = 5;
+const char clearMenu[] = "                ";
+const char errorMsg[][17] = { "Dir failed", "Card failed", "No Files", "Open failed", "Verify ", "Erasing ", "complete", "Prog " };
 
 // Keep a list of the files on the sdcard
 int fileCount;
@@ -121,12 +121,16 @@ void setup() {
 		// don't do anything more:
 		while (1);
 	}
+	
 	loadFiles();
+	
 	if (fileCount == 0) {
 		lcd.setCursor(0,1);
 		lcd.print(errorMsg[NO_FILES]);
 		delay(2000);
 	}
+	
+	setRegisters();
 	
 	menuIndex = 0;
 	fileIndex = 0;
@@ -146,6 +150,8 @@ void printAddress(uint16_t val) {
 void loop() {
 	uint8_t buttons = lcd.readButtons();
 
+	if (digitalRead(2)) // We have a write to a register
+		readRegisters();
 	if (buttons) {
 		if (buttons & BUTTON_UP) {
 			if (menuIndex == 0)
@@ -175,6 +181,9 @@ void loop() {
 				break;
 			case 3:
 				eraseROM();
+				break;
+			case 4:
+				printRegisters();
 				break;
 			}
 			lcd.clear();

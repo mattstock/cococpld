@@ -3,6 +3,8 @@
 #include "firmware2.h"
 #include "error.h"
 
+uint8_t reg[16];
+
 void verifyROM(File dataFile) {
 	uint16_t address;
 	uint8_t stored;
@@ -73,6 +75,16 @@ void eraseROM() {
 	delay(2000);
 }
 
+void printRegisters() {
+	lcd.clear();
+	for (uint8_t i=0; i < 4; i++) {
+		lcd.setCursor(2*i, 1);
+		lcd.print(reg[i], HEX);
+	}
+	delay(2000);
+	while (lcd.readButtons());
+}
+
 void viewROM() {
 	takeBus();
 
@@ -105,7 +117,7 @@ void viewROM() {
 
 			if (buttons) {
 				if (buttons & BUTTON_SELECT) {
-					SPI.transfer(0x05);
+					giveBus();
 					return;
 				}
 				if (buttons & BUTTON_UP)
