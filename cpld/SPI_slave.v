@@ -1,10 +1,9 @@
-module SPI_slave(clk, SCK, MOSI, MISO, SSEL, byte_received, byte_data_received, byte_send_ready, byte_send);
+module SPI_slave(clk, SCK, MOSI, MISO, SSEL, byte_received, byte_data_received, byte_send);
 
 input clk;
 input SCK;
 input SSEL;
 input MOSI;
-input byte_send_ready;
 input [7:0] byte_send;
 output byte_received;
 output [7:0] byte_data_received;
