@@ -12,7 +12,7 @@ void verifyROM(File dataFile) {
 	lcd.clear();
 
 	if (!dataFile) {
-		lcd.print(errorMsg[OPEN_FAILED]);
+		displayMsg(OPEN_FAILED);
 		return;
 	}
 
@@ -48,8 +48,8 @@ void verifyROM(File dataFile) {
 	dataFile.close();
 
 	lcd.clear();
-	lcd.print(errorMsg[VERIFY]);
-	lcd.print(errorMsg[COMPLETE]);
+	displayMsg(VERIFY);
+	displayMsg(COMPLETE);
 	delay(2000);
 }
 
@@ -58,7 +58,7 @@ void eraseROM() {
 	takeBus();
 		
 	lcd.clear();
-	lcd.print(errorMsg[ERASE]);
+	displayMsg(ERASE);
 
 	uint16_t address = 0x0000;
 	setAddress(address);
@@ -70,8 +70,8 @@ void eraseROM() {
 	giveBus();
 	
 	lcd.clear();
-	lcd.print(errorMsg[ERASE]);
-	lcd.print(errorMsg[COMPLETE]);
+	displayMsg(ERASE);
+	displayMsg(COMPLETE);
 	delay(2000);
 }
 
@@ -144,7 +144,7 @@ void programROM(File dataFile) {
 	lcd.clear();
 
 	if (!dataFile) {
-		lcd.print(errorMsg[OPEN_FAILED]);
+		displayMsg(OPEN_FAILED);
 		return;
 	}
 	
@@ -175,7 +175,7 @@ void programROM(File dataFile) {
 	dataFile.close();
 	
 	lcd.clear();
-	lcd.print(errorMsg[PROGRAMMING]);
-	lcd.print(errorMsg[COMPLETE]);
+	displayMsg(PROGRAMMING);
+	displayMsg(COMPLETE);
 	delay(2000);
 }

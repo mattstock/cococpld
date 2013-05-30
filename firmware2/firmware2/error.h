@@ -10,6 +10,9 @@
 #define COMPLETE 6
 #define PROGRAMMING 7
 
-extern const char errorMsg[][17];
+extern const int menuCount;
+extern const char clearMenu[];
 
+void displayMenu(int i);
+void displayMsg(int i);
 #endif

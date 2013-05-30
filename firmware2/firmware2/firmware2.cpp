@@ -15,11 +15,6 @@
 
 Adafruit_RGBLCDShield lcd;
 
-const char menu[][20] = { "program", "view", "verify", "erase", "regs" };
-const int menuCount = 5;
-const char clearMenu[] = "                ";
-const char errorMsg[][17] = { "Dir failed", "Card failed", "No Files", "Open failed", "Verify ", "Erasing ", "complete", "Prog " };
-
 // Keep a list of the files on the sdcard
 int fileCount;
 int fileIndex;
@@ -28,12 +23,6 @@ char names[MAX_FILES][13];
 // Menu navigation
 int menuIndex;
 
-void displayMenu() {
-	lcd.setCursor(0,0);
-	lcd.print(clearMenu);
-	lcd.setCursor(0,0);
-	lcd.print(menu[menuIndex]);
-}
 
 void displayFilename() {
 	lcd.setCursor(0,1);
@@ -77,7 +66,7 @@ void loadFiles() {
 	File root = SD.open("/");
 	if (!root) {
 		lcd.clear();
-		lcd.print(errorMsg[DIR_FAILED]);
+		displayMsg(DIR_FAILED);
 		delay(1000);
 		return;
 	}
@@ -117,7 +106,7 @@ void setup() {
 
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
-		lcd.print(errorMsg[CARD_FAILED]);
+		displayMsg(CARD_FAILED);
 		// don't do anything more:
 		while (1);
 	}
@@ -126,7 +115,7 @@ void setup() {
 	
 	if (fileCount == 0) {
 		lcd.setCursor(0,1);
-		lcd.print(errorMsg[NO_FILES]);
+		displayMsg(NO_FILES);
 		delay(2000);
 	}
 	
@@ -135,7 +124,7 @@ void setup() {
 	menuIndex = 0;
 	fileIndex = 0;
 	lcd.clear();
-	displayMenu();
+	displayMenu(menuIndex);
 }
 
 
@@ -188,7 +177,7 @@ void loop() {
 			}
 			lcd.clear();
 		}
-		displayMenu();
+		displayMenu(menuIndex);
 		delay(100);
 	}
 }

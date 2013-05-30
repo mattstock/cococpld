@@ -3,16 +3,16 @@
 #include <avr/io.h>
 
 void takeBus() {
-	digitalWrite(10, LOW);
+/*	digitalWrite(10, LOW);
 	SPI.transfer(0x04);
 	while (SPI.transfer(0xff));
-	digitalWrite(10, HIGH);
+	digitalWrite(10, HIGH);*/
 }
 
 void giveBus() {
-	digitalWrite(10, LOW);
+/*	digitalWrite(10, LOW);
 	SPI.transfer(0x05);
-	digitalWrite(10, HIGH);	
+	digitalWrite(10, HIGH);	*/
 }
 
 void setAddress(uint16_t addr) {
