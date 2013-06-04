@@ -4,6 +4,7 @@
 #include <SD.h>
 
 void eraseROM();
+void misc();
 void programROM(File file);
 void viewROM();
 void verifyROM(File file);

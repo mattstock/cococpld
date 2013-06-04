@@ -93,6 +93,7 @@ void setup() {
 	SPI.setDataMode(SPI_MODE0);
 
 	pinMode(2, INPUT); // For write flags
+	pinMode(3, OUTPUT); // testing
 	pinMode(10, OUTPUT);
 	digitalWrite(10, HIGH);
 	pinMode(SDSELECT_PIN, OUTPUT);
@@ -174,6 +175,8 @@ void loop() {
 			case 4:
 				printRegisters();
 				break;
+			case 5:
+				misc();
 			}
 			lcd.clear();
 		}

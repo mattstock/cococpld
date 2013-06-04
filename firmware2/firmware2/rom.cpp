@@ -22,9 +22,9 @@ void verifyROM(File dataFile) {
 		address = 0xc000;
 	else
 		address = 0x8000;
-	setAddress(address);
 	while (dataFile.available()) {
 		disk = dataFile.read();
+  		setAddress(address);
 		
 		if (address % 0x100 == 0) {
 			lcd.clear();
@@ -32,13 +32,14 @@ void verifyROM(File dataFile) {
 		}
 		stored = readData();
 		if (stored != disk) {
+			nopSPI();
 			lcd.clear();
 			lcd.print(address, HEX);
 			lcd.print(": ");
 			lcd.print(stored, HEX);
 			lcd.print(" != ");
 			lcd.print(disk, HEX);
-			delay(500);
+			while (1);
 		}
 		address++;
 	}
@@ -136,6 +137,74 @@ void viewROM() {
 	giveBus();
 	
 	lcd.clear();
+}
+
+void misc() {
+	uint8_t d;
+	
+	lcd.clear();
+	lcd.print("AA: C000 BB: D000");
+	
+	while (!lcd.readButtons()) {
+		setAddress(0xc000);
+        setData(0xaa);
+		setAddress(0xc000);
+		
+		d = readData();
+		if (d != 0xaa) {
+			lcd.clear();
+			lcd.print("c000: ");
+			lcd.print(d,HEX);
+			while (!lcd.readButtons());
+			while (lcd.readButtons());
+			lcd.clear();
+		}
+		setAddress(0xd000);
+		setData(0xbb);
+		setAddress(0xd000);
+		d = readData();
+		if (d != 0xbb) {
+			lcd.clear();
+			lcd.print("d000: ");
+			lcd.print(d,HEX);
+			while (!lcd.readButtons());
+			while (lcd.readButtons());
+			lcd.clear();
+		}
+	}
+	
+	while (lcd.readButtons());
+
+	lcd.clear();
+	lcd.print("CC: 7f40 DD: 7f50");
+	
+	while (!lcd.readButtons()) {
+		setAddress(0x7f40);
+		setData(0xcc);
+		setAddress(0x7f40);
+		
+		d = readData();
+		if (d != 0xcc) {
+			lcd.clear();
+			lcd.print("7f40: ");
+			lcd.print(d,HEX);
+			while (!lcd.readButtons());
+			while (lcd.readButtons());
+			lcd.clear();
+		}
+		setAddress(0x7f50);
+		setData(0xdd);
+		setAddress(0x7f50);
+		d = readData();
+		if (d != 0xdd) {
+			lcd.clear();
+			lcd.print("7f50: ");
+			lcd.print(d,HEX);
+			while (!lcd.readButtons());
+			while (lcd.readButtons());
+			lcd.clear();
+		}
+	}	
 }
 
 void programROM(File dataFile) {
