@@ -1,9 +1,10 @@
-module SPI_slave(clk, SCK, MOSI, MISO, SSEL, byte_received, byte_data_received, byte_send);
+module SPI_slave(clk, SCK, MOSI, MISO, SSEL, byte_received, byte_data_received, byte_send, send_latch);
 
 input clk;
 input SCK;
 input SSEL;
 input MOSI;
+input send_latch;
 input [7:0] byte_send;
 output byte_received;
 output [7:0] byte_data_received;
@@ -20,7 +21,7 @@ reg [2:0] SSELr;
 always @(posedge clk) SSELr <= {SSELr[1:0], SSEL};
 wire SSEL_active = ~SSELr[1];  // SSEL is active low
 wire SSEL_startmessage = (SSELr[2:1]==2'b10);  // message starts at falling edge
-// wire SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
+//wire SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
 
 // and for MOSI
 reg [1:0] MOSIr;
@@ -49,7 +50,6 @@ end
 
 always @(posedge clk) byte_received <= SSEL_active && SCK_risingedge && (bitcnt==3'b111);
 
-// We need to change all of this to respond to commands
 reg [7:0] byte_data_sent;
 
 always @(posedge clk)
@@ -58,11 +58,11 @@ begin
   if(SSEL_startmessage)
     byte_data_sent <= 8'h00; // During the first byte read, send what?
   else
-  if(SCK_fallingedge)
-  begin
-    if(bitcnt==3'b000)
-      byte_data_sent <= byte_send;  // The response - do we need to check the reply flag?
-    else
+  if (bitcnt == 3'b0) begin
+    if (send_latch)
+      byte_data_sent <= byte_send;  // latch this when ready
+  end else begin
+	 if (SCK_fallingedge)
       byte_data_sent <= {byte_data_sent[6:0], 1'b0}; 
   end
 end
