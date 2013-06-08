@@ -10,12 +10,15 @@
 #include <Arduino.h>
 #include "firmware2.h"
 #include "rom.h"
+#include "error.h"
 #include "busio.h"
 
 Adafruit_RGBLCDShield lcd;
 
-const char menu[][20] = { "program", "view", "verify", "erase", "check", "bits" };
-const int menuCount = 6;
+const char menu[][20] = { "program", "view", "verify", "erase", "regs" };
+const int menuCount = 5;
+const char clearMenu[] = "                ";
+const char errorMsg[][17] = { "Dir failed", "Card failed", "No Files", "Open failed", "Verify ", "Erasing ", "complete", "Prog " };
 
 // Keep a list of the files on the sdcard
 int fileCount;
@@ -25,18 +28,16 @@ char names[MAX_FILES][13];
 // Menu navigation
 int menuIndex;
 
-volatile bool newstuff = false;
-
 void displayMenu() {
 	lcd.setCursor(0,0);
-	lcd.print("              ");
+	lcd.print(clearMenu);
 	lcd.setCursor(0,0);
 	lcd.print(menu[menuIndex]);
 }
 
 void displayFilename() {
 	lcd.setCursor(0,1);
-	lcd.print("             ");
+	lcd.print(clearMenu);
 	lcd.setCursor(0,1);
 	lcd.print(names[fileIndex]);
 }
@@ -76,7 +77,7 @@ void loadFiles() {
 	File root = SD.open("/");
 	if (!root) {
 		lcd.clear();
-		lcd.print("Dir failed");
+		lcd.print(errorMsg[DIR_FAILED]);
 		delay(1000);
 		return;
 	}
@@ -85,9 +86,11 @@ void loadFiles() {
 	while (true) {
 		File entry = root.openNextFile();
 		if (!entry || (fileCount == MAX_FILES))
-		break;
-		if (!entry.isDirectory())
-		strncpy(names[fileCount++], entry.name(), 13); // 8.3 and a null
+			break;
+		if (!entry.isDirectory()) {
+			strncpy(names[fileCount++], entry.name(), 13); // 8.3 and a null
+			Serial.println(entry.name());
+		}
 		entry.close();
 	}
 	
@@ -96,8 +99,16 @@ void loadFiles() {
 
 void setup() {
 	Serial.begin(115200);
-	io_setup();
-	
+	SPI.begin();
+	SPI.setClockDivider(SPI_CLOCK_DIV4);
+	SPI.setDataMode(SPI_MODE0);
+
+	pinMode(2, INPUT); // For write flags
+	pinMode(10, OUTPUT);
+	digitalWrite(10, HIGH);
+	pinMode(SDSELECT_PIN, OUTPUT);
+	digitalWrite(SDSELECT_PIN, LOW);
+			
 	// Config LCD
 	lcd = Adafruit_RGBLCDShield();
 	lcd.begin(16, 2);
@@ -106,16 +117,20 @@ void setup() {
 
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
-		lcd.print("Card fail or np");
+		lcd.print(errorMsg[CARD_FAILED]);
 		// don't do anything more:
 		while (1);
 	}
+	
 	loadFiles();
+	
 	if (fileCount == 0) {
 		lcd.setCursor(0,1);
-		lcd.print("no files");
+		lcd.print(errorMsg[NO_FILES]);
 		delay(2000);
 	}
+	
+	setRegisters();
 	
 	menuIndex = 0;
 	fileIndex = 0;
@@ -132,91 +147,11 @@ void printAddress(uint16_t val) {
 	}
 }
 
-uint16_t selectHex(int n) {
-	uint8_t buttons;
-	int digit = 2*n-1;
-	uint16_t result;
-	uint8_t vals[4] = {0,0,0,0};
-	
-	while (lcd.readButtons());
-
-	lcd.cursor();
-	
-	lcd.setCursor(0,1);
-	for (int i=0; i < n; i++)
-		lcd.print("00");
-	  
-	while (1) {
-		buttons = lcd.readButtons();
-		if (buttons & BUTTON_SELECT)
-			break;
-		if (buttons & BUTTON_LEFT) {
-			if (digit == 2*n-1)
-				digit = 0;
-			else
-				digit++;
-		}				
-		if (buttons & BUTTON_RIGHT) {
-			if (digit == 0)	
-				digit = 2*n-1;
-			else
-				digit--;
-		}			
-		if (buttons & BUTTON_DOWN) {
-			if (vals[digit] == 0)
-				vals[digit] = 0xf;
-			else
-				vals[digit]--;
-			lcd.print(vals[digit], HEX);
-		}
-		if (buttons & BUTTON_UP) {
-			if (vals[digit] == 15)
-				vals[digit] = 0;
-			else
-				vals[digit]++;
-			lcd.print(vals[digit], HEX);
-		}			
-		lcd.setCursor(2*n-1-digit,1);
-		delay(100);
-	}
-	
-	result = 0;
-	for (int i=0; i < 2*n; i++)
-	  result = result | (vals[i] << i*4);
-	  
-	lcd.noCursor();	
-	
-	return result;
-}
-
-void bitfiddler() {
-	lcd.clear();
-	lcd.print("Address:");
-	uint16_t a = selectHex(2);
-	lcd.clear();
-	lcd.print("Data:");
-	uint8_t d = selectHex(1);
-	
-	digitalWrite(BUSREQ_PIN, HIGH); // disable coco address bus
-	pinMode(ARDRW_PIN, OUTPUT);
-	digitalWrite(ARDRW_PIN, HIGH);
-	digitalWrite(EEN_PIN, LOW);
-	
-	setAddrDir(OUTPUT);
-	setDataDir(OUTPUT);
-
-	programByte(a, d);
-
-	setAddrDir(INPUT);
-	pinMode(ARDRW_PIN, INPUT);
-
-	digitalWrite(BUSREQ_PIN, LOW);
-	digitalWrite(EEN_PIN, HIGH);
-}
-
 void loop() {
 	uint8_t buttons = lcd.readButtons();
 
+	if (digitalRead(2)) // We have a write to a register
+		readRegisters();
 	if (buttons) {
 		if (buttons & BUTTON_UP) {
 			if (menuIndex == 0)
@@ -248,10 +183,7 @@ void loop() {
 				eraseROM();
 				break;
 			case 4:
-				checkFail();
-				break;
-			case 5:
-				bitfiddler();
+				printRegisters();
 				break;
 			}
 			lcd.clear();

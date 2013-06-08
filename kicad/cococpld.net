@@ -1,493 +1,412 @@
-# EESchema Netlist Version 1.1 created  4/22/2013 8:18:13 PM
+# EESchema Netlist Version 1.1 created  5/25/2013 9:39:13 AM
 (
- ( /511D8505 SM0805 C1 0.1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519EA6DA $noname  C14 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /516FED73 SM0805 C2 0.1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519EA6D5 $noname  U6 50.00MHz {Lib=OSC}
+  (    1 ? )
+  (    2 GND )
+  (    3 /CLOCK_50 )
+  (    4 +3.3V )
  )
- ( /511D850D SM0805 C3 0.1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E7A54 $noname  JP1 CART_BOOT {Lib=JUMPER}
+  (    1 /C_QCLK )
+  (    2 /C_~CART )
  )
- ( /511D850F SM0805 C4 0.1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E5CBA $noname  U3 74LVC164245 {Lib=74LVC164245}
+  (    1 GND )
+  (    2 /C_A0 )
+  (    3 /C_A1 )
+  (    4 GND )
+  (    5 /C_A2 )
+  (    6 /C_A3 )
+  (    7 +3.3V )
+  (    8 /C_A4 )
+  (    9 /C_A5 )
+  (   10 GND )
+  (   11 /C_A6 )
+  (   12 /C_A7 )
+  (   13 /C_A8 )
+  (   14 /C_A9 )
+  (   15 GND )
+  (   16 /C_A10 )
+  (   17 /C_A11 )
+  (   18 +3.3V )
+  (   19 /C_A12 )
+  (   20 /C_A13 )
+  (   21 GND )
+  (   22 /C_A14 )
+  (   23 GND )
+  (   24 GND )
+  (   25 /C_~BUSEN )
+  (   26 ? )
+  (   27 /A14 )
+  (   28 GND )
+  (   29 /A13 )
+  (   30 /A12 )
+  (   31 +3.3V )
+  (   32 /A11 )
+  (   33 /A10 )
+  (   34 GND )
+  (   35 /A9 )
+  (   36 /A8 )
+  (   37 /A7 )
+  (   38 /A6 )
+  (   39 GND )
+  (   40 /A5 )
+  (   41 /A4 )
+  (   42 +3.3V )
+  (   43 /A3 )
+  (   44 /A2 )
+  (   45 GND )
+  (   46 /A1 )
+  (   47 /A0 )
+  (   48 /C_~BUSEN )
  )
- ( /5156E733/517285E7 SM0805 C6 .1uF
-  ( 1 GND )
-  ( 2 +3.3V )
+ ( /519E5CB9 $noname  C6 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /516FED7A SM0805 C7 0.1uF
-  ( 1 +5V )
-  ( 2 GND )
+ ( /519E5CB8 $noname  C4 0.1uF {Lib=C}
+  (    1 GND )
+  (    2 +3.3V )
  )
- ( /5170326F SM1206POL C8 10uF
-  ( 1 +5V )
-  ( 2 GND )
+ ( /519E5C6F $noname  C1 0.1uF {Lib=C}
+  (    1 GND )
+  (    2 +3.3V )
  )
- ( /51703267 SM1206POL C9 10uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E5C67 $noname  C3 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /5156E733/51728642 SM0805 C10 .1uF
-  ( 1 GND )
-  ( 2 +3.3V )
+ ( /519E5BCB $noname  P2 SPI {Lib=CONN_4X2}
+  (    1 /MISO )
+  (    2 +5V )
+  (    3 /SCLK )
+  (    4 /MOSI )
+  (    5 /~RESET )
+  (    6 GND )
+  (    7 /~SS )
+  (    8 /DIRTY )
  )
- ( /5156E733/517285EA SM0805 C11 .1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E5B7B $noname  U4 CY62256N {Lib=CY62256N}
+  (    1 /A5 )
+  (    2 /A6 )
+  (    3 /A7 )
+  (    4 /A8 )
+  (    5 /A9 )
+  (    6 /A10 )
+  (    7 /A11 )
+  (    8 /A12 )
+  (    9 /A13 )
+  (   10 /A14 )
+  (   11 /M_D0 )
+  (   12 /M_D1 )
+  (   13 /M_D2 )
+  (   14 GND )
+  (   15 /M_D3 )
+  (   16 /M_D4 )
+  (   17 /M_D5 )
+  (   18 /M_D6 )
+  (   19 /M_D7 )
+  (   20 /M_~CE2 )
+  (   21 /A0 )
+  (   22 /M_~OE )
+  (   23 /A1 )
+  (   24 /A2 )
+  (   25 /A3 )
+  (   26 /A4 )
+  (   27 /M_~WE )
+  (   28 +5V )
  )
- ( /5156E733/51728641 SM0805 C12 .1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E5B7A $noname  C5 0.1uF {Lib=C}
+  (    1 +5V )
+  (    2 GND )
  )
- ( /5156E733/51728667 SM0805 C13 .1uF
-  ( 1 GND )
-  ( 2 +3.3V )
+ ( /519E594A $noname  C13 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /5156E733/5172867A SM0805 C14 .1uF
-  ( 1 GND )
-  ( 2 +3.3V )
+ ( /519E5949 $noname  C12 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /5156E733/51728666 SM0805 C15 .1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E5948 $noname  C7 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /5156E733/51728679 SM0805 C16 .1uF
-  ( 1 +3.3V )
-  ( 2 GND )
+ ( /519E593F $noname  P3 JTAG {Lib=CONN_5X2}
+  (    1 /TCK )
+  (    2 GND )
+  (    3 /TDO )
+  (    4 +3.3V )
+  (    5 /TMS )
+  (    6 ? )
+  (    7 ? )
+  (    8 ? )
+  (    9 /TDI )
+  (   10 GND )
  )
- ( /5156E733/5156E75D SM1206POL-mds D1 DIODE
-  ( 1 /Coco_Buffers/C_POWER )
-  ( 2 +5V )
+ ( /519E593E $noname  U5 EPM3128A-TQFP144 {Lib=EPM3128A-TQFP144}
+  (    3 GND )
+  (    4 /TDI )
+  (    5 /C_ECLK )
+  (    6 ? )
+  (    7 ? )
+  (    8 /A14 )
+  (    9 ? )
+  (   10 ? )
+  (   11 ? )
+  (   13 GND )
+  (   14 ? )
+  (   15 /A10 )
+  (   16 /C_R/~W )
+  (   17 GND )
+  (   18 /C_~RESET )
+  (   20 /TMS )
+  (   21 /C_D7 )
+  (   22 /C_D6 )
+  (   23 /C_~HALT )
+  (   24 +3.3V )
+  (   25 /C_~NMI )
+  (   26 GND )
+  (   27 /C_~SCS )
+  (   28 /C_D2 )
+  (   29 /A8 )
+  (   30 /C_~CTS )
+  (   31 /A9 )
+  (   32 /C_~SLENB )
+  (   33 GND )
+  (   37 /A0 )
+  (   38 /M_D7 )
+  (   39 ? )
+  (   40 /C_D5 )
+  (   41 /A6 )
+  (   42 ? )
+  (   44 ? )
+  (   45 /A5 )
+  (   51 +3.3V )
+  (   52 GND )
+  (   53 ? )
+  (   54 ? )
+  (   55 /M_D6 )
+  (   56 ? )
+  (   57 GND )
+  (   58 +3.3V )
+  (   59 GND )
+  (   60 ? )
+  (   61 ? )
+  (   62 /M_~CE1 )
+  (   63 /M_~CE2 )
+  (   64 GND )
+  (   65 /M_~OE )
+  (   67 ? )
+  (   68 ? )
+  (   69 ? )
+  (   70 /C_D4 )
+  (   71 ? )
+  (   72 /M_D0 )
+  (   74 /C_~BUSEN )
+  (   77 GND )
+  (   78 /A2 )
+  (   79 ? )
+  (   80 ? )
+  (   81 /C_D3 )
+  (   82 /A7 )
+  (   83 ? )
+  (   84 ? )
+  (   85 GND )
+  (   86 ? )
+  (   87 /A1 )
+  (   88 ? )
+  (   89 /TCK )
+  (   91 /LED3 )
+  (   92 /LED2 )
+  (   93 /LED1 )
+  (   94 GND )
+  (   96 /LED0 )
+  (   97 ? )
+  (   98 ? )
+  (   99 /A3 )
+  (  100 ? )
+  (  101 /A4 )
+  (  102 ? )
+  (  104 /TDO )
+  (  105 GND )
+  (  106 /DIRTY )
+  (  107 /M_D2 )
+  (  109 /MISO )
+  (  110 /SCLK )
+  (  111 /MOSI )
+  (  112 /~SS )
+  (  113 /M_D3 )
+  (  114 GND )
+  (  116 /M_D4 )
+  (  117 /M_D5 )
+  (  118 /M_D1 )
+  (  119 /M_~WE )
+  (  123 +3.3V )
+  (  124 GND )
+  (  125 /CLOCK_50 )
+  (  126 ? )
+  (  127 /~RESET )
+  (  128 ? )
+  (  129 GND )
+  (  130 +3.3V )
+  (  131 ? )
+  (  132 ? )
+  (  133 ? )
+  (  134 ? )
+  (  135 GND )
+  (  136 ? )
+  (  137 ? )
+  (  138 /A12 )
+  (  139 /A13 )
+  (  140 ? )
+  (  141 /C_D1 )
+  (  142 /A11 )
+  (  143 /C_D0 )
  )
- ( /512396CA LED-1206 D2 A_PWR
-  ( 1 N-000003 )
-  ( 2 GND )
+ ( /519E593B $noname  C10 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /51697BCA LED-1206 D3 RW
-  ( 1 N-000064 )
-  ( 2 GND )
+ ( /519E5937 $noname  C11 0.1uF {Lib=C}
+  (    1 GND )
+  (    2 +3.3V )
  )
- ( /512396BE LED-1206 D4 C_PWR
-  ( 1 N-000040 )
-  ( 2 GND )
+ ( /519E5936 $noname  D4 S3 {Lib=LED}
+  (    1 N-000069 )
+  (    2 GND )
  )
- ( /512432E3 LED-1206 D5 CTS
-  ( 1 N-000005 )
-  ( 2 GND )
+ ( /519E5932 $noname  P1 COCOBUS {Lib=COCOBUS}
+  (    1 ? )
+  (    2 ? )
+  (    3 /C_~HALT )
+  (    4 /C_~NMI )
+  (    5 /C_~RESET )
+  (    6 /C_ECLK )
+  (    7 /C_QCLK )
+  (    8 /C_~CART )
+  (    9 ? )
+  (   10 /C_D0 )
+  (   11 /C_D1 )
+  (   12 /C_D2 )
+  (   13 /C_D3 )
+  (   14 /C_D4 )
+  (   15 /C_D5 )
+  (   16 /C_D6 )
+  (   17 /C_D7 )
+  (   18 /C_R/~W )
+  (   19 /C_A0 )
+  (   20 /C_A1 )
+  (   21 /C_A2 )
+  (   22 /C_A3 )
+  (   23 /C_A4 )
+  (   24 /C_A5 )
+  (   25 /C_A6 )
+  (   26 /C_A7 )
+  (   27 /C_A8 )
+  (   28 /C_A9 )
+  (   29 /C_A10 )
+  (   30 /C_A11 )
+  (   31 /C_A12 )
+  (   32 /C_~CTS )
+  (   33 GND )
+  (   34 GND )
+  (   35 ? )
+  (   36 /C_~SCS )
+  (   37 /C_A13 )
+  (   38 /C_A14 )
+  (   39 ? )
+  (   40 /C_~SLENB )
  )
- ( /512432E7 LED-1206 D6 SCS
-  ( 1 N-000006 )
-  ( 2 GND )
+ ( /519E592E $noname  D2 S1 {Lib=LED}
+  (    1 N-000115 )
+  (    2 GND )
  )
- ( /512432E8 LED-1206 D7 S0
-  ( 1 N-000004 )
-  ( 2 GND )
+ ( /519E592C $noname  D1 S0 {Lib=LED}
+  (    1 N-000066 )
+  (    2 GND )
  )
- ( /51697BAA LED-1206 D8 CBUS
-  ( 1 N-000063 )
-  ( 2 GND )
+ ( /519E592B $noname  D3 S2 {Lib=LED}
+  (    1 N-000114 )
+  (    2 GND )
  )
- ( /5156E0F9/516FEC3D SM1206POL-mds D9 DIODESCH
-  ( 1 /Arduino_Buffers/A_POWER )
-  ( 2 +5V )
+ ( /519E592A $noname  RP1 150 {Lib=R_PACK4}
+  (    1 /LED0 )
+  (    2 /LED1 )
+  (    3 /LED2 )
+  (    4 /LED3 )
+  (    5 N-000069 )
+  (    6 N-000114 )
+  (    7 N-000115 )
+  (    8 N-000066 )
  )
- ( /5156E733/5156E7BD PIN_ARRAY_2X1 JP1 CART_BOOT
-  ( 1 /Coco_Buffers/C_QCLK )
-  ( 2 /Coco_Buffers/C_~CART )
+ ( /51846E14 $noname  C2 0.1uF {Lib=C}
+  (    1 +5V )
+  (    2 GND )
  )
- ( /516FECE0 PIN_ARRAY_2X1 JP2 SPECIAL
-  ( 1 N-000059 )
-  ( 2 GND )
+ ( /51846D78 $noname  U2 CY62256N {Lib=CY62256N}
+  (    1 /A5 )
+  (    2 /A6 )
+  (    3 /A7 )
+  (    4 /A8 )
+  (    5 /A9 )
+  (    6 /A10 )
+  (    7 /A11 )
+  (    8 /A12 )
+  (    9 /A13 )
+  (   10 /A14 )
+  (   11 /M_D0 )
+  (   12 /M_D1 )
+  (   13 /M_D2 )
+  (   14 GND )
+  (   15 /M_D3 )
+  (   16 /M_D4 )
+  (   17 /M_D5 )
+  (   18 /M_D6 )
+  (   19 /M_D7 )
+  (   20 /M_~CE1 )
+  (   21 /A0 )
+  (   22 /M_~OE )
+  (   23 /A1 )
+  (   24 /A2 )
+  (   25 /A3 )
+  (   26 /A4 )
+  (   27 /M_~WE )
+  (   28 +5V )
  )
- ( /5156E733/5156E75F cardedge20x2 P1 COCOBUS
-  ( 1 ? )
-  ( 2 ? )
-  ( 3 ? )
-  ( 4 ? )
-  ( 5 ? )
-  ( 6 /Coco_Buffers/C_ECLK )
-  ( 7 /Coco_Buffers/C_QCLK )
-  ( 8 /Coco_Buffers/C_~CART )
-  ( 9 /Coco_Buffers/C_POWER )
-  ( 10 /Coco_Buffers/C_D0 )
-  ( 11 /Coco_Buffers/C_D1 )
-  ( 12 /Coco_Buffers/C_D2 )
-  ( 13 /Coco_Buffers/C_D3 )
-  ( 14 /Coco_Buffers/C_D4 )
-  ( 15 /Coco_Buffers/C_D5 )
-  ( 16 /Coco_Buffers/C_D6 )
-  ( 17 /Coco_Buffers/C_D7 )
-  ( 18 /Coco_Buffers/C_R/~W )
-  ( 19 /Coco_Buffers/C_A0 )
-  ( 20 /Coco_Buffers/C_A1 )
-  ( 21 /Coco_Buffers/C_A2 )
-  ( 22 /Coco_Buffers/C_A3 )
-  ( 23 /Coco_Buffers/C_A4 )
-  ( 24 /Coco_Buffers/C_A5 )
-  ( 25 /Coco_Buffers/C_A6 )
-  ( 26 /Coco_Buffers/C_A7 )
-  ( 27 /Coco_Buffers/C_A8 )
-  ( 28 /Coco_Buffers/C_A9 )
-  ( 29 /Coco_Buffers/C_A10 )
-  ( 30 /Coco_Buffers/C_A11 )
-  ( 31 /Coco_Buffers/C_A12 )
-  ( 32 /Coco_Buffers/C_~CTS )
-  ( 33 GND )
-  ( 34 GND )
-  ( 35 ? )
-  ( 36 /Coco_Buffers/C_~SCS )
-  ( 37 /Coco_Buffers/C_A13 )
-  ( 38 /Coco_Buffers/C_A14 )
-  ( 39 ? )
-  ( 40 /Coco_Buffers/C_~SLENB )
+ ( /5170326F $noname  C8 10uF {Lib=CP1}
+  (    1 +5V )
+  (    2 GND )
  )
- ( /510FC702 PIN_ARRAY_5x2 P2 JTAG
-  ( 1 /TCK )
-  ( 2 GND )
-  ( 3 /TDO )
-  ( 4 +3.3V )
-  ( 5 /TMS )
-  ( 6 ? )
-  ( 7 ? )
-  ( 8 ? )
-  ( 9 /TDI )
-  ( 10 GND )
+ ( /51703267 $noname  C9 10uF {Lib=CP1}
+  (    1 +3.3V )
+  (    2 GND )
  )
- ( /5156E0F9/5156E4FF PIN_ARRAY_18X2 P3 ARDUINO_MEGA_D
-  ( 1 /Arduino_Buffers/A_POWER )
-  ( 2 /Arduino_Buffers/A_POWER )
-  ( 3 /Coco_Buffers/A1 )
-  ( 4 /Arduino_Buffers/A0 )
-  ( 5 /Arduino_Buffers/A3 )
-  ( 6 /Arduino_Buffers/A2 )
-  ( 7 /Coco_Buffers/A5 )
-  ( 8 /Coco_Buffers/A4 )
-  ( 9 /Coco_Buffers/A7 )
-  ( 10 /Coco_Buffers/A6 )
-  ( 11 /Arduino_Buffers/A14 )
-  ( 12 /Arduino_Buffers/ARD_RW )
-  ( 13 /Arduino_Buffers/A12 )
-  ( 14 /Arduino_Buffers/A13 )
-  ( 15 /Arduino_Buffers/A10 )
-  ( 16 /Arduino_Buffers/A11 )
-  ( 17 /Arduino_Buffers/A8 )
-  ( 18 /Coco_Buffers/A9 )
-  ( 19 /Arduino_Buffers/A_~BUSEN )
-  ( 20 /Arduino_Buffers/BUSREQ )
-  ( 21 /Arduino_Buffers/D7 )
-  ( 22 /Arduino_Buffers/ARD_~BUSMASTER )
-  ( 23 /Coco_Buffers/D5 )
-  ( 24 /Arduino_Buffers/D6 )
-  ( 25 /Coco_Buffers/D3 )
-  ( 26 /Coco_Buffers/D4 )
-  ( 27 /Arduino_Buffers/D1 )
-  ( 28 /Arduino_Buffers/D2 )
-  ( 29 /Arduino_Buffers/ARD_EEN )
-  ( 30 /Arduino_Buffers/D0 )
-  ( 31 /Arduino_Buffers/MOSI )
-  ( 32 /Arduino_Buffers/MISO )
-  ( 33 ? )
-  ( 34 /Arduino_Buffers/SCK )
-  ( 35 GND )
-  ( 36 GND )
+ ( /513F722E $noname  P7 TST {Lib=TST}
+  (    1 GND )
  )
- ( /513F7224 1pin P4 TST
-  ( 1 GND )
+ ( /513F722B $noname  P5 TST {Lib=TST}
+  (    1 GND )
  )
- ( /513F722B 1pin P5 TST
-  ( 1 GND )
+ ( /513F7227 $noname  P6 TST {Lib=TST}
+  (    1 GND )
  )
- ( /513F7227 1pin P6 TST
-  ( 1 GND )
+ ( /513F7224 $noname  P4 TST {Lib=TST}
+  (    1 GND )
  )
- ( /513F722E 1pin P7 TST
-  ( 1 GND )
- )
- ( /5156E0F9/5171F816 PIN_ARRAY-8X1 P8 ARDUINO_ADCH
-  ( 1 ? )
-  ( 2 ? )
-  ( 3 ? )
-  ( 4 ? )
-  ( 5 ? )
-  ( 6 ? )
-  ( 7 /Arduino_Buffers/SPI_SEL )
-  ( 8 /Arduino_Buffers/ARD_SEL )
- )
- ( /5156E0F9/5171F854 PIN_ARRAY-6X1 P9 ARDUINO_COMM
-  ( 1 /Arduino_Buffers/SCL )
-  ( 2 /Arduino_Buffers/SCA )
-  ( 3 ? )
-  ( 4 ? )
-  ( 5 ? )
-  ( 6 ? )
- )
- ( /5156E0F9/5174AD98 PIN_ARRAY_4x1 P10 LCD
-  ( 1 /Arduino_Buffers/SCL )
-  ( 2 /Arduino_Buffers/SCA )
-  ( 3 /Arduino_Buffers/A_POWER )
-  ( 4 GND )
- )
- ( /5156E0F9/5175D27C PIN_ARRAY-6X1 P11 SPI_EXP
-  ( 1 /Arduino_Buffers/SCK )
-  ( 2 /Arduino_Buffers/SPI_SEL )
-  ( 3 /Arduino_Buffers/MISO )
-  ( 4 /Arduino_Buffers/MOSI )
-  ( 5 +5V )
-  ( 6 GND )
- )
- ( /51697BC9 SM0805 R1 330
-  ( 1 /LED_RW )
-  ( 2 N-000064 )
- )
- ( /512396A8 SM0805 R2 330
-  ( 1 /Arduino_Buffers/A_POWER )
-  ( 2 N-000003 )
- )
- ( /5123967A SM0805 R3 330
-  ( 1 /Coco_Buffers/C_POWER )
-  ( 2 N-000040 )
- )
- ( /51242EA2 SM0805 R4 330
-  ( 1 /LED_S )
-  ( 2 N-000004 )
- )
- ( /51242EAA SM0805 R5 330
-  ( 1 /LED_SCS )
-  ( 2 N-000006 )
- )
- ( /51242EAD SM0805 R6 330
-  ( 1 /LED_CTS )
-  ( 2 N-000005 )
- )
- ( /51697BAB SM0805 R7 330
-  ( 1 /LED_CBUS )
-  ( 2 N-000063 )
- )
- ( /516970FD SM0805 R8 47K
-  ( 1 GND )
-  ( 2 /Coco_Buffers/C_POWER )
- )
- ( /515CD751 SM0805 R9 47K
-  ( 1 GND )
-  ( 2 /Arduino_Buffers/A_POWER )
- )
- ( /5156E0F9/516970CB SM0805 R10 1K
-  ( 1 +5V )
-  ( 2 /Arduino_Buffers/ARD_RW )
- )
- ( /516FECFF SM0805 R11 1K
-  ( 1 +3.3V )
-  ( 2 N-000059 )
- )
- ( /5156E0F9/5175D312 SM0805 R12 1K
-  ( 1 +5V )
-  ( 2 /Arduino_Buffers/SPI_SEL )
- )
- ( /510C81E0 TO220_VERT U1 LM1117-3.3
-  ( 1 +5V )
-  ( 2 GND )
-  ( 3 +3.3V )
- )
- ( /5156E733/5156E80A SSOP48 U2 74LVC164245
-  ( 1 /Coco_Buffers/C_R/~W )
-  ( 2 /Coco_Buffers/C_D0 )
-  ( 3 /Coco_Buffers/C_D1 )
-  ( 4 GND )
-  ( 5 /Coco_Buffers/C_D2 )
-  ( 6 /Coco_Buffers/C_D3 )
-  ( 7 +3.3V )
-  ( 8 /Coco_Buffers/C_D4 )
-  ( 9 /Coco_Buffers/C_D5 )
-  ( 10 GND )
-  ( 11 /Coco_Buffers/C_D6 )
-  ( 12 /Coco_Buffers/C_D7 )
-  ( 13 /Coco_Buffers/C_A0 )
-  ( 14 /Coco_Buffers/C_A1 )
-  ( 15 GND )
-  ( 16 /Coco_Buffers/C_A2 )
-  ( 17 /Coco_Buffers/C_A3 )
-  ( 18 +3.3V )
-  ( 19 /Coco_Buffers/C_A4 )
-  ( 20 /Coco_Buffers/C_A5 )
-  ( 21 GND )
-  ( 22 /Coco_Buffers/C_A6 )
-  ( 23 /Coco_Buffers/C_A7 )
-  ( 24 GND )
-  ( 25 /Coco_Buffers/~C_BUSEN )
-  ( 26 /Coco_Buffers/A7 )
-  ( 27 /Coco_Buffers/A6 )
-  ( 28 GND )
-  ( 29 /Coco_Buffers/A5 )
-  ( 30 /Coco_Buffers/A4 )
-  ( 31 +3.3V )
-  ( 32 /Arduino_Buffers/A3 )
-  ( 33 /Arduino_Buffers/A2 )
-  ( 34 GND )
-  ( 35 /Coco_Buffers/A1 )
-  ( 36 /Arduino_Buffers/A0 )
-  ( 37 /Arduino_Buffers/D7 )
-  ( 38 /Arduino_Buffers/D6 )
-  ( 39 GND )
-  ( 40 /Coco_Buffers/D5 )
-  ( 41 /Coco_Buffers/D4 )
-  ( 42 +3.3V )
-  ( 43 /Coco_Buffers/D3 )
-  ( 44 /Arduino_Buffers/D2 )
-  ( 45 GND )
-  ( 46 /Arduino_Buffers/D1 )
-  ( 47 /Arduino_Buffers/D0 )
-  ( 48 /Coco_Buffers/C_~DATAEN )
- )
- ( /5156E733/5156E7F0 SSOP48 U3 74LVC164245
-  ( 1 GND )
-  ( 2 /Coco_Buffers/C_A8 )
-  ( 3 /Coco_Buffers/C_A9 )
-  ( 4 GND )
-  ( 5 /Coco_Buffers/C_A10 )
-  ( 6 /Coco_Buffers/C_A11 )
-  ( 7 +3.3V )
-  ( 8 /Coco_Buffers/C_A12 )
-  ( 9 /Coco_Buffers/C_A13 )
-  ( 10 GND )
-  ( 11 /Coco_Buffers/C_A14 )
-  ( 12 ? )
-  ( 13 /Coco_Buffers/C_ECLK )
-  ( 14 /Coco_Buffers/C_R/~W )
-  ( 15 GND )
-  ( 16 /Coco_Buffers/C_~CTS )
-  ( 17 /Coco_Buffers/C_~SCS )
-  ( 18 +3.3V )
-  ( 19 /Coco_Buffers/~SLENB )
-  ( 20 ? )
-  ( 21 GND )
-  ( 22 ? )
-  ( 23 ? )
-  ( 24 GND )
-  ( 25 /Coco_Buffers/~C_BUSEN )
-  ( 26 ? )
-  ( 27 ? )
-  ( 28 GND )
-  ( 29 ? )
-  ( 30 /Coco_Buffers/C_~SLENB )
-  ( 31 +3.3V )
-  ( 32 /Coco_Buffers/~SCS )
-  ( 33 /Coco_Buffers/~CTS )
-  ( 34 GND )
-  ( 35 /Coco_Buffers/COCO_RW )
-  ( 36 /Coco_Buffers/ECLK )
-  ( 37 ? )
-  ( 38 /Coco_Buffers/A14 )
-  ( 39 GND )
-  ( 40 /Coco_Buffers/A13 )
-  ( 41 /Arduino_Buffers/A12 )
-  ( 42 +3.3V )
-  ( 43 /Arduino_Buffers/A11 )
-  ( 44 /Arduino_Buffers/A10 )
-  ( 45 GND )
-  ( 46 /Coco_Buffers/A9 )
-  ( 47 /Arduino_Buffers/A8 )
-  ( 48 /Coco_Buffers/~C_BUSEN )
- )
- ( /511A9EE8 TQFP44 U5 EPM3032A
-  ( 1 /TDI )
-  ( 2 /Arduino_Buffers/ARD_SEL )
-  ( 3 /LED_RW )
-  ( 4 GND )
-  ( 5 /LED_CBUS )
-  ( 6 /LED_CTS )
-  ( 7 /TMS )
-  ( 8 /LED_SCS )
-  ( 9 +3.3V )
-  ( 10 /LED_S )
-  ( 11 GND )
-  ( 12 /Coco_Buffers/~SLENB )
-  ( 13 /Arduino_Buffers/BUSREQ )
-  ( 14 /Arduino_Buffers/A14 )
-  ( 15 /Arduino_Buffers/A13 )
-  ( 16 GND )
-  ( 17 +3.3V )
-  ( 18 /Coco_Buffers/~C_BUSEN )
-  ( 19 /Arduino_Buffers/A_~BUSEN )
-  ( 20 /Arduino_Buffers/ARD_~BUSMASTER )
-  ( 21 N-000047 )
-  ( 22 N-000020 )
-  ( 23 N-000059 )
-  ( 24 GND )
-  ( 25 /~EEN )
-  ( 26 /TCK )
-  ( 27 /Arduino_Buffers/A_POWER )
-  ( 28 /Coco_Buffers/C_POWER )
-  ( 29 +3.3V )
-  ( 30 GND )
-  ( 31 /Coco_Buffers/C_~DATAEN )
-  ( 32 /TDO )
-  ( 33 /~WEE )
-  ( 34 /Arduino_Buffers/ARD_EEN )
-  ( 35 /Arduino_Buffers/ARD_RW )
-  ( 36 GND )
-  ( 37 /Coco_Buffers/A13 )
-  ( 38 /Coco_Buffers/ECLK )
-  ( 39 /Coco_Buffers/COCO_RW )
-  ( 40 /Coco_Buffers/A14 )
-  ( 41 +3.3V )
-  ( 42 ? )
-  ( 43 /Coco_Buffers/~CTS )
-  ( 44 /Coco_Buffers/~SCS )
- )
- ( /511A9E98 SO28 U6 28C256
-  ( 1 N-000020 )
-  ( 2 /Arduino_Buffers/A12 )
-  ( 3 /Coco_Buffers/A7 )
-  ( 4 /Coco_Buffers/A6 )
-  ( 5 /Coco_Buffers/A5 )
-  ( 6 /Coco_Buffers/A4 )
-  ( 7 /Arduino_Buffers/A3 )
-  ( 8 /Arduino_Buffers/A2 )
-  ( 9 /Coco_Buffers/A1 )
-  ( 10 /Arduino_Buffers/A0 )
-  ( 11 /Arduino_Buffers/D0 )
-  ( 12 /Arduino_Buffers/D1 )
-  ( 13 /Arduino_Buffers/D2 )
-  ( 14 GND )
-  ( 15 /Coco_Buffers/D3 )
-  ( 16 /Coco_Buffers/D4 )
-  ( 17 /Coco_Buffers/D5 )
-  ( 18 /Arduino_Buffers/D6 )
-  ( 19 /Arduino_Buffers/D7 )
-  ( 20 GND )
-  ( 21 /Arduino_Buffers/A10 )
-  ( 22 /~EEN )
-  ( 23 /Arduino_Buffers/A11 )
-  ( 24 /Coco_Buffers/A9 )
-  ( 25 /Arduino_Buffers/A8 )
-  ( 26 N-000047 )
-  ( 27 /~WEE )
-  ( 28 +5V )
+ ( /510C81E0 $noname  U1 LM1117-3.3 {Lib=LM1117-3.3}
+  (    1 +5V )
+  (    2 GND )
+  (    3 +3.3V )
  )
 )
 *
 { Allowed footprints by component:
-$component C1
- SM*
- C?
- C1-1
-$endlist
-$component C2
- SM*
- C?
- C1-1
-$endlist
-$component C3
- SM*
- C?
- C1-1
-$endlist
-$component C4
+$component C14
  SM*
  C?
  C1-1
@@ -497,18 +416,43 @@ $component C6
  C?
  C1-1
 $endlist
+$component C4
+ SM*
+ C?
+ C1-1
+$endlist
+$component C1
+ SM*
+ C?
+ C1-1
+$endlist
+$component C3
+ SM*
+ C?
+ C1-1
+$endlist
+$component C5
+ SM*
+ C?
+ C1-1
+$endlist
+$component C13
+ SM*
+ C?
+ C1-1
+$endlist
+$component C12
+ SM*
+ C?
+ C1-1
+$endlist
 $component C7
  SM*
  C?
  C1-1
 $endlist
-$component C8
- CP*
- SM*
-$endlist
-$component C9
- CP*
- SM*
+$component U5
+ TQFP
 $endlist
 $component C10
  SM*
@@ -520,36 +464,25 @@ $component C11
  C?
  C1-1
 $endlist
-$component C12
- SM*
- C?
- C1-1
-$endlist
-$component C13
- SM*
- C?
- C1-1
-$endlist
-$component C14
- SM*
- C?
- C1-1
-$endlist
-$component C15
- SM*
- C?
- C1-1
-$endlist
-$component C16
- SM*
- C?
- C1-1
-$endlist
-$component D1
- D?
- S*
+$component D4
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
 $endlist
 $component D2
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component D1
  LED-3MM
  LED-5MM
  LED-10MM
@@ -567,141 +500,394 @@ $component D3
  LED-1206
  LEDV
 $endlist
-$component D4
- LED-3MM
- LED-5MM
- LED-10MM
- LED-0603
- LED-0805
- LED-1206
- LEDV
+$component C2
+ SM*
+ C?
+ C1-1
 $endlist
-$component D5
- LED-3MM
- LED-5MM
- LED-10MM
- LED-0603
- LED-0805
- LED-1206
- LEDV
+$component C8
+ CP*
+ SM*
 $endlist
-$component D6
- LED-3MM
- LED-5MM
- LED-10MM
- LED-0603
- LED-0805
- LED-1206
- LEDV
-$endlist
-$component D7
- LED-3MM
- LED-5MM
- LED-10MM
- LED-0603
- LED-0805
- LED-1206
- LEDV
-$endlist
-$component D8
- LED-3MM
- LED-5MM
- LED-10MM
- LED-0603
- LED-0805
- LED-1206
- LEDV
-$endlist
-$component D9
- D?
- S*
-$endlist
-$component R1
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R2
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R3
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R4
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R5
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R6
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R7
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R8
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R9
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R10
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R11
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component R12
- R?
- SM0603
- SM0805
- R?-*
- SM1206
-$endlist
-$component U5
- tqfp100
+$component C9
+ CP*
+ SM*
 $endlist
 $endfootprintlist
 }
+{ Pin List by Nets
+Net 3 "/LED0" "LED0"
+ U5 96
+ RP1 1
+Net 6 "/C_~RESET" "C_~RESET"
+ U5 18
+ P1 5
+Net 7 "/C_D2" "C_D2"
+ P1 12
+ U5 28
+Net 10 "/LED2" "LED2"
+ RP1 3
+ U5 92
+Net 17 "/C_~BUSEN" "C_~BUSEN"
+ U3 48
+ U5 74
+ U3 25
+Net 19 "/TDO" "TDO"
+ P3 3
+ U5 104
+Net 20 "GND" "GND"
+ U6 2
+ C14 2
+ U2 14
+ C9 2
+ P7 1
+ C8 2
+ P5 1
+ D3 2
+ D1 2
+ D2 2
+ C2 2
+ P1 34
+ D4 2
+ C11 1
+ C10 2
+ P1 33
+ U1 2
+ P4 1
+ P6 1
+ U3 23
+ U3 21
+ U4 14
+ C5 2
+ U3 39
+ U3 45
+ U3 10
+ P2 6
+ C4 1
+ C6 2
+ U3 28
+ U3 15
+ U3 34
+ U3 24
+ U3 4
+ U3 1
+ C3 2
+ C1 1
+ U5 57
+ U5 59
+ C12 2
+ U5 33
+ U5 3
+ U5 13
+ U5 77
+ U5 129
+ P3 10
+ U5 52
+ C7 2
+ P3 2
+ U5 17
+ U5 135
+ U5 105
+ U5 26
+ C13 2
+ U5 64
+ U5 124
+ U5 85
+ U5 114
+ U5 94
+Net 22 "/CLOCK_50" "CLOCK_50"
+ U5 125
+ U6 3
+Net 25 "/C_D0" "C_D0"
+ U5 143
+ P1 10
+Net 26 "/~RESET" "~RESET"
+ U5 127
+ P2 5
+Net 32 "/TCK" "TCK"
+ P3 1
+ U5 89
+Net 37 "/C_D1" "C_D1"
+ U5 141
+ P1 11
+Net 41 "+3.3V" "+3.3V"
+ C10 1
+ U5 51
+ C11 2
+ U1 3
+ U3 31
+ U6 4
+ P3 4
+ U5 130
+ C14 1
+ C6 1
+ U5 123
+ C1 2
+ C3 1
+ U5 58
+ C9 1
+ U3 18
+ C13 1
+ C12 1
+ U3 42
+ C7 1
+ U3 7
+ U5 24
+ C4 2
+Net 47 "/TMS" "TMS"
+ U5 20
+ P3 5
+Net 48 "/C_D5" "C_D5"
+ P1 15
+ U5 40
+Net 50 "/C_D4" "C_D4"
+ P1 14
+ U5 70
+Net 52 "/C_ECLK" "C_ECLK"
+ P1 6
+ U5 5
+Net 53 "/C_D7" "C_D7"
+ U5 21
+ P1 17
+Net 56 "/C_D3" "C_D3"
+ U5 81
+ P1 13
+Net 57 "/C_D6" "C_D6"
+ U5 22
+ P1 16
+Net 61 "/TDI" "TDI"
+ P3 9
+ U5 4
+Net 62 "+5V" "+5V"
+ U1 1
+ C5 1
+ U2 28
+ U4 28
+ C8 1
+ C2 1
+ P2 2
+Net 63 "/A5" "A5"
+ U3 40
+ U4 1
+ U5 45
+ U2 1
+Net 64 "/A6" "A6"
+ U3 38
+ U2 2
+ U5 41
+ U4 2
+Net 65 "/A11" "A11"
+ U5 142
+ U2 7
+ U4 7
+ U3 32
+Net 66 "" ""
+ RP1 8
+ D1 1
+Net 67 "/LED1" "LED1"
+ U5 93
+ RP1 2
+Net 68 "/LED3" "LED3"
+ RP1 4
+ U5 91
+Net 69 "" ""
+ D4 1
+ RP1 5
+Net 70 "/A2" "A2"
+ U4 24
+ U3 44
+ U5 78
+ U2 24
+Net 71 "/M_~CE1" "M_~CE1"
+ U5 62
+ U2 20
+Net 72 "/M_D0" "M_D0"
+ U4 11
+ U2 11
+ U5 72
+Net 73 "/A0" "A0"
+ U2 21
+ U3 47
+ U5 37
+ U4 21
+Net 74 "/M_D1" "M_D1"
+ U5 118
+ U4 12
+ U2 12
+Net 75 "/M_~OE" "M_~OE"
+ U5 65
+ U2 22
+ U4 22
+Net 76 "/M_D2" "M_D2"
+ U2 13
+ U5 107
+ U4 13
+Net 77 "/A1" "A1"
+ U5 87
+ U3 46
+ U4 23
+ U2 23
+Net 78 "/M_D3" "M_D3"
+ U5 113
+ U4 15
+ U2 15
+Net 79 "/A3" "A3"
+ U2 25
+ U5 99
+ U4 25
+ U3 43
+Net 80 "/M_D4" "M_D4"
+ U5 116
+ U2 16
+ U4 16
+Net 81 "/A4" "A4"
+ U2 26
+ U3 41
+ U4 26
+ U5 101
+Net 82 "/M_D5" "M_D5"
+ U4 17
+ U2 17
+ U5 117
+Net 83 "/M_D6" "M_D6"
+ U4 18
+ U5 55
+ U2 18
+Net 84 "/M_D7" "M_D7"
+ U4 19
+ U2 19
+ U5 38
+Net 85 "/C_A3" "C_A3"
+ U3 6
+ P1 22
+Net 86 "/C_QCLK" "C_QCLK"
+ JP1 1
+ P1 7
+Net 87 "/C_~CART" "C_~CART"
+ JP1 2
+ P1 8
+Net 89 "/C_A1" "C_A1"
+ U3 3
+ P1 20
+Net 90 "/C_A11" "C_A11"
+ U3 17
+ P1 30
+Net 91 "/C_~SLENB" "C_~SLENB"
+ P1 40
+ U5 32
+Net 92 "/C_A2" "C_A2"
+ P1 21
+ U3 5
+Net 93 "/C_A12" "C_A12"
+ P1 31
+ U3 19
+Net 94 "/C_~CTS" "C_~CTS"
+ U5 30
+ P1 32
+Net 95 "/C_A4" "C_A4"
+ U3 8
+ P1 23
+Net 96 "/C_A5" "C_A5"
+ U3 9
+ P1 24
+Net 97 "/C_A6" "C_A6"
+ U3 11
+ P1 25
+Net 99 "/C_A7" "C_A7"
+ U3 12
+ P1 26
+Net 102 "/C_~HALT" "C_~HALT"
+ U5 23
+ P1 3
+Net 103 "/C_~NMI" "C_~NMI"
+ U5 25
+ P1 4
+Net 104 "/C_~SCS" "C_~SCS"
+ P1 36
+ U5 27
+Net 105 "/C_A8" "C_A8"
+ U3 13
+ P1 27
+Net 106 "/C_A13" "C_A13"
+ P1 37
+ U3 20
+Net 107 "/C_R/~W" "C_R/~W"
+ U5 16
+ P1 18
+Net 108 "/C_A9" "C_A9"
+ U3 14
+ P1 28
+Net 109 "/C_A14" "C_A14"
+ P1 38
+ U3 22
+Net 110 "/C_A0" "C_A0"
+ P1 19
+ U3 2
+Net 111 "/C_A10" "C_A10"
+ U3 16
+ P1 29
+Net 114 "" ""
+ D3 1
+ RP1 6
+Net 115 "" ""
+ D2 1
+ RP1 7
+Net 116 "/MOSI" "MOSI"
+ U5 111
+ P2 4
+Net 117 "/MISO" "MISO"
+ P2 1
+ U5 109
+Net 118 "/SCLK" "SCLK"
+ P2 3
+ U5 110
+Net 119 "/~SS" "~SS"
+ P2 7
+ U5 112
+Net 120 "/DIRTY" "DIRTY"
+ P2 8
+ U5 106
+Net 121 "/A7" "A7"
+ U4 3
+ U5 82
+ U2 3
+ U3 37
+Net 122 "/A8" "A8"
+ U2 4
+ U5 29
+ U3 36
+ U4 4
+Net 123 "/A9" "A9"
+ U2 5
+ U4 5
+ U5 31
+ U3 35
+Net 124 "/A10" "A10"
+ U5 15
+ U3 33
+ U2 6
+ U4 6
+Net 125 "/A12" "A12"
+ U2 8
+ U4 8
+ U3 30
+ U5 138
+Net 126 "/A13" "A13"
+ U2 9
+ U3 29
+ U5 139
+ U4 9
+Net 127 "/A14" "A14"
+ U5 8
+ U4 10
+ U3 27
+ U2 10
+Net 128 "/M_~CE2" "M_~CE2"
+ U5 63
+ U4 20
+Net 129 "/M_~WE" "M_~WE"
+ U4 27
+ U5 119
+ U2 27
+}
+#End

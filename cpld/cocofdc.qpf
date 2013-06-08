@@ -16,15 +16,15 @@
 #
 # -------------------------------------------------------------------------- #
 #
-# Quartus II 32-bit
+# Quartus II 64-Bit
 # Version 12.1 Build 177 11/07/2012 SJ Web Edition
-# Date created = 12:10:22  February 20, 2013
+# Date created = 21:55:03  April 25, 2013
 #
 # -------------------------------------------------------------------------- #
 
 QUARTUS_VERSION = "12.1"
-DATE = "12:10:22  February 20, 2013"
+DATE = "21:55:03  April 25, 2013"
 
 # Revisions
 
-PROJECT_REVISION = "diskemu"
+PROJECT_REVISION = "cocofdc"
