@@ -15,5 +15,6 @@ uint8_t readData();
 void setData(uint8_t b);
 void takeBus();
 void giveBus();
+void nopSPI();
 
 #endif

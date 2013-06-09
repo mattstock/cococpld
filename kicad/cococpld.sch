@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 5/25/2013 9:38:58 AM
+EESchema Schematic File Version 2  date Thu 30 May 2013 12:50:56 PM EDT
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr User 14000 8500
 encoding utf-8
 Sheet 1 1
 Title "Color Computer Bus Interface"
-Date "25 may 2013"
+Date "30 may 2013"
 Rev "1.3"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -46,24 +46,13 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Wire Wire Line
-	13300 1350 13300 1400
+	5550 6650 5550 6700
 Wire Wire Line
-	12900 1350 13300 1350
+	13300 1400 13300 1350
+Wire Wire Line
+	13300 1350 12900 1350
 Wire Wire Line
 	4900 3650 4900 3750
-Connection ~ 4650 2450
-Wire Wire Line
-	4650 2350 4650 2550
-Wire Wire Line
-	2400 2550 2400 2450
-Connection ~ 2950 1100
-Connection ~ 3050 1100
-Wire Wire Line
-	3100 1100 2900 1100
-Wire Wire Line
-	3050 1100 3050 1300
-Wire Wire Line
-	2500 1150 2500 1100
 Wire Wire Line
 	7250 6650 7350 6650
 Wire Wire Line
@@ -222,29 +211,79 @@ Wire Wire Line
 	2050 7750 2050 7550
 Connection ~ 2050 7650
 Wire Wire Line
-	3500 1100 3500 1150
-Wire Wire Line
-	2950 1100 2950 1300
-Wire Wire Line
-	3000 1000 3000 1100
-Connection ~ 3000 1100
-Connection ~ 5250 1100
-Wire Wire Line
-	5250 1000 5250 1100
-Wire Wire Line
-	5200 1100 5200 1300
-Wire Wire Line
-	5750 1100 5750 1150
-Wire Wire Line
-	4750 1150 4750 1100
-Wire Wire Line
-	5300 1100 5300 1300
-Wire Wire Line
-	5350 1100 5150 1100
-Connection ~ 5300 1100
-Connection ~ 5200 1100
-Wire Wire Line
 	5950 3500 5950 3450
+Wire Wire Line
+	3550 6900 3200 6900
+Wire Wire Line
+	3550 6700 3200 6700
+Connection ~ 3200 6700
+Wire Wire Line
+	3200 6900 3200 6600
+$Comp
+L +3.3V #PWR?
+U 1 1 51A7835C
+P 5550 6650
+F 0 "#PWR?" H 5550 6610 30  0001 C CNN
+F 1 "+3.3V" H 5550 6760 30  0000 C CNN
+	1    5550 6650
+	-1   0    0    -1  
+$EndComp
+Text Label 3550 7100 2    60   ~ 0
+A16
+Text Label 9100 5800 3    60   ~ 0
+A15
+$Comp
+L +3.3V #PWR?
+U 1 1 51A782E7
+P 3200 6600
+F 0 "#PWR?" H 3200 6560 30  0001 C CNN
+F 1 "+3.3V" H 3200 6710 30  0000 C CNN
+	1    3200 6600
+	-1   0    0    -1  
+$EndComp
+Text Label 4900 6400 0    60   ~ 0
+M_~CE
+Text Label 3550 6800 2    60   ~ 0
+A15
+$Comp
+L R1LP0108ESF-5SI U?
+U 1 1 51A7806B
+P 4250 6950
+F 0 "U?" H 4550 7850 60  0000 C CNN
+F 1 "R1LP0108ESF-5SI" H 4250 6050 60  0000 C CNN
+	1    4250 6950
+	1    0    0    -1  
+$EndComp
+Text Label 4150 2150 0    60   ~ 0
+C_A14
+Text Label 4150 2050 0    60   ~ 0
+C_A13
+Text Label 4150 1950 0    60   ~ 0
+C_A12
+Text Label 4150 1850 0    60   ~ 0
+C_A11
+Text Label 4150 1750 0    60   ~ 0
+C_A10
+Text Label 4150 1650 0    60   ~ 0
+C_A9
+Text Label 4150 1550 0    60   ~ 0
+C_A8
+Text Label 4150 1450 0    60   ~ 0
+C_A7
+Text Label 4150 1350 0    60   ~ 0
+C_A6
+Text Label 4150 1250 0    60   ~ 0
+C_A5
+Text Label 4150 1150 0    60   ~ 0
+C_A4
+Text Label 4150 1050 0    60   ~ 0
+C_A3
+Text Label 4150 950  0    60   ~ 0
+C_A2
+Text Label 4150 850  0    60   ~ 0
+C_A1
+Text Label 4150 750  0    60   ~ 0
+C_A0
 Text Label 12900 1450 0    60   ~ 0
 DIRTY
 Text Label 11950 2500 0    60   ~ 0
@@ -325,22 +364,12 @@ Text Label 1350 6500 2    60   ~ 0
 C_QCLK
 Text Label 1950 6500 0    60   ~ 0
 C_~CART
-Text Label 11950 5200 0    60   ~ 0
-C_~BUSEN
-Text Label 3650 4400 0    60   ~ 0
-M_~CE2
-Text Label 4850 7050 0    60   ~ 0
-M_~CE1
-Text Label 3650 3700 0    60   ~ 0
-M_~WE
-Text Label 4850 6350 0    60   ~ 0
+Text Label 3550 6600 2    60   ~ 0
 M_~WE
 Text Label 11950 3800 0    60   ~ 0
 LED3
-Text Label 10500 5800 3    60   ~ 0
-M_~CE2
 Text Label 10400 5800 3    60   ~ 0
-M_~CE1
+M_~CE
 Text Label 10700 5800 3    60   ~ 0
 M_~OE
 Text Label 10500 1700 1    60   ~ 0
@@ -421,196 +450,6 @@ Text Label 1200 3400 0    60   ~ 0
 C_A1
 Text Label 1200 3300 0    60   ~ 0
 C_A0
-Text Label 4650 2250 2    60   ~ 0
-C_A14
-Text Label 4650 2150 2    60   ~ 0
-C_A13
-Text Label 4650 2050 2    60   ~ 0
-C_A12
-Text Label 4650 1950 2    60   ~ 0
-C_A11
-Text Label 4650 1850 2    60   ~ 0
-C_A10
-Text Label 4650 1750 2    60   ~ 0
-C_A9
-Text Label 4650 1650 2    60   ~ 0
-C_A8
-Text Label 2400 2350 2    60   ~ 0
-C_A7
-Text Label 2400 2250 2    60   ~ 0
-C_A6
-Text Label 2400 2150 2    60   ~ 0
-C_A5
-Text Label 2400 2050 2    60   ~ 0
-C_A4
-Text Label 2400 1950 2    60   ~ 0
-C_A3
-Text Label 2400 1850 2    60   ~ 0
-C_A2
-Text Label 2400 1750 2    60   ~ 0
-C_A1
-Text Label 2400 1650 2    60   ~ 0
-C_A0
-Text Label 5850 2250 0    60   ~ 0
-A14
-Text Label 5850 2150 0    60   ~ 0
-A13
-Text Label 5850 2050 0    60   ~ 0
-A12
-Text Label 5850 1950 0    60   ~ 0
-A11
-Text Label 5850 1850 0    60   ~ 0
-A10
-Text Label 5850 1750 0    60   ~ 0
-A9
-Text Label 5850 1650 0    60   ~ 0
-A8
-Text Label 3600 2350 0    60   ~ 0
-A7
-Text Label 3600 2250 0    60   ~ 0
-A6
-Text Label 3600 2150 0    60   ~ 0
-A5
-Text Label 3600 2050 0    60   ~ 0
-A4
-Text Label 3600 1950 0    60   ~ 0
-A3
-Text Label 3600 1850 0    60   ~ 0
-A2
-Text Label 3600 1750 0    60   ~ 0
-A1
-Text Label 3600 1650 0    60   ~ 0
-A0
-Text Label 5850 2450 0    60   ~ 0
-C_~BUSEN
-Text Label 3600 2450 0    60   ~ 0
-C_~BUSEN
-$Comp
-L GND #PWR05
-U 1 1 519E5CD9
-P 2400 2550
-F 0 "#PWR05" H 2400 2550 30  0001 C CNN
-F 1 "GND" H 2400 2480 30  0001 C CNN
-	1    2400 2550
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR06
-U 1 1 519E5CD6
-P 4650 2550
-F 0 "#PWR06" H 4650 2550 30  0001 C CNN
-F 1 "GND" H 4650 2480 30  0001 C CNN
-	1    4650 2550
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74LVC164245 U3
-U 2 1 519E5CBA
-P 5250 2000
-F 0 "U3" H 5500 2550 60  0000 C CNN
-F 1 "74LVC164245" H 5250 1400 60  0000 C CNN
-	2    5250 2000
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C6
-U 1 1 519E5CB9
-P 5550 1100
-F 0 "C6" H 5600 1200 50  0000 L CNN
-F 1 "0.1uF" H 5600 1000 50  0000 L CNN
-	1    5550 1100
-	0    -1   -1   0   
-$EndComp
-$Comp
-L C C4
-U 1 1 519E5CB8
-P 4950 1100
-F 0 "C4" H 5000 1200 50  0000 L CNN
-F 1 "0.1uF" H 5000 1000 50  0000 L CNN
-	1    4950 1100
-	0    -1   -1   0   
-$EndComp
-$Comp
-L GND #PWR07
-U 1 1 519E5CB7
-P 5750 1150
-F 0 "#PWR07" H 5750 1150 30  0001 C CNN
-F 1 "GND" H 5750 1080 30  0001 C CNN
-	1    5750 1150
-	-1   0    0    -1  
-$EndComp
-$Comp
-L GND #PWR08
-U 1 1 519E5CB6
-P 4750 1150
-F 0 "#PWR08" H 4750 1150 30  0001 C CNN
-F 1 "GND" H 4750 1080 30  0001 C CNN
-	1    4750 1150
-	-1   0    0    -1  
-$EndComp
-$Comp
-L +3.3V #PWR09
-U 1 1 519E5CB5
-P 5250 1000
-F 0 "#PWR09" H 5250 960 30  0001 C CNN
-F 1 "+3.3V" H 5250 1110 30  0000 C CNN
-	1    5250 1000
-	-1   0    0    -1  
-$EndComp
-$Comp
-L +3.3V #PWR010
-U 1 1 519E5C9B
-P 3000 1000
-F 0 "#PWR010" H 3000 960 30  0001 C CNN
-F 1 "+3.3V" H 3000 1110 30  0000 C CNN
-	1    3000 1000
-	-1   0    0    -1  
-$EndComp
-$Comp
-L GND #PWR011
-U 1 1 519E5C84
-P 2500 1150
-F 0 "#PWR011" H 2500 1150 30  0001 C CNN
-F 1 "GND" H 2500 1080 30  0001 C CNN
-	1    2500 1150
-	-1   0    0    -1  
-$EndComp
-$Comp
-L GND #PWR012
-U 1 1 519E5C7D
-P 3500 1150
-F 0 "#PWR012" H 3500 1150 30  0001 C CNN
-F 1 "GND" H 3500 1080 30  0001 C CNN
-	1    3500 1150
-	-1   0    0    -1  
-$EndComp
-$Comp
-L C C1
-U 1 1 519E5C6F
-P 2700 1100
-F 0 "C1" H 2750 1200 50  0000 L CNN
-F 1 "0.1uF" H 2750 1000 50  0000 L CNN
-	1    2700 1100
-	0    -1   -1   0   
-$EndComp
-$Comp
-L C C3
-U 1 1 519E5C67
-P 3300 1100
-F 0 "C3" H 3350 1200 50  0000 L CNN
-F 1 "0.1uF" H 3350 1000 50  0000 L CNN
-	1    3300 1100
-	0    -1   -1   0   
-$EndComp
-$Comp
-L 74LVC164245 U3
-U 1 1 519E5C5A
-P 3000 2000
-F 0 "U3" H 3250 2550 60  0000 C CNN
-F 1 "74LVC164245" H 3000 1400 60  0000 C CNN
-	1    3000 2000
-	1    0    0    -1  
-$EndComp
 Text Label 11200 1700 1    60   ~ 0
 MOSI
 Text Label 11300 1700 1    60   ~ 0
@@ -647,128 +486,35 @@ F 1 "SPI" V 12500 1300 40  0000 C CNN
 $EndComp
 NoConn ~ 1200 2300
 NoConn ~ 1200 5300
-$Comp
-L CY62256N U4
-U 1 1 519E5B7B
-P 2950 4250
-F 0 "U4" H 3250 5050 60  0000 C CNN
-F 1 "CY62256N" H 2950 3500 60  0000 C CNN
-	1    2950 4250
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C5
-U 1 1 519E5B7A
-P 4350 4200
-F 0 "C5" H 4400 4300 50  0000 L CNN
-F 1 "0.1uF" H 4400 4100 50  0000 L CNN
-	1    4350 4200
-	1    0    0    -1  
-$EndComp
-$Comp
-L +5V #PWR014
-U 1 1 519E5B79
-P 4350 4000
-F 0 "#PWR014" H 4350 4090 20  0001 C CNN
-F 1 "+5V" H 4350 4090 30  0000 C CNN
-	1    4350 4000
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR015
-U 1 1 519E5B78
-P 4350 4400
-F 0 "#PWR015" H 4350 4400 30  0001 C CNN
-F 1 "GND" H 4350 4330 30  0001 C CNN
-	1    4350 4400
-	1    0    0    -1  
-$EndComp
-Text Label 2250 4600 2    60   ~ 0
-M_D0
-Text Label 2250 4700 2    60   ~ 0
-M_D1
-Text Label 2250 4800 2    60   ~ 0
-M_D2
-Text Label 3650 4900 0    60   ~ 0
-M_D3
-Text Label 3650 4800 0    60   ~ 0
-M_D4
-Text Label 3650 4700 0    60   ~ 0
-M_D5
-Text Label 3650 4600 0    60   ~ 0
-M_D6
-Text Label 3650 4500 0    60   ~ 0
-M_D7
-$Comp
-L +5V #PWR016
-U 1 1 519E5B77
-P 3650 3600
-F 0 "#PWR016" H 3650 3690 20  0001 C CNN
-F 1 "+5V" H 3650 3690 30  0000 C CNN
-	1    3650 3600
-	1    0    0    -1  
-$EndComp
-Text Label 3650 4200 0    60   ~ 0
-M_~OE
-Text Label 3650 4300 0    60   ~ 0
-A0
-Text Label 3650 4100 0    60   ~ 0
-A1
-Text Label 3650 4000 0    60   ~ 0
-A2
-Text Label 3650 3900 0    60   ~ 0
-A3
-Text Label 3650 3800 0    60   ~ 0
-A4
-Text Label 2250 3600 2    60   ~ 0
-A5
-Text Label 2250 3700 2    60   ~ 0
-A6
-Text Label 2250 3800 2    60   ~ 0
-A7
-Text Label 2250 3900 2    60   ~ 0
-A8
-Text Label 2250 4000 2    60   ~ 0
-A9
-Text Label 2250 4100 2    60   ~ 0
-A10
-Text Label 2250 4200 2    60   ~ 0
-A11
-Text Label 2250 4300 2    60   ~ 0
-A12
-Text Label 2250 4400 2    60   ~ 0
-A13
-Text Label 2250 4500 2    60   ~ 0
+Text Label 3550 7200 2    60   ~ 0
 A14
-Text Label 3450 7150 2    60   ~ 0
-A14
-Text Label 3450 7050 2    60   ~ 0
+Text Label 3550 6500 2    60   ~ 0
 A13
-Text Label 3450 6950 2    60   ~ 0
+Text Label 3550 7300 2    60   ~ 0
 A12
-Text Label 3450 6850 2    60   ~ 0
+Text Label 3550 6200 2    60   ~ 0
 A11
-Text Label 3450 6750 2    60   ~ 0
+Text Label 4900 6300 0    60   ~ 0
 A10
-Text Label 3450 6650 2    60   ~ 0
+Text Label 3550 6300 2    60   ~ 0
 A9
-Text Label 3450 6550 2    60   ~ 0
+Text Label 3550 6400 2    60   ~ 0
 A8
-Text Label 3450 6450 2    60   ~ 0
+Text Label 3550 7400 2    60   ~ 0
 A7
-Text Label 3450 6350 2    60   ~ 0
+Text Label 3550 7500 2    60   ~ 0
 A6
-Text Label 3450 6250 2    60   ~ 0
+Text Label 3550 7600 2    60   ~ 0
 A5
-Text Label 4850 6450 0    60   ~ 0
+Text Label 3550 7700 2    60   ~ 0
 A4
-Text Label 4850 6550 0    60   ~ 0
+Text Label 4900 7700 0    60   ~ 0
 A3
-Text Label 4850 6650 0    60   ~ 0
+Text Label 4900 7600 0    60   ~ 0
 A2
-Text Label 4850 6750 0    60   ~ 0
+Text Label 4900 7500 0    60   ~ 0
 A1
-Text Label 4850 6950 0    60   ~ 0
+Text Label 4900 7400 0    60   ~ 0
 A0
 Text Label 8000 7000 0    60   ~ 0
 LED3
@@ -1133,32 +879,23 @@ F 1 "150" H 7800 7000 40  0000 C CNN
 	1    7800 7050
 	-1   0    0    -1  
 $EndComp
-Text Label 4850 6850 0    60   ~ 0
+Text Label 4900 6200 0    60   ~ 0
 M_~OE
-$Comp
-L +5V #PWR033
-U 1 1 5185B5F1
-P 4850 6250
-F 0 "#PWR033" H 4850 6340 20  0001 C CNN
-F 1 "+5V" H 4850 6340 30  0000 C CNN
-	1    4850 6250
-	1    0    0    -1  
-$EndComp
-Text Label 4850 7150 0    60   ~ 0
+Text Label 4900 6500 0    60   ~ 0
 M_D7
-Text Label 4850 7250 0    60   ~ 0
+Text Label 4900 6600 0    60   ~ 0
 M_D6
-Text Label 4850 7350 0    60   ~ 0
+Text Label 4900 6700 0    60   ~ 0
 M_D5
-Text Label 4850 7450 0    60   ~ 0
+Text Label 4900 6800 0    60   ~ 0
 M_D4
-Text Label 4850 7550 0    60   ~ 0
+Text Label 4900 6900 0    60   ~ 0
 M_D3
-Text Label 3450 7450 2    60   ~ 0
+Text Label 4900 7100 0    60   ~ 0
 M_D2
-Text Label 3450 7350 2    60   ~ 0
+Text Label 4900 7200 0    60   ~ 0
 M_D1
-Text Label 3450 7250 2    60   ~ 0
+Text Label 4900 7300 0    60   ~ 0
 M_D0
 $Comp
 L GND #PWR034
@@ -1170,30 +907,12 @@ F 1 "GND" H 5550 7030 30  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR035
-U 1 1 51846E19
-P 5550 6700
-F 0 "#PWR035" H 5550 6790 20  0001 C CNN
-F 1 "+5V" H 5550 6790 30  0000 C CNN
-	1    5550 6700
-	1    0    0    -1  
-$EndComp
-$Comp
 L C C2
 U 1 1 51846E14
 P 5550 6900
 F 0 "C2" H 5600 7000 50  0000 L CNN
 F 1 "0.1uF" H 5600 6800 50  0000 L CNN
 	1    5550 6900
-	1    0    0    -1  
-$EndComp
-$Comp
-L CY62256N U2
-U 1 1 51846D78
-P 4150 6900
-F 0 "U2" H 4450 7700 60  0000 C CNN
-F 1 "CY62256N" H 4150 6150 60  0000 C CNN
-	1    4150 6900
 	1    0    0    -1  
 $EndComp
 $Comp

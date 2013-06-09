@@ -3,16 +3,16 @@
 #include <avr/io.h>
 
 void takeBus() {
-	digitalWrite(10, LOW);
+/*	digitalWrite(10, LOW);
 	SPI.transfer(0x04);
 	while (SPI.transfer(0xff));
-	digitalWrite(10, HIGH);
+	digitalWrite(10, HIGH);*/
 }
 
 void giveBus() {
-	digitalWrite(10, LOW);
+/*	digitalWrite(10, LOW);
 	SPI.transfer(0x05);
-	digitalWrite(10, HIGH);	
+	digitalWrite(10, HIGH);	*/
 }
 
 void setAddress(uint16_t addr) {
@@ -38,6 +38,9 @@ void readRegisters() {
 		setAddress(0x7f40 + i);  // maps to 0xff40 in register space
 		reg[i] = readData();
 	}
+	
+	digitalWrite(3, reg[0] < 0x80);
+	 
 	giveBus();
 }
 
@@ -58,5 +61,8 @@ void setData(uint8_t b) {
 	digitalWrite(10, HIGH);
 }
 
-
-
+void nopSPI() {
+	digitalWrite(10, LOW);
+	SPI.transfer(0xee);
+	digitalWrite(10, HIGH);
+}
