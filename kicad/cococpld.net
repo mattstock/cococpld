@@ -1,6 +1,10 @@
-# EESchema Netlist Version 1.1 created  6/9/2013 7:10:08 AM
+# EESchema Netlist Version 1.1 created  6/9/2013 4:50:35 PM
 (
- ( /51B3FE3C $noname  U1 TLV1117-33 {Lib=TLV1117-33}
+ ( /51B4E489 $noname  C3 0.1uF {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
+ )
+ ( /51B3FE3C $noname  U4 TLV1117-33 {Lib=TLV1117-33}
   (    1 GND )
   (    2 +3.3V )
   (    3 +5V )
@@ -10,26 +14,26 @@
   (    1 +3.3V )
   (    2 +5V )
  )
- ( /51A7806B $noname  U2 R1LP0108ESF-5SI {Lib=R1LP0108ESF-5SI}
-  (    1 /A11 )
-  (    2 /A9 )
-  (    3 /A8 )
-  (    4 /A13 )
+ ( /51A7806B $noname  U1 R1LP0108ESF-5SI {Lib=R1LP0108ESF-5SI}
+  (    1 /M_A11 )
+  (    2 /M_A9 )
+  (    3 /M_A8 )
+  (    4 /M_A13 )
   (    5 /M_~WE )
   (    6 +3.3V )
-  (    7 /A15 )
+  (    7 /M_A15 )
   (    8 +3.3V )
   (   10 +3.3V )
-  (   11 /A14 )
-  (   12 /A12 )
-  (   13 /A7 )
-  (   14 /A6 )
-  (   15 /A5 )
-  (   16 /A4 )
-  (   17 /A3 )
-  (   18 /A2 )
-  (   19 /A1 )
-  (   20 /A0 )
+  (   11 /M_A14 )
+  (   12 /M_A12 )
+  (   13 /M_A7 )
+  (   14 /M_A6 )
+  (   15 /M_A5 )
+  (   16 /M_A4 )
+  (   17 /M_A3 )
+  (   18 /M_A2 )
+  (   19 /M_A1 )
+  (   20 /M_A0 )
   (   21 /M_D0 )
   (   22 /M_D1 )
   (   23 /M_D2 )
@@ -40,14 +44,14 @@
   (   28 /M_D6 )
   (   29 /M_D7 )
   (   30 /M_~CE )
-  (   31 /A10 )
+  (   31 /M_A10 )
   (   32 /M_~OE )
  )
- ( /519EA6DA $noname  C14 0.1uF {Lib=C}
+ ( /519EA6DA $noname  C6 0.1uF {Lib=C}
   (    1 +3.3V )
   (    2 GND )
  )
- ( /519EA6D5 $noname  U6 50.00MHz {Lib=OSC}
+ ( /519EA6D5 $noname  U3 50.00MHz {Lib=OSC}
   (    1 ? )
   (    2 GND )
   (    3 /CLOCK_50 )
@@ -57,7 +61,7 @@
   (    1 /C_QCLK )
   (    2 /C_~CART )
  )
- ( /519E5BCB $noname  P2 SPI {Lib=CONN_4X2}
+ ( /519E5BCB $noname  P6 SPI {Lib=CONN_4X2}
   (    1 /MISO )
   (    2 +5V )
   (    3 /SCLK )
@@ -67,11 +71,11 @@
   (    7 /~SS )
   (    8 /DIRTY )
  )
- ( /519E5948 $noname  C7 0.1uF {Lib=C}
+ ( /519E5948 $noname  C5 0.1uF {Lib=C}
   (    1 +3.3V )
   (    2 GND )
  )
- ( /519E593F $noname  P3 JTAG {Lib=CONN_5X2}
+ ( /519E593F $noname  P7 JTAG {Lib=CONN_5X2}
   (    1 /TCK )
   (    2 GND )
   (    3 /TDO )
@@ -83,104 +87,129 @@
   (    9 /TDI )
   (   10 GND )
  )
- ( /519E593E $noname  U5 EPM3256A-TQFP144 {Lib=EPM3128A-TQFP144}
+ ( /519E593E $noname  U2 EPM3256A-TQFP144 {Lib=EPM3256A-TQFP144}
+  (    1 ? )
+  (    2 ? )
   (    3 GND )
   (    4 /TDI )
-  (    5 /C_ECLK )
+  (    5 /MOSI )
   (    6 ? )
-  (    7 ? )
-  (    8 /A14 )
+  (    7 /C_~NMI )
+  (    8 ? )
   (    9 ? )
   (   10 ? )
-  (   11 ? )
+  (   11 /C_A13 )
+  (   12 /C_ECLK )
   (   13 GND )
   (   14 ? )
-  (   15 /A10 )
-  (   16 /C_R/~W )
+  (   15 ? )
+  (   16 /M_A10 )
   (   17 GND )
-  (   18 /C_~RESET )
+  (   18 /M_A11 )
+  (   19 /C_~SLENB )
   (   20 /TMS )
-  (   21 /C_D7 )
-  (   22 /C_D6 )
-  (   23 /C_~HALT )
+  (   21 /C_D2 )
+  (   22 /C_D0 )
+  (   23 /C_D1 )
   (   24 +3.3V )
-  (   25 /C_~NMI )
+  (   25 /M_D1 )
   (   26 GND )
-  (   27 /C_~SCS )
-  (   28 /C_D2 )
-  (   29 /A8 )
-  (   30 /C_~CTS )
-  (   31 /A9 )
-  (   32 /C_~SLENB )
+  (   27 /M_D2 )
+  (   28 /M_A9 )
+  (   29 /C_A8 )
+  (   30 ? )
+  (   31 /C_D6 )
+  (   32 /M_~WE )
   (   33 GND )
-  (   37 /A0 )
-  (   38 /M_D7 )
+  (   34 /M_A14 )
+  (   35 /M_A15 )
+  (   36 /C_D7 )
+  (   37 /C_A14 )
+  (   38 /~SS )
   (   39 ? )
-  (   40 /C_D5 )
-  (   41 /A6 )
+  (   40 /C_A3 )
+  (   41 /MISO )
   (   42 ? )
-  (   44 /A15 )
-  (   45 /A5 )
+  (   43 ? )
+  (   44 ? )
+  (   45 /C_A4 )
+  (   46 /M_D0 )
+  (   47 ? )
+  (   48 /M_~OE )
+  (   49 /M_A1 )
+  (   50 +3.3V )
   (   51 +3.3V )
-  (   52 GND )
-  (   53 ? )
-  (   54 ? )
-  (   55 /M_D6 )
-  (   56 ? )
-  (   57 GND )
+  (   52 ? )
+  (   53 /M_A0 )
+  (   54 /LED0 )
+  (   55 ? )
+  (   56 /M_A3 )
+  (   57 ? )
   (   58 +3.3V )
   (   59 GND )
   (   60 ? )
   (   61 ? )
-  (   62 /M_~CE )
-  (   63 ? )
+  (   62 /M_A7 )
+  (   63 /M_A4 )
   (   64 GND )
-  (   65 /M_~OE )
+  (   65 /C_A0 )
+  (   66 ? )
   (   67 ? )
   (   68 ? )
   (   69 ? )
-  (   70 /C_D4 )
+  (   70 ? )
   (   71 ? )
-  (   72 /M_D0 )
+  (   72 /C_A10 )
+  (   73 +3.3V )
   (   74 ? )
+  (   75 /C_~SCS )
+  (   76 +3.3V )
   (   77 GND )
-  (   78 /A2 )
-  (   79 ? )
-  (   80 ? )
-  (   81 /C_D3 )
-  (   82 /A7 )
-  (   83 ? )
-  (   84 ? )
+  (   78 ? )
+  (   79 /C_R/~W )
+  (   80 /SCLK )
+  (   81 /C_A1 )
+  (   82 ? )
+  (   83 /C_~RESET )
+  (   84 /C_A12 )
   (   85 GND )
   (   86 ? )
-  (   87 /A1 )
-  (   88 ? )
+  (   87 /M_A6 )
+  (   88 /M_A5 )
   (   89 /TCK )
-  (   91 /LED3 )
-  (   92 /LED2 )
-  (   93 /LED1 )
+  (   90 ? )
+  (   91 /C_A9 )
+  (   92 /M_D6 )
+  (   93 ? )
   (   94 GND )
-  (   96 /LED0 )
-  (   97 ? )
+  (   95 +3.3V )
+  (   96 /M_D7 )
+  (   97 /C_A2 )
   (   98 ? )
-  (   99 /A3 )
-  (  100 ? )
-  (  101 /A4 )
+  (   99 /M_A2 )
+  (  100 /M_~CE )
+  (  101 ? )
   (  102 ? )
+  (  103 /C_~CTS )
   (  104 /TDO )
   (  105 GND )
-  (  106 /DIRTY )
-  (  107 /M_D2 )
-  (  109 /MISO )
-  (  110 /SCLK )
-  (  111 /MOSI )
-  (  112 /~SS )
-  (  113 /M_D3 )
+  (  106 ? )
+  (  107 /DIRTY )
+  (  108 ? )
+  (  109 ? )
+  (  110 ? )
+  (  111 ? )
+  (  112 /C_A6 )
+  (  113 /C_A5 )
   (  114 GND )
-  (  116 /M_D4 )
-  (  117 /M_D5 )
-  (  118 /M_D1 )
-  (  119 /M_~WE )
+  (  115 +3.3V )
+  (  116 /M_D5 )
+  (  117 /C_D5 )
+  (  118 /M_D4 )
+  (  119 ? )
+  (  120 /M_D3 )
+  (  121 /C_D4 )
+  (  122 /C_D3 )
   (  123 +3.3V )
   (  124 GND )
   (  125 /CLOCK_50 )
@@ -189,33 +218,34 @@
   (  128 ? )
   (  129 GND )
   (  130 +3.3V )
-  (  131 ? )
-  (  132 ? )
+  (  131 /C_A7 )
+  (  132 /C_A11 )
   (  133 ? )
-  (  134 ? )
+  (  134 /M_A8 )
   (  135 GND )
-  (  136 ? )
-  (  137 ? )
-  (  138 /A12 )
-  (  139 /A13 )
-  (  140 ? )
-  (  141 /C_D1 )
-  (  142 /A11 )
-  (  143 /C_D0 )
+  (  136 /C_~HALT )
+  (  137 /M_A13 )
+  (  138 /M_A12 )
+  (  139 /LED1 )
+  (  140 /LED2 )
+  (  141 /LED3 )
+  (  142 ? )
+  (  143 ? )
+  (  144 +3.3V )
  )
- ( /519E593B $noname  C10 0.1uF {Lib=C}
+ ( /519E593B $noname  C2 0.1uF {Lib=C}
   (    1 +3.3V )
   (    2 GND )
  )
- ( /519E5937 $noname  C11 0.1uF {Lib=C}
+ ( /519E5937 $noname  C4 0.1uF {Lib=C}
   (    1 GND )
   (    2 +3.3V )
  )
  ( /519E5936 $noname  D4 S3 {Lib=LED}
-  (    1 N-000079 )
+  (    1 N-000076 )
   (    2 GND )
  )
- ( /519E5932 $noname  P1 COCOBUS {Lib=COCOBUS}
+ ( /519E5932 $noname  P3 COCOBUS {Lib=COCOBUS}
   (    1 ? )
   (    2 ? )
   (    3 /C_~HALT )
@@ -234,39 +264,39 @@
   (   16 /C_D6 )
   (   17 /C_D7 )
   (   18 /C_R/~W )
-  (   19 /A0 )
-  (   20 /A1 )
-  (   21 /A2 )
-  (   22 /A3 )
-  (   23 /A4 )
-  (   24 /A5 )
-  (   25 /A6 )
-  (   26 /A7 )
-  (   27 /A8 )
-  (   28 /A9 )
-  (   29 /A10 )
-  (   30 /A11 )
-  (   31 /A12 )
+  (   19 /C_A0 )
+  (   20 /C_A1 )
+  (   21 /C_A2 )
+  (   22 /C_A3 )
+  (   23 /C_A4 )
+  (   24 /C_A5 )
+  (   25 /C_A6 )
+  (   26 /C_A7 )
+  (   27 /C_A8 )
+  (   28 /C_A9 )
+  (   29 /C_A10 )
+  (   30 /C_A11 )
+  (   31 /C_A12 )
   (   32 /C_~CTS )
   (   33 GND )
   (   34 GND )
   (   35 ? )
   (   36 /C_~SCS )
-  (   37 /A13 )
-  (   38 /A14 )
+  (   37 /C_A13 )
+  (   38 /C_A14 )
   (   39 ? )
   (   40 /C_~SLENB )
  )
  ( /519E592E $noname  D2 S1 {Lib=LED}
-  (    1 N-000067 )
+  (    1 N-000073 )
   (    2 GND )
  )
  ( /519E592C $noname  D1 S0 {Lib=LED}
-  (    1 N-000066 )
+  (    1 N-000070 )
   (    2 GND )
  )
  ( /519E592B $noname  D3 S2 {Lib=LED}
-  (    1 N-000065 )
+  (    1 N-000072 )
   (    2 GND )
  )
  ( /519E592A $noname  RP1 150 {Lib=R_PACK4}
@@ -274,61 +304,66 @@
   (    2 /LED1 )
   (    3 /LED2 )
   (    4 /LED3 )
-  (    5 N-000079 )
-  (    6 N-000065 )
-  (    7 N-000067 )
-  (    8 N-000066 )
+  (    5 N-000076 )
+  (    6 N-000072 )
+  (    7 N-000073 )
+  (    8 N-000070 )
  )
- ( /51846E14 $noname  C2 0.1uF {Lib=C}
+ ( /51846E14 $noname  C1 0.1uF {Lib=C}
   (    1 +3.3V )
   (    2 GND )
  )
- ( /5170326F $noname  C8 10uF {Lib=CP1}
+ ( /5170326F $noname  C7 10uF {Lib=CP1}
   (    1 +5V )
   (    2 GND )
  )
- ( /51703267 $noname  C9 100uF {Lib=CP1}
+ ( /51703267 $noname  C8 100uF {Lib=CP1}
   (    1 +3.3V )
   (    2 GND )
  )
- ( /513F722E $noname  P7 TST {Lib=TST}
+ ( /513F722E $noname  P4 TST {Lib=TST}
   (    1 GND )
  )
- ( /513F722B $noname  P5 TST {Lib=TST}
+ ( /513F722B $noname  P1 TST {Lib=TST}
   (    1 GND )
  )
- ( /513F7227 $noname  P6 TST {Lib=TST}
+ ( /513F7227 $noname  P5 TST {Lib=TST}
   (    1 GND )
  )
- ( /513F7224 $noname  P4 TST {Lib=TST}
+ ( /513F7224 $noname  P2 TST {Lib=TST}
   (    1 GND )
  )
 )
 *
 { Allowed footprints by component:
+$component C3
+ SM*
+ C?
+ C1-1
+$endlist
 $component D5
  D?
  S*
 $endlist
-$component C14
+$component C6
  SM*
  C?
  C1-1
 $endlist
-$component C7
+$component C5
  SM*
  C?
  C1-1
 $endlist
-$component U5
+$component U2
  TQFP
 $endlist
-$component C10
+$component C2
  SM*
  C?
  C1-1
 $endlist
-$component C11
+$component C4
  SM*
  C?
  C1-1
@@ -369,293 +404,329 @@ $component D3
  LED-1206
  LEDV
 $endlist
-$component C2
+$component C1
  SM*
  C?
  C1-1
 $endlist
-$component C8
+$component C7
  CP*
  SM*
 $endlist
-$component C9
+$component C8
  CP*
  SM*
 $endlist
 $endfootprintlist
 }
 { Pin List by Nets
-Net 1 "/MOSI" "MOSI"
- P2 4
- U5 111
-Net 7 "/C_D1" "C_D1"
- P1 11
- U5 141
-Net 12 "/C_D2" "C_D2"
- U5 28
- P1 12
-Net 19 "+3.3V" "+3.3V"
- U2 6
- U2 8
- U2 10
- U5 51
- C11 2
- U5 24
- C2 1
- C9 1
- U1 2
- D5 1
- P3 4
- C10 1
- C7 1
- U5 58
- U5 123
- C14 1
- U5 130
- U6 4
-Net 20 "/C_D0" "C_D0"
- U5 143
- P1 10
-Net 22 "/CLOCK_50" "CLOCK_50"
- U5 125
- U6 3
-Net 25 "/~RESET" "~RESET"
- U5 127
- P2 5
-Net 27 "/C_~CTS" "C_~CTS"
- P1 32
- U5 30
-Net 28 "/C_D5" "C_D5"
- P1 15
- U5 40
-Net 32 "/C_D7" "C_D7"
- P1 17
- U5 21
-Net 36 "/C_D3" "C_D3"
- P1 13
- U5 81
-Net 37 "/C_D6" "C_D6"
- P1 16
- U5 22
-Net 38 "/C_~SLENB" "C_~SLENB"
- P1 40
- U5 32
-Net 39 "/TDO" "TDO"
- U5 104
- P3 3
-Net 40 "/TMS" "TMS"
- P3 5
- U5 20
-Net 44 "/TDI" "TDI"
- P3 9
- U5 4
-Net 51 "/C_R/~W" "C_R/~W"
- U5 16
- P1 18
-Net 54 "/C_~SCS" "C_~SCS"
- U5 27
- P1 36
-Net 59 "/A15" "A15"
- U2 7
- U5 44
-Net 61 "/LED0" "LED0"
+Net 4 "/C_A14" "C_A14"
+ U2 37
+ P3 38
+Net 7 "/C_A4" "C_A4"
+ P3 23
+ U2 45
+Net 9 "/LED0" "LED0"
  RP1 1
- U5 96
-Net 62 "/LED1" "LED1"
- U5 93
- RP1 2
-Net 63 "/LED2" "LED2"
- U5 92
- RP1 3
-Net 64 "/LED3" "LED3"
- U5 91
- RP1 4
-Net 65 "" ""
- D3 1
- RP1 6
-Net 66 "" ""
- RP1 8
- D1 1
-Net 67 "" ""
- RP1 7
- D2 1
-Net 68 "+5V" "+5V"
- U1 3
- D5 2
- P2 2
- C8 1
-Net 69 "/A4" "A4"
- P1 23
- U5 101
- U2 16
-Net 70 "/A2" "A2"
- P1 21
- U2 18
- U5 78
-Net 71 "/A12" "A12"
- U5 138
- U2 12
- P1 31
-Net 72 "/A3" "A3"
- U2 17
- U5 99
- P1 22
-Net 73 "/A11" "A11"
- U5 142
- U2 1
- P1 30
-Net 74 "/C_D4" "C_D4"
- U5 70
- P1 14
-Net 75 "/A5" "A5"
- U2 15
- P1 24
- U5 45
-Net 76 "/A6" "A6"
- U5 41
- P1 25
- U2 14
-Net 78 "/C_~NMI" "C_~NMI"
- U5 25
- P1 4
-Net 79 "" ""
- RP1 5
- D4 1
-Net 82 "/C_~HALT" "C_~HALT"
- U5 23
- P1 3
-Net 83 "/A7" "A7"
- U5 82
- P1 26
- U2 13
-Net 84 "/C_~RESET" "C_~RESET"
- U5 18
- P1 5
-Net 85 "/C_ECLK" "C_ECLK"
- U5 5
- P1 6
-Net 86 "/C_QCLK" "C_QCLK"
- JP1 1
- P1 7
-Net 87 "/C_~CART" "C_~CART"
- P1 8
- JP1 2
-Net 89 "/A1" "A1"
- U5 87
+ U2 54
+Net 11 "/C_A12" "C_A12"
+ P3 31
+ U2 84
+Net 15 "/C_~SCS" "C_~SCS"
+ P3 36
+ U2 75
+Net 16 "/C_A5" "C_A5"
+ P3 24
+ U2 113
+Net 17 "/C_A7" "C_A7"
+ P3 26
+ U2 131
+Net 19 "/C_A6" "C_A6"
+ P3 25
+ U2 112
+Net 20 "/C_A11" "C_A11"
+ P3 30
+ U2 132
+Net 22 "/C_~CTS" "C_~CTS"
+ P3 32
+ U2 103
+Net 26 "/TDO" "TDO"
+ P7 3
+ U2 104
+Net 29 "/C_~SLENB" "C_~SLENB"
+ P3 40
  U2 19
- P1 20
-Net 90 "/A10" "A10"
- U5 15
- U2 31
- P1 29
-Net 91 "/A8" "A8"
- U2 3
- P1 27
- U5 29
-Net 92 "/A13" "A13"
- U5 139
- P1 37
- U2 4
-Net 93 "/A9" "A9"
- U2 2
- P1 28
- U5 31
-Net 94 "/A14" "A14"
- U5 8
- P1 38
- U2 11
-Net 95 "/A0" "A0"
- U5 37
- P1 19
- U2 20
-Net 96 "/TCK" "TCK"
- P3 1
- U5 89
-Net 99 "/M_~WE" "M_~WE"
- U2 5
- U5 119
-Net 100 "/M_~CE" "M_~CE"
- U2 30
- U5 62
-Net 101 "/M_D0" "M_D0"
- U5 72
- U2 21
-Net 102 "GND" "GND"
- P2 6
+Net 30 "/C_A8" "C_A8"
+ U2 29
+ P3 27
+Net 32 "/M_A1" "M_A1"
+ U1 19
+ U2 49
+Net 34 "/TCK" "TCK"
  P7 1
- P5 1
- P6 1
- P4 1
- C10 2
- U5 85
- U5 77
- U5 13
- U6 2
- U5 33
+ U2 89
+Net 35 "/M_A2" "M_A2"
+ U1 18
+ U2 99
+Net 36 "/M_~CE" "M_~CE"
+ U1 30
+ U2 100
+Net 38 "/LED2" "LED2"
+ U2 140
+ RP1 3
+Net 40 "GND" "GND"
+ P2 1
  D1 2
  D3 2
  D2 2
- U2 24
- C14 2
- U5 57
- U5 52
- U5 59
+ U4 1
+ P6 6
  C7 2
- U5 129
- P3 10
- P1 34
- P1 33
- U5 64
- U5 26
- C9 2
- C8 2
+ U2 135
+ C1 2
  C2 2
- U5 17
- P3 2
- U5 94
- U5 3
- U1 1
+ C4 1
  D4 2
- C11 1
- U5 124
- U5 105
- U5 114
- U5 135
-Net 103 "/~SS" "~SS"
- U5 112
- P2 7
-Net 104 "/DIRTY" "DIRTY"
- U5 106
- P2 8
-Net 105 "/MISO" "MISO"
- U5 109
- P2 1
-Net 106 "/SCLK" "SCLK"
- U5 110
- P2 3
-Net 107 "/M_D7" "M_D7"
- U5 38
- U2 29
-Net 109 "/M_D6" "M_D6"
- U5 55
- U2 28
-Net 110 "/M_D1" "M_D1"
- U2 22
- U5 118
-Net 111 "/M_~OE" "M_~OE"
- U5 65
- U2 32
-Net 112 "/M_D2" "M_D2"
- U5 107
- U2 23
-Net 113 "/M_D3" "M_D3"
- U5 113
- U2 25
-Net 114 "/M_D4" "M_D4"
+ C8 2
+ P4 1
+ P1 1
+ P5 1
+ P7 2
+ C6 2
+ U2 59
+ P7 10
+ U2 3
+ U3 2
+ C5 2
+ U2 85
+ U2 77
+ U2 64
+ U2 94
  U2 26
- U5 116
-Net 115 "/M_D5" "M_D5"
+ U2 114
+ U2 124
+ P3 34
+ U2 33
+ U2 13
+ U2 17
+ U1 24
+ C3 2
+ U2 129
+ U2 105
+ P3 33
+Net 46 "/TDI" "TDI"
+ U2 4
+ P7 9
+Net 50 "+3.3V" "+3.3V"
+ C3 1
+ D5 1
+ U4 2
+ U2 24
+ U2 115
+ U3 4
+ C4 2
+ C2 1
+ C8 1
+ C1 1
+ U2 73
+ U2 50
+ U1 10
+ U2 51
+ P7 4
+ U2 95
+ C6 1
+ U2 123
+ U2 144
+ U1 6
+ U2 76
+ U2 130
+ U1 8
+ C5 1
+ U2 58
+Net 54 "/C_A10" "C_A10"
+ P3 29
+ U2 72
+Net 57 "/M_A0" "M_A0"
+ U1 20
+ U2 53
+Net 60 "/TMS" "TMS"
+ U2 20
+ P7 5
+Net 65 "/C_A13" "C_A13"
+ U2 11
+ P3 37
+Net 68 "/C_A9" "C_A9"
+ U2 91
+ P3 28
+Net 70 "" ""
+ D1 1
+ RP1 8
+Net 71 "/LED3" "LED3"
+ U2 141
+ RP1 4
+Net 72 "" ""
+ D3 1
+ RP1 6
+Net 73 "" ""
+ RP1 7
+ D2 1
+Net 74 "+5V" "+5V"
+ D5 2
+ P6 2
+ U4 3
+ C7 1
+Net 75 "/LED1" "LED1"
+ RP1 2
+ U2 139
+Net 76 "" ""
+ RP1 5
+ D4 1
+Net 79 "/~RESET" "~RESET"
+ U2 127
+ P6 5
+Net 80 "/CLOCK_50" "CLOCK_50"
+ U2 125
+ U3 3
+Net 83 "/DIRTY" "DIRTY"
+ U2 107
+ P6 8
+Net 84 "/C_~HALT" "C_~HALT"
+ P3 3
+ U2 136
+Net 89 "/C_D7" "C_D7"
+ P3 17
+ U2 36
+Net 90 "/C_D4" "C_D4"
+ U2 121
+ P3 14
+Net 91 "/C_D5" "C_D5"
+ P3 15
+ U2 117
+Net 92 "/C_D6" "C_D6"
+ U2 31
+ P3 16
+Net 93 "/C_R/~W" "C_R/~W"
+ U2 79
+ P3 18
+Net 94 "/C_A0" "C_A0"
+ P3 19
+ U2 65
+Net 96 "/C_~NMI" "C_~NMI"
+ P3 4
+ U2 7
+Net 97 "/C_~RESET" "C_~RESET"
+ P3 5
+ U2 83
+Net 98 "/C_ECLK" "C_ECLK"
+ P3 6
+ U2 12
+Net 99 "/C_QCLK" "C_QCLK"
+ P3 7
+ JP1 1
+Net 100 "/C_~CART" "C_~CART"
+ JP1 2
+ P3 8
+Net 102 "/C_D0" "C_D0"
+ U2 22
+ P3 10
+Net 103 "/C_A1" "C_A1"
+ U2 81
+ P3 20
+Net 104 "/C_D1" "C_D1"
+ U2 23
+ P3 11
+Net 105 "/C_A2" "C_A2"
+ U2 97
+ P3 21
+Net 106 "/C_D2" "C_D2"
+ U2 21
+ P3 12
+Net 107 "/C_A3" "C_A3"
+ U2 40
+ P3 22
+Net 108 "/C_D3" "C_D3"
+ U2 122
+ P3 13
+Net 109 "/M_A4" "M_A4"
+ U1 16
+ U2 63
+Net 110 "/M_D4" "M_D4"
+ U2 118
+ U1 26
+Net 111 "/M_A3" "M_A3"
+ U2 56
+ U1 17
+Net 112 "/M_D5" "M_D5"
+ U1 27
+ U2 116
+Net 113 "/M_D6" "M_D6"
+ U2 92
+ U1 28
+Net 114 "/M_D7" "M_D7"
+ U2 96
+ U1 29
+Net 115 "/M_D3" "M_D3"
+ U2 120
+ U1 25
+Net 117 "/M_A12" "M_A12"
+ U1 12
+ U2 138
+Net 118 "/M_A15" "M_A15"
+ U1 7
+ U2 35
+Net 119 "/M_A14" "M_A14"
+ U1 11
+ U2 34
+Net 120 "/M_D0" "M_D0"
+ U1 21
+ U2 46
+Net 121 "/M_A10" "M_A10"
+ U1 31
+ U2 16
+Net 122 "/M_D1" "M_D1"
+ U1 22
+ U2 25
+Net 123 "/M_~OE" "M_~OE"
+ U1 32
+ U2 48
+Net 124 "/M_A7" "M_A7"
+ U1 13
+ U2 62
+Net 125 "/M_D2" "M_D2"
  U2 27
- U5 117
+ U1 23
+Net 126 "/M_A6" "M_A6"
+ U2 87
+ U1 14
+Net 127 "/M_A5" "M_A5"
+ U2 88
+ U1 15
+Net 128 "/MISO" "MISO"
+ U2 41
+ P6 1
+Net 129 "/SCLK" "SCLK"
+ U2 80
+ P6 3
+Net 130 "/MOSI" "MOSI"
+ U2 5
+ P6 4
+Net 131 "/~SS" "~SS"
+ P6 7
+ U2 38
+Net 132 "/M_~WE" "M_~WE"
+ U1 5
+ U2 32
+Net 134 "/M_A11" "M_A11"
+ U1 1
+ U2 18
+Net 135 "/M_A9" "M_A9"
+ U1 2
+ U2 28
+Net 136 "/M_A8" "M_A8"
+ U2 134
+ U1 3
+Net 137 "/M_A13" "M_A13"
+ U1 4
+ U2 137
 }
 #End

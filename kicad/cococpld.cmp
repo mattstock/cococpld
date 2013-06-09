@@ -1,66 +1,59 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 6/9/2013 12:06:33 AM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 6/9/2013 4:31:28 PM
 
 BeginCmp
 TimeStamp = /51846E14;
+Reference = C1;
+ValeurCmp = 0.1uF;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /519E593B;
 Reference = C2;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /519E5948;
-Reference = C7;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /5170326F;
-Reference = C8;
-ValeurCmp = 10uF;
-IdModule  = UWXCAP-3mm;
-EndCmp
-
-BeginCmp
-TimeStamp = /51703267;
-Reference = C9;
-ValeurCmp = 100uF;
-IdModule  = UWXCAP-6.3mm;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E593B;
-Reference = C10;
+TimeStamp = /51B4E489;
+Reference = C3;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
 TimeStamp = /519E5937;
-Reference = C11;
+Reference = C4;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /519E5949;
-Reference = C12;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E594A;
-Reference = C13;
+TimeStamp = /519E5948;
+Reference = C5;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
 TimeStamp = /519EA6DA;
-Reference = C14;
+Reference = C6;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5170326F;
+Reference = C7;
+ValeurCmp = 10uF;
+IdModule  = UWXCAP-3mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /51703267;
+Reference = C8;
+ValeurCmp = 100uF;
+IdModule  = UWXCAP-6.3mm;
 EndCmp
 
 BeginCmp
@@ -106,52 +99,52 @@ IdModule  = PIN_ARRAY_2X1;
 EndCmp
 
 BeginCmp
-TimeStamp = /519E5932;
+TimeStamp = /513F722B;
 Reference = P1;
+ValeurCmp = TST;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /513F7224;
+Reference = P2;
+ValeurCmp = TST;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /519E5932;
+Reference = P3;
 ValeurCmp = COCOBUS;
 IdModule  = cardedge20x2;
 EndCmp
 
 BeginCmp
-TimeStamp = /519E5BCB;
-Reference = P2;
-ValeurCmp = SPI;
-IdModule  = pin_array_4x2;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E593F;
-Reference = P3;
-ValeurCmp = JTAG;
-IdModule  = PIN_ARRAY_5x2-mds;
-EndCmp
-
-BeginCmp
-TimeStamp = /513F7224;
+TimeStamp = /513F722E;
 Reference = P4;
 ValeurCmp = TST;
 IdModule  = 1pin;
 EndCmp
 
 BeginCmp
-TimeStamp = /513F722B;
+TimeStamp = /513F7227;
 Reference = P5;
 ValeurCmp = TST;
 IdModule  = 1pin;
 EndCmp
 
 BeginCmp
-TimeStamp = /513F7227;
+TimeStamp = /519E5BCB;
 Reference = P6;
-ValeurCmp = TST;
-IdModule  = 1pin;
+ValeurCmp = SPI;
+IdModule  = pin_array_4x2;
 EndCmp
 
 BeginCmp
-TimeStamp = /513F722E;
+TimeStamp = /519E593F;
 Reference = P7;
-ValeurCmp = TST;
-IdModule  = 1pin;
+ValeurCmp = JTAG;
+IdModule  = PIN_ARRAY_5x2-mds;
 EndCmp
 
 BeginCmp
@@ -162,31 +155,31 @@ IdModule  = CAY16-J4;
 EndCmp
 
 BeginCmp
-TimeStamp = /51B3FE3C;
-Reference = U1;
-ValeurCmp = TLV1117-33;
-IdModule  = SOT223;
-EndCmp
-
-BeginCmp
 TimeStamp = /51A7806B;
-Reference = U2;
+Reference = U1;
 ValeurCmp = R1LP0108ESF-5SI;
 IdModule  = TSOP32SP;
 EndCmp
 
 BeginCmp
 TimeStamp = /519E593E;
-Reference = U5;
+Reference = U2;
 ValeurCmp = EPM3256A-TQFP144;
 IdModule  = TQFP144;
 EndCmp
 
 BeginCmp
 TimeStamp = /519EA6D5;
-Reference = U6;
+Reference = U3;
 ValeurCmp = 50.00MHz;
 IdModule  = OSC;
+EndCmp
+
+BeginCmp
+TimeStamp = /51B3FE3C;
+Reference = U4;
+ValeurCmp = TLV1117-33;
+IdModule  = SOT223;
 EndCmp
 
 EndListe
