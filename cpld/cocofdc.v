@@ -1,12 +1,12 @@
 `timescale 1ns/1ns
 
-module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw, miso, mosi, sclk, ss,
-					sram_we_n, sram_oe_n, sram_cs1_n, sram_cs2_n, c_slenb_n, clock_50, reset, c_busen_n, led, dirty);
+module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw, miso, mosi, sclk, ss,
+					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, dirty);
 
-output reg [14:0] sram_addrbus; // Memory address bus
+input [14:0] c_addrbus;
+output reg [15:0] sram_addrbus; // Memory address bus
 inout reg [7:0] sram_databus; // Memory databus
-output sram_cs1_n;
-output sram_cs2_n;
+output sram_ce_n;
 inout [7:0] c_databus; // 
 input c_scs_n; // 0 = Coco register read/write 
 input c_cts_n; // 0 = Coco ROM read
@@ -19,7 +19,6 @@ output [3:0] led;
 output reg sram_we_n;
 output sram_oe_n;
 output c_halt_n;
-output c_busen_n;
 output dirty;
 input sclk;
 input clock_50;
@@ -72,9 +71,7 @@ assign sram_oe_n = ~sram_we_n;
 assign c_slenb_n = 1'bz;
 assign c_nmi_n = 1'bz;
 assign c_halt_n = 1'bz;
-assign c_busen_n = 1'b1;
-assign sram_cs1_n = 1'b0;
-assign sram_cs2_n = 1'b1;
+assign sram_ce_n = 1'b0;
 
 assign led = { spi_state, ~sram_we_n};
 
@@ -101,7 +98,6 @@ always @(negedge reset or posedge clock_50) begin
 	 dirty <= 1'b0;
 	 counter_50 <= 3'b0;
 	 sram_databus <= 8'bz;
-	 sram_addrbus <= 15'bz;
 	 sram_we_n <= 1'b1;
 	 req <= 3'b0;
   end else begin
@@ -158,6 +154,7 @@ task scs_handler;
 begin
     actor <= 1'b0; // Coco
     counter_50 <= 3'h6;
+    sram_addrbus <= { 1'b0, c_addrbus};
     if (c_rw)
       sram_databus <= 8'bz;
     else begin
@@ -172,6 +169,7 @@ task cts_handler;
 begin
     actor <= 1'b0;  // Coco
     counter_50 <= 3'h6;
+    sram_addrbus <= { 1'b0, c_addrbus};
     sram_databus <= 8'bz;
     sram_we_n <= 1'b1;	   
 end
