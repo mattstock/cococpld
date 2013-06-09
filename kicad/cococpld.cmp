@@ -1,43 +1,8 @@
-Cmp-Mod V01 Genere par PcbNew le 5/23/2013 7:42:33 PM
-
-BeginCmp
-TimeStamp = /519E5C6F;
-Reference = C1;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 6/9/2013 12:06:33 AM
 
 BeginCmp
 TimeStamp = /51846E14;
 Reference = C2;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5C67;
-Reference = C3;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5CB8;
-Reference = C4;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5B7A;
-Reference = C5;
-ValeurCmp = 0.1uF;
-IdModule  = SM0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5CB9;
-Reference = C6;
 ValeurCmp = 0.1uF;
 IdModule  = SM0805;
 EndCmp
@@ -53,14 +18,14 @@ BeginCmp
 TimeStamp = /5170326F;
 Reference = C8;
 ValeurCmp = 10uF;
-IdModule  = SM1206POL;
+IdModule  = UWXCAP-3mm;
 EndCmp
 
 BeginCmp
 TimeStamp = /51703267;
 Reference = C9;
-ValeurCmp = 10uF;
-IdModule  = SM1206POL;
+ValeurCmp = 100uF;
+IdModule  = UWXCAP-6.3mm;
 EndCmp
 
 BeginCmp
@@ -127,6 +92,13 @@ IdModule  = LED-1206;
 EndCmp
 
 BeginCmp
+TimeStamp = /51B3F4AA;
+Reference = D5;
+ValeurCmp = DIODE;
+IdModule  = DO214;
+EndCmp
+
+BeginCmp
 TimeStamp = /519E7A54;
 Reference = JP1;
 ValeurCmp = CART_BOOT;
@@ -190,37 +162,23 @@ IdModule  = CAY16-J4;
 EndCmp
 
 BeginCmp
-TimeStamp = /510C81E0;
+TimeStamp = /51B3FE3C;
 Reference = U1;
-ValeurCmp = LM1117-3.3;
-IdModule  = TO220_VERT;
+ValeurCmp = TLV1117-33;
+IdModule  = SOT223;
 EndCmp
 
 BeginCmp
-TimeStamp = /51846D78;
+TimeStamp = /51A7806B;
 Reference = U2;
-ValeurCmp = CY62256N;
-IdModule  = TSOP28;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5CBA;
-Reference = U3;
-ValeurCmp = 74LVC164245;
-IdModule  = SSOP48;
-EndCmp
-
-BeginCmp
-TimeStamp = /519E5B7B;
-Reference = U4;
-ValeurCmp = CY62256N;
-IdModule  = TSOP28;
+ValeurCmp = R1LP0108ESF-5SI;
+IdModule  = TSOP32SP;
 EndCmp
 
 BeginCmp
 TimeStamp = /519E593E;
 Reference = U5;
-ValeurCmp = EPM3128A-TQFP144;
+ValeurCmp = EPM3256A-TQFP144;
 IdModule  = TQFP144;
 EndCmp
 
