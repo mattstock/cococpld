@@ -3,6 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "firmware2", "firmware2\firmware2.cppproj", "{E31DF9D9-E3ED-4DF5-A539-4CAE14C0DCAA}"
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "LiquidCrystal", "H:\electronics\avr\LiquidCrystal\LiquidCrystal.cppproj", "{54876039-0D68-4F8A-9ABF-2368C422B1DC}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "arduino2560", "H:\electronics\avr\arduino2560\arduino2560\arduino2560.cppproj", "{293FAED4-4768-4FDF-A173-6C4E8BA60165}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Adafruit_RGBLCDShield", "H:\electronics\avr\Adafruit_RGBLCDShield\Adafruit_RGBLCDShield.cppproj", "{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Wire", "H:\electronics\avr\Wire\Wire.cppproj", "{96BF073B-388B-4481-B9BD-6541EC2E0CA4}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SD", "H:\electronics\avr\SD\SD.cppproj", "{0E2E6336-99A6-43F8-9F4C-3929D9F4998F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -13,6 +23,26 @@ Global
 		{E31DF9D9-E3ED-4DF5-A539-4CAE14C0DCAA}.Debug|AVR.Build.0 = Debug|AVR
 		{E31DF9D9-E3ED-4DF5-A539-4CAE14C0DCAA}.Release|AVR.ActiveCfg = Release|AVR
 		{E31DF9D9-E3ED-4DF5-A539-4CAE14C0DCAA}.Release|AVR.Build.0 = Release|AVR
+		{54876039-0D68-4F8A-9ABF-2368C422B1DC}.Debug|AVR.ActiveCfg = Debug|AVR
+		{54876039-0D68-4F8A-9ABF-2368C422B1DC}.Debug|AVR.Build.0 = Debug|AVR
+		{54876039-0D68-4F8A-9ABF-2368C422B1DC}.Release|AVR.ActiveCfg = Release|AVR
+		{54876039-0D68-4F8A-9ABF-2368C422B1DC}.Release|AVR.Build.0 = Release|AVR
+		{293FAED4-4768-4FDF-A173-6C4E8BA60165}.Debug|AVR.ActiveCfg = Debug|AVR
+		{293FAED4-4768-4FDF-A173-6C4E8BA60165}.Debug|AVR.Build.0 = Debug|AVR
+		{293FAED4-4768-4FDF-A173-6C4E8BA60165}.Release|AVR.ActiveCfg = Release|AVR
+		{293FAED4-4768-4FDF-A173-6C4E8BA60165}.Release|AVR.Build.0 = Release|AVR
+		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Debug|AVR.ActiveCfg = Debug|AVR
+		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Debug|AVR.Build.0 = Debug|AVR
+		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Release|AVR.ActiveCfg = Release|AVR
+		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Release|AVR.Build.0 = Release|AVR
+		{96BF073B-388B-4481-B9BD-6541EC2E0CA4}.Debug|AVR.ActiveCfg = Debug|AVR
+		{96BF073B-388B-4481-B9BD-6541EC2E0CA4}.Debug|AVR.Build.0 = Debug|AVR
+		{96BF073B-388B-4481-B9BD-6541EC2E0CA4}.Release|AVR.ActiveCfg = Release|AVR
+		{96BF073B-388B-4481-B9BD-6541EC2E0CA4}.Release|AVR.Build.0 = Release|AVR
+		{0E2E6336-99A6-43F8-9F4C-3929D9F4998F}.Debug|AVR.ActiveCfg = Debug|AVR
+		{0E2E6336-99A6-43F8-9F4C-3929D9F4998F}.Debug|AVR.Build.0 = Debug|AVR
+		{0E2E6336-99A6-43F8-9F4C-3929D9F4998F}.Release|AVR.ActiveCfg = Release|AVR
+		{0E2E6336-99A6-43F8-9F4C-3929D9F4998F}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
