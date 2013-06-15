@@ -12,9 +12,8 @@ Videos of how these components work together are available at https://www.youtub
 
 Directories:
 
-arduino2560 - AVR Studio 6 project to build the Arduino library for the Arduino MEGA 2560.
-firmware2 - AVR Studio 6 project for a simple ROM programmer for the board.
-cpld - Altera Quartus project to implement the control logic for the board.
-kicad - Kicad project including the schematics and board layout.
+firmware2 - AVR Studio 6 project for a simple programmer for the v1.2 board.
+cpld - Altera Quartus project to implement the control logic for the v1.2 board.
+kicad - Kicad project including the schematics and v1.2 board layout.
 
 
