@@ -92,10 +92,13 @@ void setup() {
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 	SPI.setDataMode(SPI_MODE0);
 
-	pinMode(2, INPUT); // For write flags
-	pinMode(3, OUTPUT); // testing
-	pinMode(10, OUTPUT);
-	digitalWrite(10, HIGH);
+	pinMode(WRITEINT_PIN, INPUT);
+	pinMode(USBSELECT_PIN, OUTPUT);
+	digitalWrite(USBSELECT_PIN, HIGH);
+	pinMode(ETHSELECT_PIN, OUTPUT);
+	digitalWrite(ETHSELECT_PIN, HIGH);
+	pinMode(COCOSELECT_PIN, OUTPUT);
+	digitalWrite(COCOSELECT_PIN, HIGH);
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, LOW);
 			
@@ -140,7 +143,7 @@ void printAddress(uint16_t val) {
 void loop() {
 	uint8_t buttons = lcd.readButtons();
 
-	if (digitalRead(2)) // We have a write to a register
+	if (digitalRead(WRITEINT_PIN)) // We have a write to a register
 		readRegisters();
 	if (buttons) {
 		if (buttons & BUTTON_UP) {

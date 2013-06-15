@@ -15,8 +15,6 @@ void verifyROM(File dataFile) {
 		displayMsg(OPEN_FAILED);
 		return;
 	}
-
-	takeBus();
 	
 	if (dataFile.size() <= 16*1024)
 		address = 0xc000;
@@ -32,19 +30,16 @@ void verifyROM(File dataFile) {
 		}
 		stored = readData();
 		if (stored != disk) {
-			nopSPI();
 			lcd.clear();
 			lcd.print(address, HEX);
 			lcd.print(": ");
 			lcd.print(stored, HEX);
 			lcd.print(" != ");
 			lcd.print(disk, HEX);
-			while (1);
+			delay(200);
 		}
 		address++;
 	}
-
-	giveBus();	
 	
 	dataFile.close();
 
@@ -54,10 +49,7 @@ void verifyROM(File dataFile) {
 	delay(2000);
 }
 
-void eraseROM() {	
-	
-	takeBus();
-		
+void eraseROM() {			
 	lcd.clear();
 	displayMsg(ERASE);
 
@@ -68,8 +60,6 @@ void eraseROM() {
 		address++;
 	}
 
-	giveBus();
-	
 	lcd.clear();
 	displayMsg(ERASE);
 	displayMsg(COMPLETE);
@@ -87,8 +77,6 @@ void printRegisters() {
 }
 
 void viewROM() {
-	takeBus();
-
 	lcd.clear();
 	lcd.print("0000");
 	
@@ -117,10 +105,8 @@ void viewROM() {
 			uint8_t buttons = lcd.readButtons();
 
 			if (buttons) {
-				if (buttons & BUTTON_SELECT) {
-					giveBus();
+				if (buttons & BUTTON_SELECT)
 					return;
-				}
 				if (buttons & BUTTON_UP)
 					address += 0x1000;
 				if (buttons & BUTTON_RIGHT)
@@ -133,8 +119,6 @@ void viewROM() {
 			}
 		}
 	}
-	
-	giveBus();
 	
 	lcd.clear();
 }
@@ -217,8 +201,6 @@ void programROM(File dataFile) {
 		return;
 	}
 	
-	takeBus();
-
 	if (dataFile.size() <= 16*1024)
 	address = 0xc000;
 	else
@@ -238,8 +220,6 @@ void programROM(File dataFile) {
 		setData(d);
 		address++;
 	}
-
-	giveBus();
 
 	dataFile.close();
 	

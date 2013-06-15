@@ -9,7 +9,7 @@
 
 // How many filenames we will be able to store
 #define MAX_FILES 30
-#define SDSELECT_PIN 8
+
 
 extern Adafruit_RGBLCDShield lcd;
 #endif
