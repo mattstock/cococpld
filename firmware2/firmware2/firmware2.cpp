@@ -41,21 +41,21 @@ boolean fileSelect() {
 	while (1) {
 		if ((buttons = lcd.readButtons())) {
 			if (buttons & BUTTON_LEFT)
-			return false;
+				return false;
 			if (buttons & BUTTON_UP) {
 				if (fileIndex == 0)
-				fileIndex = fileCount-1;
+					fileIndex = fileCount-1;
 				else
-				fileIndex--;
+					fileIndex--;
 			}
 			if (buttons & BUTTON_DOWN) {
 				if (fileIndex == fileCount-1)
-				fileIndex = 0;
+					fileIndex = 0;
 				else
-				fileIndex++;
+					fileIndex++;
 			}
 			if (buttons & BUTTON_SELECT)
-			return true;
+				return true;
 			displayFilename();
 			delay(100);
 		}
@@ -100,7 +100,7 @@ void setup() {
 	pinMode(COCOSELECT_PIN, OUTPUT);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 	pinMode(SDSELECT_PIN, OUTPUT);
-	digitalWrite(SDSELECT_PIN, LOW);
+	digitalWrite(SDSELECT_PIN, HIGH);
 			
 	// Config LCD
 	lcd = Adafruit_RGBLCDShield();
@@ -123,7 +123,7 @@ void setup() {
 		delay(2000);
 	}
 	
-	setRegisters();
+	loadRegisters();
 	
 	menuIndex = 0;
 	fileIndex = 0;
@@ -148,15 +148,15 @@ void loop() {
 	if (buttons) {
 		if (buttons & BUTTON_UP) {
 			if (menuIndex == 0)
-			menuIndex = menuCount-1;
+				menuIndex = menuCount-1;
 			else
-			menuIndex--;
+				menuIndex--;
 		}
 		if (buttons & BUTTON_DOWN) {
 			if (menuIndex == menuCount-1)
-			menuIndex = 0;
+				menuIndex = 0;
 			else
-			menuIndex++;
+				menuIndex++;
 		}
 		if (buttons & BUTTON_SELECT) {
 			while (lcd.readButtons()); // Wait for release

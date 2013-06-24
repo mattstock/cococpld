@@ -10,17 +10,23 @@ void setAddress(uint16_t addr) {
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
-void setRegisters() {
-	for (uint8_t i=0; i < 15; i++) {
-		setAddress(0x7f40 + i);
-		setData(0xa0+i);
+void setRegister(uint8_t i, uint8_t d) {
+	setAddress(i);
+	reg[i] = d;
+	setData(d);
+}
+
+void loadRegisters() {
+	for (uint8_t i=0; i < 31; i++) { // pull from SPI
+		setAddress(i);
+		reg[i] = readData();
 	}
 }
 
 void readRegisters() {
 	for (uint8_t i=0; i < 15; i++) {
-		setAddress(0x7f40 + i);  // maps to 0xff40 in register space
-		reg[i] = readData();
+		setAddress(i*2);
+		reg[i*2] = readData();
 	}
 }
 
@@ -38,5 +44,18 @@ void setData(uint8_t b) {
 	digitalWrite(COCOSELECT_PIN, LOW);
 	SPI.transfer(0x02);
 	SPI.transfer(b);
+	digitalWrite(COCOSELECT_PIN, HIGH);
+}
+
+void setNMI(boolean s) {
+	digitalWrite(COCOSELECT_PIN, LOW);
+	SPI.transfer(s ? 0x04 : 0x05);
+	digitalWrite(COCOSELECT_PIN, HIGH);
+}
+
+void setHALT(boolean s) {
+	
+	digitalWrite(COCOSELECT_PIN, LOW);
+	SPI.transfer(s ? 0x06 : 0x07);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }

@@ -52,6 +52,8 @@ reg [7:0] writebuf;     // If the SRAM is in use, writes a buffered here
 reg actor;              // Who initiated read or write cycle, or added to pending: 0 = coco, 1 = spi
 reg [2:0] req;				// Flags for pending requests { SPI, SCS, CTS }
 
+reg [7:0] dskreg;
+
 SPI_slave u0(.clk(clock_50), .SCK(sclk), .MISO(miso), .MOSI(mosi), .SSEL(ss), .byte_received(spi_input_flag), .byte_data_received(spi_rec), 
 	.byte_send(spi_readbuf), .send_latch(spi_send_ready));
 
@@ -100,6 +102,7 @@ always @(negedge reset or posedge clock_50) begin
 	 sram_databus <= 8'bz;
 	 sram_we_n <= 1'b1;
 	 req <= 3'b0;
+	 dskreg <= 8'h0;
   end else begin
     if (spi_input_flag)
 	   req[2] <= 1'b1;
@@ -152,9 +155,15 @@ end
 
 task scs_handler;
 begin
+  if (c_addrbus[4:0] == 5'h0)
+    if (c_rw)
+	   c_readbuf <= 8'h0;
+    else
+	   dskreg <= c_databus;
+  else begin
     actor <= 1'b0; // Coco
     counter_50 <= 3'h6;
-    sram_addrbus <= { 1'b0, c_addrbus};
+    sram_addrbus[15:0] <= { 10'b0000000000, c_addrbus[4:0], c_rw}; 
     if (c_rw)
       sram_databus <= 8'bz;
     else begin
@@ -162,6 +171,7 @@ begin
       sram_databus <= c_databus;
       dirty <= 1'b1;
     end
+  end
 end
 endtask
 
