@@ -23,13 +23,6 @@ void loadRegisters() {
 	}
 }
 
-void readRegisters() {
-	for (uint8_t i=0; i < 15; i++) {
-		setAddress(i*2);
-		reg[i*2] = readData();
-	}
-}
-
 uint8_t readData() {
 	uint8_t b;
 	

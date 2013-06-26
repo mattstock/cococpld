@@ -138,17 +138,41 @@ void createImage(char *name) {
   image.close();
 }
 
+// Wait until the DRO bit changes to 0
+void waitDR() {
+	while (reg[RW(FDCSTAT)] & 0x02)
+		loadRegisters();
+}
+
+// Given a logical sector and track, find and return the
+// file position of the start of the physical sector.
+uint32_t findSector(File file, uint8_t track, uint8_t sector) {
+	uint32_t pos;
+	
+	for (uint8_t i=1; i < 19; i++) {
+		pos = track*TRACKSIZE+32+(i-1)*SECTORSIZE;
+		file.seek(pos+12);
+		if (file.read() != track)
+			return 0;
+		if (file.read() != 0x00)
+			return 0;
+		if (file.read() == sector)
+			return pos;
+	}
+	return 0;
+}
+
 // Start to handle FDC instructions
 void misc() {
 	File image;
-	uint16_t byte_cnt = 0;
-	uint8_t read_cnt = 0;
 	uint8_t command = 0;
 	uint8_t drive = 0;
 	uint8_t ddir = 0;
 	uint8_t control = 0;
 	uint8_t sector = 1;
 	uint8_t track = 0;
+	uint32_t tmp;
+	uint16_t crc;
 	
 	// Set reset register values for FDC
 	setRegister(RW(DSKREG), 0x00); 
@@ -168,14 +192,11 @@ void misc() {
 	while (lcd.readButtons());
 	while (!lcd.readButtons()) {
 		if (digitalRead(WRITEINT_PIN)) {
-			readRegisters();
+			loadRegisters();
 			
 			if (control != reg[RR(DSKREG)]) {
 				Serial.println("Control register update");
-				if (command != reg[RR(FDCCMD)]) {
-					Serial.print("Crap, we have a potential issue: ");
-					Serial.println(reg[RR(FDCCMD)]);
-				}
+
 				control = reg[RR(DSKREG)];
 				if (!(control & 0x47)) {
 				  Serial.println("closing open floppy");
@@ -187,7 +208,6 @@ void misc() {
 					image.close();
 					image = SD.open("floppy0.dsk", FILE_WRITE);
 					Serial.println("Opened disk 0");
-					byte_cnt = 0;
 					track = 0;
 					sector = 1;
 				}
@@ -209,10 +229,11 @@ void misc() {
 					image = SD.open("floppy3.dsk", FILE_WRITE);
 					Serial.println("Opened disk 3");
 				}
-				continue;
 			}
 			
-			Serial.println("Command update");
+			if (command == reg[RR(FDCCMD)])
+				continue;
+				
 			command = reg[RR(FDCCMD)];
 			switch (reg[RR(FDCCMD)]) {
 				case 0x03: // RESTORE
@@ -222,11 +243,9 @@ void misc() {
 					setRegister(RW(FDCTRK), 0x00);
 					setRegister(RR(FDCSEC), 0x01); // sector 1
 					setRegister(RW(FDCSEC), 0x01);
-					image.seek(0);
+					image.seek(track*TRACKSIZE);
 					track = 0;
 					sector = 1;
-					read_cnt = 0;
-					byte_cnt = 0;
 					setNMI(true);
 					break;
 				case 0x17: // SEEK
@@ -235,8 +254,6 @@ void misc() {
 					track = reg[RR(FDCDAT)];
 					Serial.println(track, HEX);
 					setRegister(RW(FDCTRK), track);
-					setRegister(RW(FDCSEC), reg[RR(FDCSEC)]);
-					image.seek(track*TRACKSIZE);
 					setRegister(RW(FDCSTAT), (track ? 0x04 : 0x00)); // Set track 0;
 					setNMI(true);
 					break;
@@ -247,29 +264,21 @@ void misc() {
 					  track++;
 					else
 					  track--;
-					byte_cnt = 0;
 					Serial.println(track, HEX);
 					if (track == 255)
 						track = 0;						
 					setRegister(RW(FDCSTAT), (track ? 0x24 : 0x20));
-					setRegister(RW(FDCTRK), track);
-					image.seek(track*TRACKSIZE);
-					delay(15);
 					setNMI(true);
 					break;
 				case 0x43: // STEP IN
 					setRegister(RW(FDCSTAT), 0x21); // BUSY
 					Serial.print("STEP IN ");
 					track--;
-					byte_cnt = 0;
 					ddir = 0;
 					if (track == 255)
 						track = 0;
 					setRegister(RW(FDCSTAT), (track ? 0x24 : 0x20));
-					Serial.println(track);
-					setRegister(RW(FDCTRK), track);
-					image.seek(track*TRACKSIZE);
-					delay(15);
+					Serial.println(track, HEX);
 					setNMI(true);
 					break;
 				case 0x53: // STEP OUT
@@ -277,57 +286,48 @@ void misc() {
 					Serial.print("STEP OUT ");
 				    track++;
 					ddir = 1;
-					Serial.println(track);
-					byte_cnt = 0;
+					Serial.println(track, HEX);
 					setRegister(RW(FDCSTAT), 0x20);
-					setRegister(RW(FDCTRK), track);
-					image.seek(track*TRACKSIZE);
-					delay(15);
 					setNMI(true);
 					break;
 				case 0x80: // READ SECTOR
 					setRegister(RW(FDCSTAT), 0x01); // BUSY
-					track = reg[RR(FDCTRK)];
 					sector = reg[RR(FDCSEC)];
-					setRegister(RW(FDCSEC), sector);
-					setRegister(RW(FDCTRK), track);
-					image.seek(track*TRACKSIZE+(sector-1)*SECTORSIZE+32+8+3+1+1+1+1+1+1+22+12+3+1);
+					tmp = findSector(image, track, sector);
+					Serial.print("pos = ");
+					Serial.println(tmp);
+					image.seek(tmp+32+56);
 					Serial.print("READ SECTOR ");
 					Serial.println(sector, HEX);
 					
 					for (int i = 0; i < 256; i++) {
-						Serial.print(">");
 						setRegister(RW(FDCDAT), image.read());
 						setRegister(RW(FDCSTAT), 0x03);
-						setHALT(false);
-						delay(50);
+						if (i != 255) {
+							setHALT(false);
+							waitDR();
+						}
 					}
 					
-					Serial.println("");
 					setRegister(RW(FDCSTAT), 0x00);
 					setNMI(true);			
 					break;
 				case 0xa0: // WRITE SECTOR
 					setRegister(RW(FDCSTAT), 0x01); // BUSY
-					if (read_cnt == 0) {
-						sector = reg[RR(FDCSEC)];
-						setRegister(RW(FDCSEC), sector);
-						image.seek(track*TRACKSIZE+(sector-1)*SECTORSIZE+32+8+3+1+1+1+1+1+1+22+12+3+1);
-						Serial.print("WRITE SECTOR ");
-						Serial.println(sector, HEX);
-					}
-					read_cnt++;
-					image.write(reg[RR(FDCDAT)]);
-					if (read_cnt) {
+					sector = reg[RR(FDCSEC)];
+					image.seek(findSector(image, track, sector)+32+56);
+					Serial.print("WRITE SECTOR ");
+					Serial.println(sector, HEX);
+				
+					for (int i=0; i < 256; i++) {
 						setRegister(RW(FDCSTAT), 0x03);
 						setHALT(false);
-					} else {
-						setRegister(RW(FDCSTAT), 0x00);
-						setNMI(true);
+						waitDR();
+						image.write(reg[RR(FDCDAT)]);
 					}
-					break;
-					Serial.println("WRITE SECTOR");
-					sector = reg[RR(FDCSEC)];
+					
+					setRegister(RW(FDCSTAT), 0x00);
+					setNMI(true);
 					break;
 				case 0xc0: // READ ADDRESS
 					setRegister(RW(FDCSTAT), 0x01); // BUSY
@@ -337,56 +337,59 @@ void misc() {
 					Serial.println(sector);
 
 					setRegister(RW(FDCSTAT), 0x03); // BUSY, DRO
-					switch (read_cnt) {
-						case 0:
-							setRegister(RW(FDCDAT), track);
-							setHALT(false);
-							read_cnt++;
-							break;
-						case 1:
-							setRegister(RW(FDCDAT), 0x00);
-							setHALT(false);
-							read_cnt++;
-							break;
-						case 2:
-							setRegister(RW(FDCDAT), sector);
-							setHALT(false);
-							read_cnt++;
-							break;
-						case 3:
-							setRegister(RW(FDCDAT), 0x01);
-							setHALT(false);
-							read_cnt++;
-							break;
-						case 4:
-							setRegister(RW(FDCDAT), 0x00); // CRC1
-							setHALT(false);
-							read_cnt++;
-							break;
-						case 5:
-							setRegister(RW(FDCDAT), 0x00); // CRC2
-							read_cnt = 0;
-							setRegister(RW(FDCSTAT), 0x00); // clear BUSY
-							setNMI(true);
-							break;
-					}
+					setRegister(RW(FDCDAT), track);
+					setHALT(false);
+					delay(5);
+					setRegister(RW(FDCDAT), 0x00);
+					setHALT(false);
+					delay(5);
+					setRegister(RW(FDCDAT), sector);
+					setHALT(false);
+					delay(5);
+					setRegister(RW(FDCDAT), 0x01);
+					setHALT(false);
+					delay(5);
+					setRegister(RW(FDCDAT), 0x00); // CRC1
+					setHALT(false);
+					delay(5);
+					setRegister(RW(FDCDAT), 0x00); // CRC2
+					setRegister(RW(FDCSTAT), 0x00); // clear BUSY
+					setNMI(true);
 					break;
 				case 0xe4: // READ TRACK
 					Serial.println("READ TRACK");
+					image.seek(track*TRACKSIZE);
+					setNMI(true);
 					break;
 				case 0xf4: // WRITE TRACK
 					setRegister(RW(FDCSTAT), RW(FDCSTAT) | 0x01); // BUSY
-					if (byte_cnt == 0)
-						Serial.println("WRITE TRACK");
-					image.write(reg[RR(FDCDAT)]);
-					byte_cnt++;
-					if (byte_cnt == TRACKSIZE) {
-						setRegister(RW(FDCSTAT), 0x00); // Next track please
-						setNMI(true); // command complete
-					} else {
+					Serial.print("WRITE TRACK ");
+					Serial.println(track, HEX);
+					image.seek(track*TRACKSIZE);
+					
+					for (uint16_t i=0; i < TRACKSIZE; i++) {
+						switch (reg[RR(FDCDAT)]) {
+							case 0xf5:
+								image.write(0xf5);
+								crc = 0xffff;
+								break;
+							case 0xf7:
+								image.write((crc >> 8) & 0xff);
+								image.write(crc & 0xff);
+								break;
+							default:
+								image.write(reg[RR(FDCDAT)]);
+								for (int i = 0; i < 8; i++)
+									crc = (crc << 1) ^ ((((crc >> 8) ^ ((reg[RR(FDCDAT)]) << i)) & 0x0080) ? 0x1021 : 0);
+								break;
+						}
 						setRegister(RW(FDCSTAT), 0x03);
-						setHALT(false); // indicate that we processed this byte
+						setHALT(false);
+						waitDR();
 					}
+					
+					setRegister(RW(FDCSTAT), 0x00);
+					setNMI(true); // command complete
 					break;
 				case 0xd0: // FORCE INTERRUPT
 					Serial.println("FORCE INT");

@@ -144,7 +144,7 @@ void loop() {
 	uint8_t buttons = lcd.readButtons();
 
 	if (digitalRead(WRITEINT_PIN)) // We have a write to a register
-		readRegisters();
+		loadRegisters();
 	if (buttons) {
 		if (buttons & BUTTON_UP) {
 			if (menuIndex == 0)

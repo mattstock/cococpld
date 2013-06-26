@@ -16,10 +16,10 @@
 #define FDCTRK 0xff49
 #define FDCSEC 0xff4a
 #define FDCDAT 0xff4b
-#define SECTORSIZE 336L
+#define SECTORSIZE 338L
 #define MAXSECTOR 18
 #define MAXTRACK 35
-#define TRACKSIZE (32+SECTORSIZE*MAXSECTOR+200)
+#define TRACKSIZE 6250L
 #define RR(x) (2*(x-DSKREG))
 #define RW(x) (2*(x-DSKREG)+1)
 
@@ -27,7 +27,6 @@
 #define SET(port, bit) port |= (1 << bit)
 
 void setAddress(uint16_t addr);
-void readRegisters();
 void loadRegisters();
 void setRegister(uint8_t i, uint8_t d);
 void setNMI(boolean s);
