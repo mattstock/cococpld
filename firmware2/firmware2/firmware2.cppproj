@@ -190,6 +190,12 @@
     <Compile Include="error.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="fdc.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="fdc.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="firmware2.cpp">
       <SubType>compile</SubType>
     </Compile>

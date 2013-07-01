@@ -11,6 +11,7 @@
 #include "firmware2.h"
 #include "rom.h"
 #include "error.h"
+#include "fdc.h"
 #include "busio.h"
 
 Adafruit_RGBLCDShield lcd;
@@ -179,7 +180,7 @@ void loop() {
 				printRegisters();
 				break;
 			case 5:
-				misc();
+				fdc();
 			}
 			lcd.clear();
 		}

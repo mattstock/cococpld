@@ -8,8 +8,8 @@ const char menu[][16] = {
 	"view",
 	"verify",
 	"erase",
-	"regs",
-	"misc"
+	"misc",
+	"fdc"
 };
 
 const int menuCount = 6;

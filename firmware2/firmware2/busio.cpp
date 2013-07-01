@@ -1,5 +1,6 @@
 ﻿#include "busio.h"
 #include "rom.h"
+#include "fdc.h"
 #include <avr/io.h>
 
 void setAddress(uint16_t addr) {
