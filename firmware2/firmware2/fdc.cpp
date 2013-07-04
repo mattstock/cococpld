@@ -56,33 +56,27 @@ uint32_t findSector(File file, uint32_t tracklen, uint8_t trackcnt, uint8_t trac
 	uint8_t cnt;
 	
 	pos = 0x10 + tracklen*track;
-	
+#ifdef DEBUG
 	Serial.print("findSector(");
 	Serial.print(track, HEX);
 	Serial.print(",");
 	Serial.print(sector, HEX);
 	Serial.print(") = ");
 	Serial.println(pos, HEX);
-
+#endif
 	file.seek(pos);
 	off = file.read();
 	off += ((0x3f & file.read()) << 8);
 	cnt = 0;
 	while (off != 0) {
-		Serial.print("Looking at ");
-		Serial.println(pos+off+3, HEX);
 		file.seek(pos+off+3);
-		if (file.read() == sector) {
-			Serial.print("Found sector at ");
-			Serial.println(cnt, HEX);
+		if (file.read() == sector)
 			return pos+off+0x2d;
-		}
 		cnt++;
 		file.seek(pos+2*cnt);
 		off = file.read();
 		off += ((0x3f & file.read()) << 8);
 	}
-	Serial.println("failure!");
 	return 0;
 }
 
@@ -100,6 +94,9 @@ void fdc() {
 	// pulled from DMK header
 	uint16_t tracklen;
 	uint8_t trackcnt;
+
+	if (programROM(SD.open("DISK21.CCC")) != 0)
+		return;
 	
 	// Set reset register values for FDC
 	setRegister(RW(DSKREG), 0x00);
@@ -117,11 +114,11 @@ void fdc() {
 			loadRegisters();
 			
 			if (control != reg[RR(DSKREG)]) {
-				Serial.println("Control register update");
-
 				control = reg[RR(DSKREG)];
 				if (!(control & 0x47)) {
-					Serial.println("closing open floppy");
+#ifdef DEBUG
+					Serial.println("Closing open floppy");
+#endif
 					drive = 100;
 					image.close();
 				}
@@ -133,25 +130,45 @@ void fdc() {
 					trackcnt = image.read();
 					tracklen = image.read();
 					tracklen += (image.read() << 8);
-					
+#ifdef DEBUG			
 					Serial.print("Open f0(");
 					Serial.print(trackcnt, HEX);
 					Serial.print(",");
 					Serial.print(tracklen, HEX);
 					Serial.println(")");
-					
+#endif		
+					track = 0;
+					sector = 1;
+				}
+				if ((control & 0x02) && (drive != 1)) {
+					drive = 1;
+					image.close();
+					image = SD.open("floppy1.dsk", FILE_WRITE);
+					image.seek(1);
+					trackcnt = image.read();
+					tracklen = image.read();
+					tracklen += (image.read() << 8);
+#ifdef DEBUG					
+					Serial.print("Open f1(");
+					Serial.print(trackcnt, HEX);
+					Serial.print(",");
+					Serial.print(tracklen, HEX);
+					Serial.println(")");
+#endif		
 					track = 0;
 					sector = 1;
 				}
 			}
 			
 			if (command == reg[RR(FDCCMD)])
-			continue;
+				continue;
 			
 			command = reg[RR(FDCCMD)];
 			switch (reg[RR(FDCCMD)]) {
 				case 0x03: // RESTORE
+#ifdef DEBUG
 					Serial.println("RESTORE");
+#endif
 					setRegister(RW(FDCSTAT), 0x04);
 					setRegister(RR(FDCTRK), 0x00); // track 0
 					setRegister(RW(FDCTRK), 0x00);
@@ -163,21 +180,25 @@ void fdc() {
 					break;
 				case 0x17: // SEEK
 					setRegister(RW(FDCSTAT), (track ? 0x01 : 0x05)); // BUSY;
-					Serial.print("SEEK ");
 					track = reg[RR(FDCDAT)];
+#ifdef DEBUG
+					Serial.print("SEEK ");
 					Serial.println(track, HEX);
+#endif
 					setRegister(RW(FDCTRK), track);
 					setRegister(RW(FDCSTAT), (track ? 0x04 : 0x00)); // Set track 0;
 					setNMI(true);
 					break;
 				case 0x23: // STEP
 					setRegister(RW(FDCSTAT), (track ? 0x21 : 0x25)); // BUSY;
-					Serial.print("STEP ");
 					if (ddir)
 						track++;
 					else
 						track--;
+#ifdef DEBUG
+					Serial.print("STEP ");
 					Serial.println(track, HEX);
+#endif
 					if (track == 255)
 						track = 0;
 					setRegister(RW(FDCSTAT), (track ? 0x24 : 0x20));
@@ -185,7 +206,9 @@ void fdc() {
 					break;
 				case 0x43: // STEP IN
 					setRegister(RW(FDCSTAT), 0x21); // BUSY
+#ifdef DEBUG
 					Serial.print("STEP IN ");
+#endif
 					track--;
 					ddir = 0;
 					if (track == 255)
@@ -196,7 +219,9 @@ void fdc() {
 					break;
 				case 0x53: // STEP OUT
 					setRegister(RW(FDCSTAT), 0x21); // BUSY
+#ifdef DEBUG
 					Serial.print("STEP OUT ");
+#endif
 					track++;
 					ddir = 1;
 					Serial.println(track, HEX);
@@ -207,19 +232,23 @@ void fdc() {
 				setRegister(RW(FDCSTAT), 0x01); // BUSY
 				sector = reg[RR(FDCSEC)];
 				tmp = findSector(image, tracklen, trackcnt, track, sector);
-				Serial.print("pos = ");
-				Serial.println(tmp, HEX);
-				image.seek(tmp);
+#ifdef DEBUG
 				Serial.print("READ SECTOR ");
 				Serial.println(sector, HEX);
-				
+				Serial.print("pos = ");
+				Serial.println(tmp, HEX);
+#endif
+				image.seek(tmp);
+
+				// The first byte uses a simple busy wait on the Coco side
+				// making this loop somewhat complicated on the head and tail.
 				for (int i = 0; i < 256; i++) {
 					setRegister(RW(FDCDAT), image.read());
 					setRegister(RW(FDCSTAT), 0x03);
-					if (i != 255) {
+					if (i != 0)
 						setHALT(false);
+					if (i != 255)
 						waitDR();
-					}
 				}
 				
 				setRegister(RW(FDCSTAT), 0x00);
@@ -229,12 +258,14 @@ void fdc() {
 				setRegister(RW(FDCSTAT), 0x01); // BUSY
 				sector = reg[RR(FDCSEC)];
 				image.seek(findSector(image, tracklen, trackcnt, track, sector));
+#ifdef DEBUG
 				Serial.print("WRITE SECTOR ");
 				Serial.println(sector, HEX);
-				
+#endif	
 				for (int i=0; i < 256; i++) {
 					setRegister(RW(FDCSTAT), 0x03);
-					setHALT(false);
+					if (i != 0)
+						setHALT(false);
 					waitDR();
 					image.write(reg[RR(FDCDAT)]);
 				}
@@ -244,11 +275,12 @@ void fdc() {
 				break;
 				case 0xc0: // READ ADDRESS
 				setRegister(RW(FDCSTAT), 0x01); // BUSY
+#ifdef DEBUG
 				Serial.print("READ ADDRESS ");
 				Serial.print(track);
 				Serial.print("/");
 				Serial.println(sector);
-
+#endif
 				setRegister(RW(FDCSTAT), 0x03); // BUSY, DRO
 				setRegister(RW(FDCDAT), track);
 				setHALT(false);
@@ -270,10 +302,12 @@ void fdc() {
 				setNMI(true);
 				break;
 				case 0xe4: // READ TRACK
-				Serial.println("READ TRACK");
+				setRegister(RW(FDCSTAT), 0x80); // throw error
 				setNMI(true);
 				break;
 				case 0xf4: // WRITE TRACK
+				setRegister(RW(FDCSTAT), 0x80); // throw error
+				setNMI(true); // command complete
 /*				setRegister(RW(FDCSTAT), RW(FDCSTAT) | 0x01); // BUSY
 				Serial.print("WRITE TRACK ");
 				Serial.println(track, HEX);
@@ -301,7 +335,6 @@ void fdc() {
 				}
 				
 				setRegister(RW(FDCSTAT), 0x00); */
-				setNMI(true); // command complete
 				break;
 				case 0xd0: // FORCE INTERRUPT
 				Serial.println("FORCE INT");
@@ -309,7 +342,7 @@ void fdc() {
 				setNMI(true);
 				break;
 			}
-			
+#ifdef DEBUG			
 			if (reg[RR(FDCCMD)] != 0xf4) {
 				Serial.print("Command: ");
 				Serial.print(reg[RR(FDCCMD)], HEX);
@@ -330,7 +363,7 @@ void fdc() {
 				Serial.print(" diskreg = ");
 				Serial.println(reg[RR(DSKREG)], HEX);
 			}
-
+#endif
 		}
 	}
 	image.close();

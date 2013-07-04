@@ -167,19 +167,13 @@ void loop() {
 					programROM(SD.open(names[fileIndex]));
 				break;
 			case 1:
-				viewROM();
-				break;
-			case 2:
 				if (fileSelect())
 					verifyROM(SD.open(names[fileIndex]));
 				break;
-			case 3:
+			case 2:
 				eraseROM();
 				break;
-			case 4:
-				printRegisters();
-				break;
-			case 5:
+			case 3:
 				fdc();
 			}
 			lcd.clear();

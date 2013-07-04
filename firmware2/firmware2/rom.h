@@ -4,9 +4,9 @@
 #include <SD.h>
 
 void eraseROM();
-void programROM(File file);
+int programROM(File file);
 void viewROM();
-void verifyROM(File file);
+int verifyROM(File file);
 void programByte(uint16_t addr, uint8_t data);
 void printRegisters();
 

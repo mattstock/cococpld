@@ -5,14 +5,12 @@
 
 const char menu[][16] = {
 	"program",
-	"view",
 	"verify",
 	"erase",
-	"misc",
 	"fdc"
 };
 
-const int menuCount = 6;
+const int menuCount = 4;
 const char clearMenu[] = "                ";
 
 const char dirfail[] = "Dir failed";
