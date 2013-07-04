@@ -102,6 +102,11 @@ void setup() {
 	digitalWrite(COCOSELECT_PIN, HIGH);
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
+	
+	byte mac[] = { 0xE3, 0x4A, 0xBE, 0xC0, 0x3D, 0x3D };  // Load from setup file in the production version
+		
+	// Ethernet setup
+	Ethernet.begin(mac);
 			
 	// Config LCD
 	lcd = Adafruit_RGBLCDShield();

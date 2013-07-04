@@ -6,6 +6,7 @@
 #include <Adafruit_RGBLCDShield.h>
 #include <SPI.h>
 #include <SD.h>
+#include <Ethernet.h>
 
 // How many filenames we will be able to store
 #define MAX_FILES 30
