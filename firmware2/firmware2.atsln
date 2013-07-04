@@ -32,6 +32,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Adafruit_RGBLCDShield", "H:
 		{293FAED4-4768-4FDF-A173-6C4E8BA60165} = {293FAED4-4768-4FDF-A173-6C4E8BA60165}
 	EndProjectSection
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Ethernet", "H:\electronics\avr\Ethernet\Ethernet.cppproj", "{1CA57062-64E9-4B99-BA2A-E297894EC6F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -62,6 +64,10 @@ Global
 		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Debug|AVR.Build.0 = Debug|AVR
 		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Release|AVR.ActiveCfg = Release|AVR
 		{9BF9E73B-3611-4AE5-8BE5-9E47D972DDE5}.Release|AVR.Build.0 = Release|AVR
+		{1CA57062-64E9-4B99-BA2A-E297894EC6F2}.Debug|AVR.ActiveCfg = Debug|AVR
+		{1CA57062-64E9-4B99-BA2A-E297894EC6F2}.Debug|AVR.Build.0 = Debug|AVR
+		{1CA57062-64E9-4B99-BA2A-E297894EC6F2}.Release|AVR.ActiveCfg = Release|AVR
+		{1CA57062-64E9-4B99-BA2A-E297894EC6F2}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
