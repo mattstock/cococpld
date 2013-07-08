@@ -3,6 +3,8 @@
 #include "fdc.h"
 #include <avr/io.h>
 
+uint8_t reg[31];
+
 void setAddress(uint16_t addr) {
 	digitalWrite(COCOSELECT_PIN, LOW);
 	SPI.transfer(0x01);

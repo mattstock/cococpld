@@ -1,8 +1,8 @@
-#define DSKREG 0xff40
-#define FDCCMD 0xff48
 #ifndef FDC_H
 #define FDC_H
 
+#define DSKREG 0xff40
+#define FDCCMD 0xff48
 #define FDCSTAT 0xff48
 #define FDCTRK 0xff49
 #define FDCSEC 0xff4a

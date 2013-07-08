@@ -37,7 +37,7 @@
 
 
 set_global_assignment -name FAMILY MAX3000A
-set_global_assignment -name DEVICE "EPM3256ATC144-10"
+set_global_assignment -name DEVICE AUTO
 set_global_assignment -name TOP_LEVEL_ENTITY cocofdc
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 12.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "21:55:03  APRIL 25, 2013"
@@ -52,9 +52,6 @@ set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
 set_global_assignment -name MAX7000_DEVICE_IO_STANDARD "3.3-V LVTTL"
 set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 10
-set_global_assignment -name DEVICE_FILTER_PIN_COUNT 144
 set_global_assignment -name VERILOG_FILE SPI_slave.v
 set_global_assignment -name VERILOG_FILE cocofdc.v
 set_global_assignment -name SDC_FILE cocofdc.sdc
-set_location_assignment PIN_125 -to clock_50
-set_location_assignment PIN_127 -to reset

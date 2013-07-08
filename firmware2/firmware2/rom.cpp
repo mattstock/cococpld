@@ -3,8 +3,6 @@
 #include "firmware2.h"
 #include "error.h"
 
-uint8_t reg[30];
-
 int verifyROM(File dataFile) {
 	uint16_t address;
 	uint8_t stored;
@@ -92,6 +90,9 @@ int programROM(File dataFile) {
 	
 	if (!dataFile)
 		return -1;
+
+	Serial.print("program: ");
+	Serial.println(dataFile.name());	
 	
 	if (dataFile.size() <= 16*1024)
 		address = 0xc000;

@@ -1,9 +1,13 @@
 `timescale 1ns/1ns
 
-module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw, miso, mosi, sclk, ss,
-					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, dirty);
+module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw,
+					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, dirty, a_databus, a_addrbus, a_rw, a_sel);
 
 input [14:0] c_addrbus;
+input [15:0] a_addrbus;
+input a_rw;
+input a_sel;
+inout [7:0] a_databus;
 output reg [15:0] sram_addrbus; // Memory address bus
 inout reg [7:0] sram_databus; // Memory databus
 output sram_ce_n;
@@ -20,11 +24,7 @@ output reg sram_we_n;
 output sram_oe_n;
 output c_halt_n;
 output dirty;
-input sclk;
 input clock_50;
-input mosi;
-input ss;
-output miso;
 input reset;
 
 // SPI states
@@ -36,9 +36,7 @@ parameter COCO_W = 2'b00, COCO_R = 2'b10, SPI_W = 2'b01, SPI_R = 2'b11;
 // Data from the SPI bus
 wire spi_input_flag;     // Single clock tick flag indicating there is a byte available from SPI
 wire [7:0] spi_rec;      // Databyte received from SPI - only valid on spi_input_flag high
-reg [15:0] spi_address;  // Stored SPI address - avoids having to send address for each read/write
 reg [2:0] spi_state;     // spi_state of the SPI spi_state machine
-reg spi_send_ready;
 reg [7:0] spi_readbuf;  // Databyte being sent to SPI - update only when spi_input_flag high (for next SPI cycle)
 
 reg [2:0] counter_50;     // 50MHz counter for SRAM read/write   
@@ -46,6 +44,7 @@ reg dirty;               // HIGH to indicate SCS register changes since last SPI
 reg [2:0] eclk_edge;     // Synchonizer for Coco E clock and 50MHz CPLD clock
 reg [2:0] cts_edge;
 reg [2:0] scs_edge;
+reg [2:0] avr_edge;
 
 reg [7:0] c_readbuf;    // SRAM stores in this register for the fairly long E Coco read cycle
 reg [7:0] writebuf;     // If the SRAM is in use, writes a buffered here
@@ -78,6 +77,7 @@ assign sram_ce_n = 1'b0;
 
 wire cts_falling_edge = (cts_edge[2:1] == 2'b10);
 wire scs_falling_edge = (scs_edge[2:1] == 2'b01); // it's flipped because of the eclk timing
+wire avr_falling_edge = (avr_edge[2:1] == 2'b10);
 wire c_regselect = ~c_scs_n & c_eclk;
 wire c_memselect = ~c_cts_n;
 wire c_select = c_reset_n & (c_regselect | c_memselect);
@@ -86,18 +86,19 @@ assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz);
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
-// sync E clock, CTS, SCS with 50MHz osc
+assign a_databus = (a_rw & a_sel ? spi_readbuf : 8'bz);
+
+// sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
   eclk_edge <= {eclk_edge[1:0], c_eclk};
   cts_edge <= {cts_edge[1:0], c_cts_n};
   scs_edge <= {scs_edge[1:0], ~c_scs_n & c_eclk};
+  avr_edge <= {avr_edge[1:0], a_sel};
 end
 
 always @(negedge reset or posedge clock_50) begin
   if (!reset) begin
     spi_state <= SPI_IDLE;
-	 spi_address <= 16'h0;
-    spi_send_ready <= 1'b0;
 	 dirty <= 1'b0;
 	 counter_50 <= 3'b0;
 	 sram_databus <= 8'bz;
@@ -108,7 +109,7 @@ always @(negedge reset or posedge clock_50) begin
  	 nmi <= 1'b0;
 	 halt <= 1'b0;
  end else begin
-    if (spi_input_flag)
+    if (avr_falling_edge)
 	   req[2] <= 1'b1;
     if (scs_falling_edge && c_reset_n) 
 	   req[1] <= 1'b1;
@@ -132,9 +133,7 @@ always @(negedge reset or posedge clock_50) begin
 				end
 			 end
 			 SPI_R: begin
-            spi_address <= spi_address + 1'b1;
 			   spi_readbuf <= sram_databus;
-				spi_send_ready <= 1'b1;
 			 end
 			 COCO_W: begin
 			   if (c_addrbus[3:0] == 4'h0) begin
@@ -152,12 +151,11 @@ always @(negedge reset or posedge clock_50) begin
 			 end
 			 SPI_W: begin
 			   sram_we_n <= 1'b1;
-				spi_address <= spi_address + 1'b1;
 			 end
 		  endcase	 
 	 end else
 	   // All of these happen on the next clock tick!
-		// This functions as a very simple arbiter - SPI first because it has tighter timing, then
+		// This functions as a very simple arbiter - AVR first because it has tighter timing, then
 		// Coco.
 	   casex (req)
   	     3'b1xx: begin // SPI byte waiting	 
@@ -202,78 +200,40 @@ endtask
 
 task spi_command;
 begin
-  case (spi_state)
-	 SPI_IDLE: // Waiting for command byte
-		case (spi_rec)
-		  SPI_CMD_ADDR: spi_state <= SPI_ADDR1; // set addr
-		  SPI_CMD_WRITE: spi_state <= SPI_WRITE; // write byte
-		  SPI_CMD_READ: begin
-		    if (spi_address == 16'h0000) begin  // Read from $ff40
-            spi_address <= spi_address + 1'b1;
-			   spi_readbuf <= dskreg;
-				spi_send_ready <= 1'b1;
-            spi_state <= SPI_READ;
-			 end else if (spi_address == 16'h0011) begin // Read from $ff48 status reg
-            spi_address <= spi_address + 1'b1;
-			   spi_readbuf <= fdcstatus;
-				spi_send_ready <= 1'b1;
-            spi_state <= SPI_READ;
-			 end else begin
-		      counter_50 <= 3'h4; // Use a 4 tick read cycle 20ns
-			   sram_addrbus <= spi_address;
-			   sram_databus <= 8'bz;
-			   sram_we_n <= 1'b1;
-		      spi_send_ready <= 1'b0;
-		      actor <= 1'b1;
-            spi_state <= SPI_READ;
-			 end
-		  end
-		  SPI_CMD_HALT_OFF: begin
-		    halt <= 1'b0;
-		    spi_state <= SPI_IDLE;
-		  end
-		  SPI_CMD_NMI_ON: begin
-		    nmi <= 1'b1;
-			 dskreg[7] <= 1'b0; // halt enable is cleared at the end of each command
-			 halt <= 1'b0;
-		    spi_state <= SPI_IDLE;
-		  end
-		  default: spi_state <= SPI_IDLE; // ignore bytes we don't know
-		endcase
-    SPI_ADDR1: begin
-		spi_address <= (spi_rec << 8);
-		spi_state <= SPI_ADDR2;
-    end
-	 SPI_ADDR2: begin // Set address, wait for ll
-	   spi_address <= spi_address + spi_rec;
-		spi_state <= SPI_IDLE;
-    end
-	 SPI_WRITE: begin     // write byte xx
-	   if (spi_address == 16'h0011) begin // Write to $ff48
-		  spi_address <= spi_address + 1'b1;
-		  fdcstatus <= spi_rec;
-        spi_state <= SPI_IDLE;
-		end else begin
-	     counter_50 <= 3'h4; // Use a 4 tick write cycle 20ns
-		  sram_addrbus[15:0] <= spi_address;
-		  sram_databus[7:0] <= spi_rec;
-		  sram_we_n <= 1'b0;
-		  actor <= 1'b1;
-		  spi_state <= SPI_IDLE;
-		end
+  if (a_rw) begin
+    if (a_addrbus == 16'h0000) begin  // Read from $ff40
+	   spi_readbuf <= dskreg;
+ 	 end else if (a_addrbus == 16'h0011) begin // Read from $ff48 status reg
+ 	   spi_readbuf <= fdcstatus;
+	 end else begin
+	   counter_50 <= 3'h4; // Use a 4 tick read cycle 20ns
+		sram_addrbus <= a_addrbus;
+		sram_databus <= 8'bz;
+	   sram_we_n <= 1'b1;
+		actor <= 1'b1;
+ 	 end
+    if (!a_addrbus[15]) // Clear the read markers
+	   dirty <= 1'b0;
+  end else begin
+    if (a_addrbus == 16'h0011) begin // Write to $ff48
+      fdcstatus <= spi_rec;
+    end else if (a_addrbus == 16'h0100) begin // Magic control port
+      if (a_databus[0])
+	   halt <= 1'b0;
+	   if (a_databus[1]) begin
+		  nmi <= 1'b1;
+		  dskreg[7] <= 1'b0; // halt enable is cleared at the end of each command
+		  halt <= 1'b0;	 
+	   end
+    end else begin
+      counter_50 <= 3'h4; // Use a 4 tick write cycle 20ns
+	   sram_addrbus[15:0] <= a_addrbus;
+	   sram_databus[7:0] <= a_databus;
+	   sram_we_n <= 1'b0;
+	   actor <= 1'b1;
 	 end
-	 SPI_READ: begin // clock out read byte
-		if (!spi_address[15]) // Clear the read markers
-		  dirty <= 1'b0;
-	   spi_state <= SPI_IDLE;
-	 end
-    default:
-	   spi_state <= SPI_IDLE;
-  endcase
+  end
 end
 endtask
-
-SPI_slave u0(.clk(clock_50), .SCK(sclk), .MISO(miso), .MOSI(mosi), .SSEL(ss), .byte_received(spi_input_flag), .byte_data_received(spi_rec), 
-	.byte_send(spi_readbuf), .send_latch(spi_send_ready));
 
 endmodule
