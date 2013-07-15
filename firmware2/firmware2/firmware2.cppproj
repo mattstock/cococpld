@@ -58,13 +58,13 @@
       </StimuliFile>
       <Channel>
         <host>127.0.0.1</host>
-        <port>62376</port>
+        <port>63469</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
         <InterfaceName>JTAG</InterfaceName>
         <InterfaceProperties>
-          <JtagDbgClock>3030000</JtagDbgClock>
+          <JtagDbgClock>32000</JtagDbgClock>
           <SwdClock>249000</SwdClock>
           <JtagProgClock>7500000</JtagProgClock>
           <IspClock>125000</IspClock>

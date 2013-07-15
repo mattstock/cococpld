@@ -51,6 +51,15 @@ public:
 	int setup(char *name);
 	
 protected:
-
 	uint32_t findSector(uint8_t side, uint8_t sector);	
+};
+
+class RAWDisk : public CocoDisk {
+
+public:
+	~RAWDisk();
+	int setup(char *name);
+	
+protected:
+	uint32_t findSector(uint8_t side, uint8_t sector);
 };

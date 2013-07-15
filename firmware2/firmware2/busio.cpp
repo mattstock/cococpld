@@ -19,11 +19,21 @@ void setRegister(uint8_t i, uint8_t d) {
 	setData(d);
 }
 
+void loadStatusReg() {
+	setAddress(0x0011);
+	reg[17] = readData(); 
+}
+
 void loadRegisters() {
-	for (uint8_t i=0; i < 31; i++) { // pull from SPI
+	for (uint8_t i=2; i < 31; i++) { // pull from SPI
 		setAddress(i);
 		reg[i] = readData();
 	}
+}
+
+void loadConfigReg() {
+	setAddress(0x0000);
+	reg[0] = readData();
 }
 
 uint8_t readData() {

@@ -4,19 +4,44 @@
 
 
 CocoDisk::CocoDisk() {
+	track = 0;
 }
 
 CocoDisk::~CocoDisk() {
 	
 }
 
+int RAWDisk::setup(char *name) {
+	image = SD.open(name, FILE_WRITE);
+	if (!image) {
+		Serial.println("Failed to open RAWDisk");
+		return -1;
+	}
+	max_sectors = 18;
+	tracklen = 18*256L;
+	if (image.size() == 256L*18*35)
+		max_sides = 1;
+	else
+		max_sides = 2;
+	
+	Serial.print("tracklen = ");
+	Serial.println(tracklen, HEX);
+	Serial.print("sides = ");
+	Serial.println(max_sides, HEX);	
+	return 0;
+}
+
+
+RAWDisk::~RAWDisk() {
+	image.close();
+}
+
 int DMKDisk::setup(char *name) {
 	image = SD.open(name, FILE_WRITE);
 	if (!image) {
-		Serial.println("Failed to open CocoDisk");
+		Serial.println("Failed to open DMKDisk");
 		return -1;
 	}
-	track = 0;
 	max_sectors = 18;
 	max_sides = 1;
 	
@@ -103,12 +128,18 @@ int RBFDisk::setup(char *name)  {
 	
 	Serial.print("sides = ");
 	Serial.println(max_sides, HEX);
-	track = 0;
 	return 0;
 }
 
 RBFDisk::~RBFDisk() {
 	image.close();
+}
+
+uint32_t RAWDisk::findSector(uint8_t side, uint8_t sector) {
+	if (sector > max_sectors || side >= max_sides)
+		return 0;
+
+	return track*(max_sides*tracklen) + side*(max_sectors*256L) + (sector-1)*256L;
 }
 
 // Given a logical sector find and return the
@@ -121,14 +152,14 @@ uint32_t RBFDisk::findSector(uint8_t side, uint8_t sector) {
 	
 	pos = max_sides*tracklen*track;
 	
-	#ifdef DEBUG
+#ifdef DEBUG
 	Serial.print("findSector(");
 	Serial.print(track, HEX);
 	Serial.print(",");
 	Serial.print(sector, HEX);
 	Serial.print(") = ");
 	Serial.println(pos, HEX);
-	#endif
+#endif
 	
 	return pos + (sector-1)*max_sides*256L+side*256L;
 }
@@ -155,7 +186,7 @@ void CocoDisk::seek(uint16_t track) {
 	Serial.println(track, HEX);
 #endif
 	setRegister(RW(FDCTRK), track);
-	setRegister(RW(FDCSTAT), (track ? 0x04 : 0x00)); // Set track 0;
+	setRegister(RW(FDCSTAT), (track ? 0x00 : 0x04)); // Set track 0;
 	setNMI(true);
 }
 
@@ -169,7 +200,8 @@ void CocoDisk::step() {
 	Serial.print("STEP ");
 	Serial.println(track, HEX);
 #endif
-	setRegister(RW(FDCSTAT), (track ? 0x24 : 0x20));
+	setRegister(RW(FDCTRK), track);
+	setRegister(RW(FDCSTAT), (track ? 0x20 : 0x24));
 	setNMI(true);
 }
 
@@ -182,7 +214,8 @@ void CocoDisk::stepin() {
 	ddir = false;
 	if (track < 0)
 		track = 0;
-	setRegister(RW(FDCSTAT), (track ? 0x24 : 0x20));
+	setRegister(RW(FDCTRK), track);
+	setRegister(RW(FDCSTAT), (track ? 0x20 : 0x24));
 }
 
 void CocoDisk::stepout() {
@@ -192,6 +225,7 @@ void CocoDisk::stepout() {
 #endif
 	track++;
 	ddir = true;
+	setRegister(RW(FDCTRK), track);
 	setRegister(RW(FDCSTAT), 0x20);
 	setNMI(true);
 }
@@ -217,15 +251,18 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 
 	// The first byte uses a simple busy wait on the Coco side
 	// making this loop somewhat complicated on the head and tail.
+	delayMicroseconds(50);
 	for (int i = 0; i < 256; i++) {
 		setRegister(RW(FDCDAT), image.read());
-		setRegister(RW(FDCSTAT), 0x03);
+		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)
 			setHALT(false);
 		if (i != 255)
 			waitDR();
 	}	
+	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
+	Serial.println("");
 	setNMI(true);	
 }
 
@@ -250,8 +287,10 @@ void CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 		if (i != 0)
 			setHALT(false);
 		waitDR();
+		loadRegisters(); 
 		image.write(reg[RR(FDCDAT)]);
 	}			
+	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
 	setNMI(true);	
 }
@@ -290,11 +329,20 @@ void CocoDisk::writeTrack() {
 void CocoDisk::forceInt() {
 	Serial.println("FORCE INT");
 	setRegister(RW(FDCSTAT), (track ? 0x00 : 0x04));
-	setNMI(true);
 }
 
 // Wait until the DRO bit changes to 0
 void CocoDisk::waitDR() {
-	while (reg[RW(FDCSTAT)] & 0x02)
-	loadRegisters();
+	int i=0;
+	while (reg[RW(FDCSTAT)] & 0x02) {
+		delayMicroseconds(1);
+		i++;
+		if (i == 30) {
+			Serial.println("timeout!");
+			setHALT(false);
+			i=0;
+		}
+		loadStatusReg();
+	}
+
 }

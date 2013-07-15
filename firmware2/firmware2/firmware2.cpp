@@ -7,6 +7,7 @@
 
 
 #include <avr/io.h>
+#include <avr/interrupt.h> 
 #include <Arduino.h>
 #include "firmware2.h"
 #include "rom.h"
@@ -24,6 +25,10 @@ char *config[7];
 
 // Menu navigation
 int menuIndex;
+
+/*ISR({Vector Source}_vect) {
+	// ISR code to execute here
+}*/
 
 void displayFilename() {
 	lcd.setCursor(0,1);
@@ -161,7 +166,8 @@ void setup() {
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 	SPI.setDataMode(SPI_MODE0);
 
-	pinMode(WRITEINT_PIN, INPUT);
+	pinMode(CMDINT_PIN, INPUT);
+	pinMode(CFGINT_PIN, INPUT);
 	pinMode(USBSELECT_PIN, OUTPUT);
 	digitalWrite(USBSELECT_PIN, HIGH);
 	pinMode(ETHSELECT_PIN, OUTPUT);
@@ -218,8 +224,6 @@ void printAddress(uint16_t val) {
 void loop() {
 	uint8_t buttons = lcd.readButtons();
 
-	if (digitalRead(WRITEINT_PIN)) // We have a write to a register
-		loadRegisters();
 	if (buttons) {
 		if (buttons & BUTTON_UP) {
 			if (menuIndex == 0)

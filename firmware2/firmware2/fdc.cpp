@@ -8,12 +8,33 @@ uint32_t findRBFSector(File file, uint8_t side, uint32_t tracklen, uint16_t trac
   return (side+1)*(track*tracklen+(sector-1)*256);
 }
 
+void printPair(uint16_t r) {
+	Serial.print(reg[RR(r)], HEX);
+	Serial.print("/");
+	Serial.print(reg[RW(r)], HEX);
+	Serial.print(" ");
+}
+
+void printRegs() {
+	Serial.print("cmd/stat: ");
+	printPair(FDCCMD);
+	Serial.print("dskreg: ");
+	printPair(DSKREG);
+	Serial.print("fdcdat: ");
+	printPair(FDCDAT);
+	Serial.print("fdctrk: ");
+	printPair(FDCTRK);
+	Serial.print("fdcsec: ");
+	printPair(FDCSEC);
+	Serial.println("");
+}
+
 // Start to handle FDC instructions
 void fdc() {
 	uint8_t command = 0;
 	uint8_t drive = 100;
-	uint8_t control = 0;	
-	RBFDisk disk;
+	uint8_t control = 0;
+	RAWDisk disk;
 	
 	Serial.println(config[DSKROM]);
 
@@ -32,40 +53,38 @@ void fdc() {
 	lcd.print("FDC ready");
 	while (lcd.readButtons());
 	while (!lcd.readButtons()) {
-		if (digitalRead(WRITEINT_PIN)) {
-			loadRegisters();
-			
-			if (control != reg[RR(DSKREG)]) {
-				control = reg[RR(DSKREG)];
-				if ((control & 0x47) & ((control & 0x47)-1)) {
-					Serial.print("skipping crap: ");
-					Serial.println(control);
-					continue;
-				}
-				if (!(control & 0x47)) {
+		if (digitalRead(CFGINT_PIN)) {
+			loadConfigReg();
+			control = reg[RR(DSKREG)];
+			if (!(control & 0x47)) {
 #ifdef DEBUG
-					Serial.println("Closing open floppy");
+				Serial.println("Closing open floppy");
 #endif
-					drive = 100;
-				}
-				if ((control & 0x09) && (drive != 0)) {
-					drive = 0;
-					Serial.println("Firing up drive 0");
-					disk.setup(config[FLOPPY0]);		
-				}
-				if ((control & 0x0a) && (drive != 1)) {
-					drive = 1;
-					Serial.println("Firing up drive 1");
-					disk.setup(config[FLOPPY1]);
-				}
+				drive = 100;
 			}
-			
-			if (command == reg[RR(FDCCMD)] || drive == 100)
-				continue;
-			
+			if (((control & 0x09) == 0x09) && (drive != 0)) {
+				drive = 0;
+				Serial.println("Firing up drive 0");
+				disk.setup(config[FLOPPY0]);		
+			}
+			if (((control & 0x0a) == 0x0a) && (drive != 1)) {
+				drive = 1;
+				Serial.println("Firing up drive 1");
+				disk.setup(config[FLOPPY1]);
+			}
+			if (((control & 0x0c) == 0x0c) && (drive != 2)) {
+				drive = 2;
+				Serial.println("Firing up drive 2");
+				disk.setup(config[FLOPPY2]);
+			}
+		}
+		
+		if (digitalRead(CMDINT_PIN)) {
+			Serial.println("-----------------------------------------------------");
+			Serial.print("B: ");
+			loadRegisters();
+			printRegs();
 			command = reg[RR(FDCCMD)];
-			Serial.print("Command: ");
-			Serial.println(command, HEX);
 			if ((command & 0xf0) == 0)
 				disk.restore();
 			if ((command & 0xf0) == 0x10)
@@ -77,9 +96,9 @@ void fdc() {
 			if ((command & 0xe0) == 0x60)
 				disk.stepout();
 			if ((command & 0xf1) == 0x80)
-				disk.readSector((command & 0x08) == 0x08, reg[RR(FDCSEC)]);
+				disk.readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xf0) == 0xa0)
-				disk.writeSector((command & 0x08) == 0x08, reg[RR(FDCSEC)]);
+				disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xfb) == 0xc0)
 				disk.readAddress();
 			if ((command & 0xfb) == 0xe0)
@@ -89,6 +108,8 @@ void fdc() {
 			if ((command & 0xf8) == 0xd0)
 				disk.forceInt();
 
+			Serial.print("A: ");
+			printRegs();
 		}
 	}
 	delay(2000);
