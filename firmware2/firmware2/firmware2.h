@@ -12,13 +12,11 @@
 
 #define FLOPPY0 0
 #define FLOPPY1 1
-#define FLOPPY2 2
-#define FLOPPY3 3
-#define DSKROM  4
-#define ROM     5
-#define MAC     6
+#define DSKROM  2
+#define ROM     3
+#define MAC     4
 
-extern char *config[7];
+extern char *config[5];
 
 extern Adafruit_RGBLCDShield lcd;
 #endif

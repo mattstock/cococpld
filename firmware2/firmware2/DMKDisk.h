@@ -1,3 +1,6 @@
+#ifndef DMKDISK_H
+#define DMKDISK_H
+
 #include <SD.h>
 
 class CocoDisk {
@@ -63,3 +66,16 @@ public:
 protected:
 	uint32_t findSector(uint8_t side, uint8_t sector);
 };
+
+class VirtualDisk : public CocoDisk {
+
+public:
+	~VirtualDisk();
+	int setup(char *name);
+	
+protected:
+
+	uint32_t findSector(uint8_t side, uint8_t sector);
+};
+
+#endif

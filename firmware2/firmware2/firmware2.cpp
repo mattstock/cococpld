@@ -108,14 +108,6 @@ void parseLine(char *line) {
 		config[FLOPPY1] = (char *) malloc(13);
 		strcpy(config[FLOPPY1], &(line[8]));
 	}
-	if (!strncmp("floppy2 ", line, 8)) {
-		config[FLOPPY2] = (char *) malloc(13);
-		strcpy(config[FLOPPY2], &(line[8]));
-	}
-	if (!strncmp("floppy3 ", line, 8)) {
-		config[FLOPPY3] = (char *) malloc(13);
-		strcpy(config[FLOPPY3], &(line[8]));
-	}
 	if (!strncmp("rom ", line, 4)) {
 		config[ROM] = (char *) malloc(13);
 		strcpy(config[ROM], &(line[4]));

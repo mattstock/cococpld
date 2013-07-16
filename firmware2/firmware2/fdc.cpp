@@ -34,7 +34,7 @@ void fdc() {
 	uint8_t command = 0;
 	uint8_t drive = 100;
 	uint8_t control = 0;
-	RAWDisk disk;
+	CocoDisk *disk = NULL;
 	
 	Serial.println(config[DSKROM]);
 
@@ -65,17 +65,26 @@ void fdc() {
 			if (((control & 0x09) == 0x09) && (drive != 0)) {
 				drive = 0;
 				Serial.println("Firing up drive 0");
-				disk.setup(config[FLOPPY0]);		
+				if (disk != NULL)
+					delete disk;
+				disk = new RAWDisk();
+				disk->setup(config[FLOPPY0]);		
 			}
 			if (((control & 0x0a) == 0x0a) && (drive != 1)) {
 				drive = 1;
 				Serial.println("Firing up drive 1");
-				disk.setup(config[FLOPPY1]);
+				if (disk != NULL)
+					delete disk;
+				disk = new RAWDisk();
+				disk->setup(config[FLOPPY1]);
 			}
 			if (((control & 0x0c) == 0x0c) && (drive != 2)) {
 				drive = 2;
 				Serial.println("Firing up drive 2");
-				disk.setup(config[FLOPPY2]);
+				if (disk != NULL)
+					delete disk;
+				disk = new VirtualDisk();
+				disk->setup();
 			}
 		}
 		
@@ -86,27 +95,27 @@ void fdc() {
 			printRegs();
 			command = reg[RR(FDCCMD)];
 			if ((command & 0xf0) == 0)
-				disk.restore();
+				disk->restore();
 			if ((command & 0xf0) == 0x10)
-				disk.seek(reg[RR(FDCDAT)]);
+				disk->seek(reg[RR(FDCDAT)]);
 			if ((command & 0xe0) == 0x20)
-				disk.step();
+				disk->step();
 			if ((command & 0xe0) == 0x40)
-				disk.stepin();
+				disk->stepin();
 			if ((command & 0xe0) == 0x60)
-				disk.stepout();
+				disk->stepout();
 			if ((command & 0xf1) == 0x80)
-				disk.readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
+				disk->readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xf0) == 0xa0)
-				disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
+				disk->writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xfb) == 0xc0)
-				disk.readAddress();
+				disk->readAddress();
 			if ((command & 0xfb) == 0xe0)
-				disk.readTrack();
+				disk->readTrack();
 			if ((command & 0xfb) == 0xf0)
-				disk.writeTrack();
+				disk->writeTrack();
 			if ((command & 0xf8) == 0xd0)
-				disk.forceInt();
+				disk->forceInt();
 
 			Serial.print("A: ");
 			printRegs();
