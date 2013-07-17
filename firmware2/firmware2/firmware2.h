@@ -7,9 +7,6 @@
 #include <SPI.h>
 #include <SD.h>
 
-// How many filenames we will be able to store
-#define MAX_FILES 30
-
 #define FLOPPY0 0
 #define FLOPPY1 1
 #define DSKROM  2

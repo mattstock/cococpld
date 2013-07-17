@@ -47,4 +47,18 @@ class DECBImage : public CocoImage {
 	File image;
 };
 
+class VirtualImage : public CocoImage {
+
+	public:
+	
+	VirtualImage();
+	~VirtualImage();
+	char *getSector(uint8_t side, uint16_t track, uint16_t sector);
+	boolean putSector(uint8_t side, uint16_t track, uint16_t sector, char *data);
+
+	private:
+	
+	uint8_t image_count;
+	File image;
+};
 #endif

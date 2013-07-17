@@ -3,16 +3,6 @@
 #include "firmware2.h"
 #include "error.h"
 
-const char menu[][16] = {
-	"program",
-	"verify",
-	"erase",
-	"fdc"
-};
-
-const int menuCount = 4;
-const char clearMenu[] = "                ";
-
 const char dirfail[] = "Dir failed";
 const char cardfail[] = "Card failed";
 const char nofiles[] = "No Files";
@@ -22,13 +12,6 @@ const char erasing[] = "Erasing ";
 const char complete[] = "complete";
 const char prog[] = "Prog ";
 const char errfail[] = "Error";
-
-void displayMenu(int i) {
-	lcd.setCursor(0,0);
-	lcd.print(clearMenu);
-	lcd.setCursor(0,0);
-	lcd.print(menu[i]);
-}
 
 void displayMsg(int i) {
 	char *ptr;

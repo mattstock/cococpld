@@ -17,10 +17,6 @@
 
 Adafruit_RGBLCDShield lcd;
 
-// Keep a list of the files on the sdcard
-int fileCount;
-int fileIndex;
-char *names[MAX_FILES];
 char *config[5];
 
 // Menu navigation
@@ -30,74 +26,6 @@ int menuIndex;
 	// ISR code to execute here
 }*/
 
-void displayFilename() {
-	lcd.setCursor(0,1);
-	lcd.print(clearMenu);
-	lcd.setCursor(0,1);
-	lcd.print(names[fileIndex]);
-}
-
-boolean fileSelect() {
-	uint8_t buttons;
-	
-	// wait for button release
-	while (lcd.readButtons());
-
-	if (fileCount == 0)
-	  return false;
-	  
-	displayFilename();
-	while (1) {
-		if ((buttons = lcd.readButtons())) {
-			if (buttons & BUTTON_LEFT)
-				return false;
-			if (buttons & BUTTON_UP) {
-				if (fileIndex == 0)
-					fileIndex = fileCount-1;
-				else
-					fileIndex--;
-			}
-			if (buttons & BUTTON_DOWN) {
-				if (fileIndex == fileCount-1)
-					fileIndex = 0;
-				else
-					fileIndex++;
-			}
-			if (buttons & BUTTON_SELECT)
-				return true;
-			displayFilename();
-			delay(100);
-		}
-	}
-}
-
-void loadFiles() {
-	char *name;
-	File root = SD.open("/");
-	if (!root) {
-		lcd.clear();
-		displayMsg(DIR_FAILED);
-		delay(1000);
-		return;
-	}
-	
-	root.rewindDirectory();
-	fileCount = 0;
-	while (true) {
-		File entry = root.openNextFile();
-		if (!entry || (fileCount == MAX_FILES))
-			break;
-		if (!entry.isDirectory()) {
-			name = entry.name();
-			if (strncasecmp("ccc", &(name[strlen(name)-3]), 3))
-				continue;
-			names[fileCount] = (char *) malloc(14);
-			strncpy(names[fileCount++], name, 13); // 8.3 and a null
-			Serial.println(entry.name());
-		}
-		entry.close();
-	}
-}
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
@@ -188,20 +116,12 @@ void setup() {
 	// Ethernet setup
 	// Ethernet.begin(mac);
 	
-	loadFiles();
-	
-	if (fileCount == 0) {
-		lcd.setCursor(0,1);
-		displayMsg(NO_FILES);
-		delay(2000);
-	}
-	
 	loadRegisters();
 	
-	menuIndex = 0;
-	fileIndex = 0;
-	lcd.clear();
-	displayMenu(menuIndex);
+	Serial.print("Going into fdc");
+	fdc();
+	Serial.print("Fail");
+	while (1);
 }
 
 
@@ -214,43 +134,6 @@ void printAddress(uint16_t val) {
 }
 
 void loop() {
-	uint8_t buttons = lcd.readButtons();
-
-	if (buttons) {
-		if (buttons & BUTTON_UP) {
-			if (menuIndex == 0)
-				menuIndex = menuCount-1;
-			else
-				menuIndex--;
-		}
-		if (buttons & BUTTON_DOWN) {
-			if (menuIndex == menuCount-1)
-				menuIndex = 0;
-			else
-				menuIndex++;
-		}
-		if (buttons & BUTTON_SELECT) {
-			while (lcd.readButtons()); // Wait for release
-			switch (menuIndex) {
-			case 0:
-				if (fileSelect())
-					programROM(SD.open(names[fileIndex]));
-				break;
-			case 1:
-				if (fileSelect())
-					verifyROM(SD.open(names[fileIndex]));
-				break;
-			case 2:
-				eraseROM();
-				break;
-			case 3:
-				fdc();
-			}
-			lcd.clear();
-		}
-		displayMenu(menuIndex);
-		delay(100);
-	}
 }
 
 extern void arduinomain(void);

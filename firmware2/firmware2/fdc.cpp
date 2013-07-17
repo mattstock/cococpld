@@ -41,6 +41,8 @@ void fdc() {
 	if (programROM(SD.open(config[DSKROM])) != 0)
 		return;
 	
+	Serial.println("Programmed the disk rom");
+	
 	// Set reset register values for FDC
 	setRegister(RW(DSKREG), 0x00);
 	setRegister(RW(FDCSTAT), 0x04);
@@ -49,8 +51,6 @@ void fdc() {
 	setRegister(RR(FDCSEC), 0x01); // sector 1
 	setRegister(RW(FDCSEC), 0x01);
 
-	lcd.clear();
-	lcd.print("FDC ready");
 	while (lcd.readButtons());
 	while (!lcd.readButtons()) {
 		if (digitalRead(CFGINT_PIN)) {
@@ -81,7 +81,7 @@ void fdc() {
 				Serial.println("Firing up virtual drive");
 				if (disk != NULL)
 					delete disk;
-//				disk = new CocoDisk(new VirtualImage());
+				disk = new CocoDisk(new VirtualImage());
 			}
 		}
 		
@@ -118,5 +118,6 @@ void fdc() {
 			printRegs();
 		}
 	}
+	Serial.println("Exiting fdc()");
 	delay(2000);
 }
