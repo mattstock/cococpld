@@ -67,24 +67,21 @@ void fdc() {
 				Serial.println("Firing up drive 0");
 				if (disk != NULL)
 					delete disk;
-				disk = new RAWDisk();
-				disk->setup(config[FLOPPY0]);		
+				disk = new CocoDisk(new DECBImage(config[FLOPPY0]));
 			}
 			if (((control & 0x0a) == 0x0a) && (drive != 1)) {
 				drive = 1;
 				Serial.println("Firing up drive 1");
 				if (disk != NULL)
 					delete disk;
-				disk = new RAWDisk();
-				disk->setup(config[FLOPPY1]);
+				disk = new CocoDisk(new DECBImage(config[FLOPPY1]));
 			}
 			if (((control & 0x0c) == 0x0c) && (drive != 2)) {
 				drive = 2;
-				Serial.println("Firing up drive 2");
+				Serial.println("Firing up virtual drive");
 				if (disk != NULL)
 					delete disk;
-				disk = new VirtualDisk();
-				disk->setup();
+//				disk = new CocoDisk(new VirtualImage());
 			}
 		}
 		

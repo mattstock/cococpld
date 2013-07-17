@@ -16,7 +16,7 @@
 #define ROM     3
 #define MAC     4
 
-extern char *config[5];
+extern char *config[];
 
 extern Adafruit_RGBLCDShield lcd;
 #endif

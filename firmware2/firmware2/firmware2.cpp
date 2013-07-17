@@ -21,7 +21,7 @@ Adafruit_RGBLCDShield lcd;
 int fileCount;
 int fileIndex;
 char *names[MAX_FILES];
-char *config[7];
+char *config[5];
 
 // Menu navigation
 int menuIndex;

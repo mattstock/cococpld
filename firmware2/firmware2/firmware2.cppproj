@@ -58,7 +58,7 @@
       </StimuliFile>
       <Channel>
         <host>127.0.0.1</host>
-        <port>63469</port>
+        <port>50461</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -246,10 +246,13 @@
     <Compile Include="busio.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DMKDisk.cpp">
+    <Compile Include="CocoDisk.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DMKDisk.h">
+    <Compile Include="CocoImage.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CocoImage.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="error.cpp">
@@ -268,6 +271,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="firmware2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CocoDisk.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="rom.cpp">
