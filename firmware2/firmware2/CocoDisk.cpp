@@ -2,14 +2,27 @@
 #include "fdc.h"
 #include "busio.h"
 
-CocoDisk::CocoDisk(CocoImage *image) {
-	disk = image;
+CocoDisk::CocoDisk(const char *disk1, const char *disk2) {
+	strncpy(diskname1, disk1, 13);
+	strncpy(diskname2, disk2, 13);
 }
 
 CocoDisk::~CocoDisk() {
 	delete disk;
 }
 
+void CocoDisk::setDrive(uint8_t d) {
+	if (d > 2)
+		return;
+	if (disk != NULL)
+		delete disk;
+	if (d == 0)
+		disk = new DECBImage(diskname1);
+	if (d == 1)
+		disk = new DECBImage(diskname2);
+	if (d == 2)
+		disk = new VirtualImage();
+}
 void CocoDisk::restore() {
 	Serial.println("RESTORE");
 	setRegister(RW(FDCSTAT), 0x04);
@@ -78,6 +91,11 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	// making this loop somewhat complicated on the head and tail.
 	delayMicroseconds(50);
 	for (uint16_t i = 0; i < sector_size; i++) {
+/*		if (sector_data[i] < 0x0f)
+			Serial.print("0");
+		Serial.print(sector_data[i], HEX);
+		if (((i+1) % 16) == 0)
+			Serial.println(""); */
 		setRegister(RW(FDCDAT), sector_data[i]);
 		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)
@@ -87,7 +105,6 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	}
 	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
-	Serial.println("");
 	setNMI(true);
 	free(sector_data);
 }

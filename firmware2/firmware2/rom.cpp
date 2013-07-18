@@ -1,7 +1,6 @@
 ﻿#include "rom.h"
 #include "busio.h"
 #include "firmware2.h"
-#include "error.h"
 
 int verifyROM(File dataFile) {
 	uint16_t address;
@@ -36,53 +35,6 @@ void eraseROM() {
 		setData(0x00);
 		address++;
 	}
-}
-
-void viewROM() {
-	lcd.clear();
-	lcd.print("0000");
-	
-	uint16_t address = 0x0000;
-	while (true) {
-		if (address < 0x10)
-		lcd.setCursor(3,0);
-		else if (address < 0x100)
-		lcd.setCursor(2,0);
-		else if (address < 0x1000)
-		lcd.setCursor(1,0);
-		else
-		lcd.setCursor(0,0);
-		lcd.print(address, HEX);
-		lcd.print(":");
-		
-		lcd.setCursor(0,1);
-		lcd.print("0000000000000000");
-		setAddress(address);
-		for (int i=0; i < 8; i++) {
-			lcd.setCursor(i*2,1);
-			lcd.print(readData(), HEX);
-		}
-		
-		while (1) {
-			uint8_t buttons = lcd.readButtons();
-
-			if (buttons) {
-				if (buttons & BUTTON_SELECT)
-					return;
-				if (buttons & BUTTON_UP)
-					address += 0x1000;
-				if (buttons & BUTTON_RIGHT)
-					address += 8;
-				if (buttons & BUTTON_LEFT)
-					address -= 8;
-				if (buttons & BUTTON_DOWN)
-					address -= 0x1000;
-				break;
-			}
-		}
-	}
-	
-	lcd.clear();
 }
 
 int programROM(File dataFile) {

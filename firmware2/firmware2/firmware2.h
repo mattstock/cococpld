@@ -1,9 +1,6 @@
 #ifndef _FIRMWARE2_H
 #define _FIRMWARE2_H
 
-#include <Wire.h>
-#include <Adafruit_MCP23017.h>
-#include <Adafruit_RGBLCDShield.h>
 #include <SPI.h>
 #include <SD.h>
 
@@ -15,5 +12,4 @@
 
 extern char *config[];
 
-extern Adafruit_RGBLCDShield lcd;
 #endif

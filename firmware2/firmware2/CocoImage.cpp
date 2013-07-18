@@ -7,6 +7,9 @@
 
 #include "CocoImage.h"
 
+CocoImage::~CocoImage() {
+}
+
 uint16_t CocoImage::getSectorSize() {
 	return sector_size;
 }
@@ -98,14 +101,22 @@ VirtualImage::VirtualImage() {
 	char filename[11];
 	int idx;
 	
+	sectors_per_track = 18;
+	sector_size = 256;
+	max_sides = 1;
+	
 	File root = SD.open("/");
 	if (!root)
 		return;
 	
 	image = SD.open("track17.dat", FILE_WRITE);
+	image.seek(0);
 	// Initialize
 	for (uint16_t i=0; i < sector_size*10L; i++)
-	  image.write(0xff);
+		if (i > 67 && i < 256)
+			image.write((uint8_t)0x00); // FAT zeroing
+		else
+			image.write((uint8_t)0xff);
 	
 	Serial.println("Written blank file");
 	root.rewindDirectory();
@@ -113,13 +124,17 @@ VirtualImage::VirtualImage() {
 	while (true) {
 		File entry = root.openNextFile();
 		if (!entry)
-		break;
+			break;
 		if (!entry.isDirectory()) {
-			image.seek(sector_size+image_count*32);
+			image.seek(sector_size+image_count*32L);
 			name = entry.name();
 			if (strncasecmp("dsk", &(name[strlen(name)-3]), 3))
 				continue;
-			Serial.println(name);
+			Serial.print(name);
+			Serial.print(": ");
+			Serial.print(sector_size+image_count*32L, HEX);
+			Serial.print(", ");
+			Serial.println(image_count, HEX);
 			idx = 0;
 			for (int i=0; i < 11; i++)
 				filename[i] = ' ';			
@@ -136,11 +151,14 @@ VirtualImage::VirtualImage() {
 			image.write((uint8_t)0x01);
 			// Fix the FAT entry as well
 			image.seek(image_count);
-			image.write(0xc1);
+			image.write(0xc0);
 			image_count++;
 		}
 		entry.close();
-	}	
+	}
+	image.close();
+	root.close();
+	image = SD.open("track17.dat"); // RO copy
 }
 
 VirtualImage::~VirtualImage() {
@@ -149,6 +167,9 @@ VirtualImage::~VirtualImage() {
 
 char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	char *sector_data = (char *)malloc(sector_size);
+	
+	Serial.print("track = ");
+	Serial.println(track, HEX);
 	
 	// Unless it's the directory track, we ignore it for now
 	if (track != 0x11) {

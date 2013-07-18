@@ -7,6 +7,7 @@ class CocoImage {
 
 	public:
 	
+	virtual ~CocoImage();
 	virtual char *getSector(uint8_t side, uint16_t track, uint16_t sector) = 0;
 	virtual boolean putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) = 0;
 	uint16_t getSectorSize();

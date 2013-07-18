@@ -34,7 +34,7 @@ void fdc() {
 	uint8_t command = 0;
 	uint8_t drive = 100;
 	uint8_t control = 0;
-	CocoDisk *disk = NULL;
+	CocoDisk *disk = new CocoDisk(config[FLOPPY0], config[FLOPPY1]);
 	
 	Serial.println(config[DSKROM]);
 
@@ -51,42 +51,25 @@ void fdc() {
 	setRegister(RR(FDCSEC), 0x01); // sector 1
 	setRegister(RW(FDCSEC), 0x01);
 
-	while (lcd.readButtons());
-	while (!lcd.readButtons()) {
+	while (1) {
 		if (digitalRead(CFGINT_PIN)) {
 			loadConfigReg();
 			control = reg[RR(DSKREG)];
-			if (!(control & 0x47)) {
-#ifdef DEBUG
-				Serial.println("Closing open floppy");
-#endif
-				drive = 100;
-			}
-			if (((control & 0x09) == 0x09) && (drive != 0)) {
+			if (((control & 0x01) == 0x01) && (drive != 0)) {
 				drive = 0;
-				Serial.println("Firing up drive 0");
-				if (disk != NULL)
-					delete disk;
-				disk = new CocoDisk(new DECBImage(config[FLOPPY0]));
+				disk->setDrive(0);
 			}
-			if (((control & 0x0a) == 0x0a) && (drive != 1)) {
+			if (((control & 0x02) == 0x02) && (drive != 1)) {
 				drive = 1;
-				Serial.println("Firing up drive 1");
-				if (disk != NULL)
-					delete disk;
-				disk = new CocoDisk(new DECBImage(config[FLOPPY1]));
+				disk->setDrive(1);
 			}
-			if (((control & 0x0c) == 0x0c) && (drive != 2)) {
+			if (((control & 0x04) == 0x04) && (drive != 2)) {
 				drive = 2;
-				Serial.println("Firing up virtual drive");
-				if (disk != NULL)
-					delete disk;
-				disk = new CocoDisk(new VirtualImage());
+				disk->setDrive(2);
 			}
 		}
 		
 		if (digitalRead(CMDINT_PIN)) {
-			Serial.println("-----------------------------------------------------");
 			Serial.print("B: ");
 			loadRegisters();
 			printRegs();
@@ -113,9 +96,6 @@ void fdc() {
 				disk->writeTrack();
 			if ((command & 0xf8) == 0xd0)
 				disk->forceInt();
-
-			Serial.print("A: ");
-			printRegs();
 		}
 	}
 	Serial.println("Exiting fdc()");

@@ -7,8 +7,9 @@ class CocoDisk {
 
 	public:
 
-	CocoDisk(CocoImage *image);
+	CocoDisk(const char *disk1, const char *disk2);
 	~CocoDisk();
+	void setDrive(uint8_t d);
 	void restore();
 	void seek(uint16_t track);
 	void step();
@@ -25,6 +26,8 @@ class CocoDisk {
 
 	void waitDR();
 
+	char diskname1[13];
+	char diskname2[13];
 	CocoImage *disk;
 	uint32_t track;
 	boolean ddir;

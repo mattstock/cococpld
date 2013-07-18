@@ -11,16 +11,10 @@
 #include <Arduino.h>
 #include "firmware2.h"
 #include "rom.h"
-#include "error.h"
 #include "fdc.h"
 #include "busio.h"
 
-Adafruit_RGBLCDShield lcd;
-
 char *config[5];
-
-// Menu navigation
-int menuIndex;
 
 /*ISR({Vector Source}_vect) {
 	// ISR code to execute here
@@ -97,12 +91,6 @@ void setup() {
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
 	
-	// Config LCD
-	lcd = Adafruit_RGBLCDShield();
-	lcd.begin(16, 2);
-	lcd.clear();
-	lcd.setBacklight(0x1);
-
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
 		Serial.println("microSD failed");
@@ -122,15 +110,6 @@ void setup() {
 	fdc();
 	Serial.print("Fail");
 	while (1);
-}
-
-
-// Prints a single bit in the right position on the LCD screen
-void printAddress(uint16_t val) {
-	for (int i=0; i < 16; i++) {
-		lcd.setCursor(15-i, 1);
-		lcd.print((val & (1 << i)) ? "1" : "0");
-	}
 }
 
 void loop() {
