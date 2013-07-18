@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 
 module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw,
-					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, dirty, a_databus, a_addrbus, a_rw, a_sel);
+					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, intr, a_databus, a_addrbus, a_rw, a_sel);
 
 input [14:0] c_addrbus;
 input [15:0] a_addrbus;
@@ -23,29 +23,20 @@ output [3:0] led;
 output reg sram_we_n;
 output sram_oe_n;
 output c_halt_n;
-output dirty;
+output [1:0] intr;
 input clock_50;
 input reset;
 
-// SPI states
-parameter SPI_IDLE = 3'b000, SPI_ADDR1 = 3'b001, SPI_ADDR2 = 3'b010, SPI_WRITE = 3'b011, SPI_READ = 3'b100;
-// SPI command bytes
-parameter SPI_CMD_ADDR = 8'h01, SPI_CMD_WRITE = 8'h02, SPI_CMD_READ = 8'h03, SPI_CMD_NMI_ON = 8'h04, SPI_CMD_HALT_OFF = 8'h07;
-parameter COCO_W = 2'b00, COCO_R = 2'b10, SPI_W = 2'b01, SPI_R = 2'b11;
-
-// Data from the SPI bus
-wire spi_input_flag;     // Single clock tick flag indicating there is a byte available from SPI
-wire [7:0] spi_rec;      // Databyte received from SPI - only valid on spi_input_flag high
-reg [2:0] spi_state;     // spi_state of the SPI spi_state machine
-reg [7:0] spi_readbuf;  // Databyte being sent to SPI - update only when spi_input_flag high (for next SPI cycle)
+parameter COCO_W = 2'b00, COCO_R = 2'b10, AVR_W = 2'b01, AVR_R = 2'b11;
 
 reg [2:0] counter_50;     // 50MHz counter for SRAM read/write   
-reg dirty;               // HIGH to indicate SCS register changes since last SPI read
+reg [1:0] intr;               // HIGH to indicate SCS register changes since last SPI read
 reg [2:0] eclk_edge;     // Synchonizer for Coco E clock and 50MHz CPLD clock
 reg [2:0] cts_edge;
 reg [2:0] scs_edge;
 reg [2:0] avr_edge;
 
+reg [7:0] avr_readbuf;
 reg [7:0] c_readbuf;    // SRAM stores in this register for the fairly long E Coco read cycle
 reg [7:0] writebuf;     // If the SRAM is in use, writes a buffered here
 reg actor;              // Who initiated read or write cycle, or added to pending: 0 = coco, 1 = spi
@@ -71,8 +62,6 @@ reg [7:0] fdcstatus;    // 0xff48 read kept in CPLD
 assign sram_oe_n = ~sram_we_n;
 
 assign c_slenb_n = 1'bz;
-assign c_nmi_n = 1'bz;
-assign c_halt_n = 1'bz;
 assign sram_ce_n = 1'b0;
 
 wire cts_falling_edge = (cts_edge[2:1] == 2'b10);
@@ -86,7 +75,9 @@ assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz);
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
-assign a_databus = (a_rw & a_sel ? spi_readbuf : 8'bz);
+assign a_databus = (a_rw & a_sel ? avr_readbuf : 8'bz);
+
+assign led = { intr, dskreg[7] & halt };
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -96,10 +87,9 @@ always @(posedge clock_50) begin
   avr_edge <= {avr_edge[1:0], a_sel};
 end
 
-always @(negedge reset or posedge clock_50) begin
-  if (!reset) begin
-    spi_state <= SPI_IDLE;
-	 dirty <= 1'b0;
+always @(negedge c_reset_n or posedge clock_50) begin
+  if (!c_reset_n) begin
+	 intr <= 2'b00;
 	 counter_50 <= 3'b0;
 	 sram_databus <= 8'bz;
 	 sram_we_n <= 1'b1;
@@ -132,24 +122,27 @@ always @(negedge reset or posedge clock_50) begin
 			     c_readbuf <= sram_databus;
 				end
 			 end
-			 SPI_R: begin
-			   spi_readbuf <= sram_databus;
+			 AVR_R: begin
+			   avr_readbuf <= sram_databus;
 			 end
 			 COCO_W: begin
 			   if (c_addrbus[3:0] == 4'h0) begin
-				  dirty <= 1'b1;
+				  intr[0] <= 1'b1;
 				  dskreg <= c_databus;
+				  fdcstatus[0] <= 1'b0;
 				end else if (c_addrbus[3:0] == 4'h8) begin
+			     if (c_databus[7:6] == 2'b10) // Type II operations set halt
+				    halt <= 1'b1;
 				  nmi <= 1'b0;
 				  dskreg[7] <= 1'b0;
-				  dirty <= 1'b1;
+				  intr[1] <= 1'b1;
 				end else if (c_addrbus[3:0] == 4'hb) begin
 				  halt <= 1'b1;
 				  fdcstatus[1] <= 1'b0;
 				end
 			   sram_we_n <= 1'b1;
 			 end
-			 SPI_W: begin
+			 AVR_W: begin
 			   sram_we_n <= 1'b1;
 			 end
 		  endcase	 
@@ -158,8 +151,8 @@ always @(negedge reset or posedge clock_50) begin
 		// This functions as a very simple arbiter - AVR first because it has tighter timing, then
 		// Coco.
 	   casex (req)
-  	     3'b1xx: begin // SPI byte waiting	 
-          spi_command();
+  	     3'b1xx: begin // AVR request pending	 
+          avr_command();
  		    req[2] <= 1'b0;
 		  end
 		  3'b01x: begin // SCS request pending
@@ -198,13 +191,15 @@ begin
 end
 endtask
 
-task spi_command;
+task avr_command;
 begin
   if (a_rw) begin
     if (a_addrbus == 16'h0000) begin  // Read from $ff40
-	   spi_readbuf <= dskreg;
+	   avr_readbuf <= dskreg;
+	   intr[0] <= 1'b0;
  	 end else if (a_addrbus == 16'h0011) begin // Read from $ff48 status reg
- 	   spi_readbuf <= fdcstatus;
+ 	   avr_readbuf <= fdcstatus;
+		intr[1] <= 1'b0;
 	 end else begin
 	   counter_50 <= 3'h4; // Use a 4 tick read cycle 20ns
 		sram_addrbus <= a_addrbus;
@@ -212,14 +207,12 @@ begin
 	   sram_we_n <= 1'b1;
 		actor <= 1'b1;
  	 end
-    if (!a_addrbus[15]) // Clear the read markers
-	   dirty <= 1'b0;
   end else begin
     if (a_addrbus == 16'h0011) begin // Write to $ff48
-      fdcstatus <= spi_rec;
+      fdcstatus <= a_databus;
     end else if (a_addrbus == 16'h0100) begin // Magic control port
       if (a_databus[0])
-	   halt <= 1'b0;
+	     halt <= 1'b0;
 	   if (a_databus[1]) begin
 		  nmi <= 1'b1;
 		  dskreg[7] <= 1'b0; // halt enable is cleared at the end of each command
