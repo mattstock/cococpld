@@ -9,12 +9,13 @@
 #include <avr/io.h>
 #include <avr/interrupt.h> 
 #include <Arduino.h>
+#include <Ethernet.h>
 #include "firmware2.h"
 #include "rom.h"
 #include "fdc.h"
 #include "busio.h"
 
-char *config[5];
+char *config[MAX_CONFIG];
 
 /*ISR({Vector Source}_vect) {
 	// ISR code to execute here
@@ -51,7 +52,7 @@ void loadSetup() {
 
 	Serial.println("Loading config file");
 	
-	for (int i=0; i < 7; i++)
+	for (int i=0; i < MAX_CONFIG; i++)
 		config[i] = NULL;
 		
 	while (f.available()) {
@@ -91,6 +92,9 @@ void setup() {
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
 	
+	Serial.print("Ram: ");
+	Serial.println(FreeRam());
+	
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
 		Serial.println("microSD failed");
@@ -100,13 +104,13 @@ void setup() {
 
 	loadSetup();
 
-	//byte mac[] = { 0xE3, 0x4A, 0xBE, 0xC0, 0x3D, 0x3D };  // Load from setup file in the production version
+//	byte mac[] = { 0xE3, 0x4A, 0xBE, 0xC0, 0x3D, 0x3D };  // Load from setup file in the production version
 	// Ethernet setup
-	// Ethernet.begin(mac);
-	
-	loadRegisters();
-	
-	Serial.print("Going into fdc");
+//	Ethernet.begin(mac);
+		
+	Serial.print("Ram: ");
+	Serial.println(FreeRam());
+	Serial.println("Going into fdc");
 	fdc();
 	Serial.print("Fail");
 	while (1);

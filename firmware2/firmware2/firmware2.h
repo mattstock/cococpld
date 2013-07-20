@@ -9,6 +9,7 @@
 #define DSKROM  2
 #define ROM     3
 #define MAC     4
+#define MAX_CONFIG 5
 
 extern char *config[];
 

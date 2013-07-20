@@ -2,26 +2,46 @@
 #include "fdc.h"
 #include "busio.h"
 
+CocoDisk::CocoDisk() {
+}
+
 CocoDisk::CocoDisk(const char *disk1, const char *disk2) {
+	this->setup(disk1, disk2);
+}
+
+CocoDisk::~CocoDisk() {
+	if (disk != NULL)
+		delete disk;
+}
+
+void CocoDisk::setup(const char *disk1, const char *disk2) {
+	disk = NULL;
 	strncpy(diskname1, disk1, 13);
 	strncpy(diskname2, disk2, 13);
 }
 
-CocoDisk::~CocoDisk() {
-	delete disk;
-}
-
 void CocoDisk::setDrive(uint8_t d) {
+	Serial.print("setting drive: ");
+	Serial.println(d, HEX);
 	if (d > 2)
 		return;
 	if (disk != NULL)
 		delete disk;
-	if (d == 0)
+	if (d == 0) {
+		Serial.println("Before DECB new");
 		disk = new DECBImage(diskname1);
+	}
 	if (d == 1)
 		disk = new DECBImage(diskname2);
 	if (d == 2)
 		disk = new VirtualImage();
+	if (disk == NULL) {
+		Serial.println("Disk memory allocation failed");
+		while (1);
+	} else {
+		Serial.print("Size of disk: ");
+		Serial.println(sizeof(disk));
+	}
 }
 void CocoDisk::restore() {
 	Serial.println("RESTORE");
@@ -80,22 +100,29 @@ void CocoDisk::stepout() {
 }
 
 void CocoDisk::readSector(uint8_t side, uint8_t sector) {
-	uint16_t sector_size = disk->getSectorSize();
+	uint16_t sector_size;
 	char *sector_data;
 	
-	setRegister(RW(FDCSTAT), 0x01); // BUSY
 	
+	if (disk == NULL) {
+		setRegister(RW(FDCSTAT), 0x80); // throw error
+		setNMI(true);
+		return;
+	}
+	
+	setRegister(RW(FDCSTAT), 0x01); // BUSY
+	sector_size = disk->getSectorSize();
+	sector_data = (char *)malloc(sector_size);
 	sector_data = disk->getSector(side, track, sector);
 
 	// The first byte uses a simple busy wait on the Coco side
 	// making this loop somewhat complicated on the head and tail.
-	delayMicroseconds(50);
 	for (uint16_t i = 0; i < sector_size; i++) {
-/*		if (sector_data[i] < 0x0f)
+		if (sector_data[i] < 0x0f)
 			Serial.print("0");
 		Serial.print(sector_data[i], HEX);
 		if (((i+1) % 16) == 0)
-			Serial.println(""); */
+			Serial.println("");
 		setRegister(RW(FDCDAT), sector_data[i]);
 		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)
@@ -110,10 +137,18 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 }
 
 void CocoDisk::writeSector(uint8_t side, uint8_t sector) {
-	uint16_t sector_size = disk->getSectorSize();
-	char *sector_data = (char *)malloc(sector_size);
+	uint16_t sector_size;
+	char *sector_data;
 
+	if (disk == NULL) {
+		setRegister(RW(FDCSTAT), 0x80); // throw error
+		setNMI(true);
+		return;
+	}
+	
 	setRegister(RW(FDCSTAT), 0x01); // BUSY
+	sector_size = disk->getSectorSize();
+	sector_data = (char *)malloc(sector_size);
 	for (uint16_t i=0; i < sector_size; i++) {
 		setRegister(RW(FDCSTAT), 0x03);
 		if (i != 0)
@@ -161,6 +196,7 @@ void CocoDisk::writeTrack() {
 void CocoDisk::forceInt() {
 	Serial.println("FORCE INT");
 	setRegister(RW(FDCSTAT), (track ? 0x00 : 0x04));
+	setNMI(true);
 }
 
 // Wait until the DRO bit changes to 0

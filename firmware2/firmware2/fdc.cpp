@@ -34,13 +34,19 @@ void fdc() {
 	uint8_t command = 0;
 	uint8_t drive = 100;
 	uint8_t control = 0;
-	CocoDisk *disk = new CocoDisk(config[FLOPPY0], config[FLOPPY1]);
+	CocoDisk disk;
 	
-	Serial.println(config[DSKROM]);
+	disk.setup(config[FLOPPY0], config[FLOPPY1]);
+	
+	Serial.print("Ram: ");
+	Serial.println(FreeRam());
 
 	if (programROM(SD.open(config[DSKROM])) != 0)
 		return;
 	
+	Serial.print("Ram: ");
+	Serial.println(FreeRam());
+
 	Serial.println("Programmed the disk rom");
 	
 	// Set reset register values for FDC
@@ -53,49 +59,53 @@ void fdc() {
 
 	while (1) {
 		if (digitalRead(CFGINT_PIN)) {
+//			Serial.println("ConfigInt");
 			loadConfigReg();
 			control = reg[RR(DSKREG)];
 			if (((control & 0x01) == 0x01) && (drive != 0)) {
 				drive = 0;
-				disk->setDrive(0);
+				disk.setDrive(0);
 			}
 			if (((control & 0x02) == 0x02) && (drive != 1)) {
 				drive = 1;
-				disk->setDrive(1);
+				disk.setDrive(1);
 			}
 			if (((control & 0x04) == 0x04) && (drive != 2)) {
 				drive = 2;
-				disk->setDrive(2);
+				disk.setDrive(2);
 			}
+			Serial.print("Ram: ");
+			Serial.println(FreeRam());
 		}
 		
 		if (digitalRead(CMDINT_PIN)) {
+//			Serial.println("CommandInt");
 			Serial.print("B: ");
 			loadRegisters();
 			printRegs();
 			command = reg[RR(FDCCMD)];
 			if ((command & 0xf0) == 0)
-				disk->restore();
+				disk.restore();
 			if ((command & 0xf0) == 0x10)
-				disk->seek(reg[RR(FDCDAT)]);
+				disk.seek(reg[RR(FDCDAT)]);
 			if ((command & 0xe0) == 0x20)
-				disk->step();
+				disk.step();
 			if ((command & 0xe0) == 0x40)
-				disk->stepin();
+				disk.stepin();
 			if ((command & 0xe0) == 0x60)
-				disk->stepout();
+				disk.stepout();
 			if ((command & 0xf1) == 0x80)
-				disk->readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
+				disk.readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xf0) == 0xa0)
-				disk->writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
+				disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
 			if ((command & 0xfb) == 0xc0)
-				disk->readAddress();
+				disk.readAddress();
 			if ((command & 0xfb) == 0xe0)
-				disk->readTrack();
+				disk.readTrack();
 			if ((command & 0xfb) == 0xf0)
-				disk->writeTrack();
+				disk.writeTrack();
 			if ((command & 0xf8) == 0xd0)
-				disk->forceInt();
+				disk.forceInt();
 		}
 	}
 	Serial.println("Exiting fdc()");

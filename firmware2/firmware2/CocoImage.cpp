@@ -65,7 +65,6 @@ DECBImage::DECBImage(char *name) {
 		max_sides = 1;
 	else
 		max_sides = 2;
-	Serial.print("sides = ");
 	Serial.println(max_sides, HEX);
 }
 
@@ -76,8 +75,8 @@ DECBImage::~DECBImage() {
 char *DECBImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	char *tmp = (char *)malloc(sector_size);
 	uint32_t pos = findSector(side, track, sector);
-	Serial.print("pos = ");
-	Serial.println(pos, HEX);
+//	Serial.print("pos = ");
+//	Serial.println(pos, HEX);
 	image.seek(pos);
 	if (image.readBytes(tmp, sector_size) != sector_size) {
 		Serial.println("Failed to read from image");
@@ -104,13 +103,14 @@ VirtualImage::VirtualImage() {
 	sectors_per_track = 18;
 	sector_size = 256;
 	max_sides = 1;
-	
+
 	File root = SD.open("/");
 	if (!root)
 		return;
 	
 	image = SD.open("track17.dat", FILE_WRITE);
 	image.seek(0);
+
 	// Initialize
 	for (uint16_t i=0; i < sector_size*10L; i++)
 		if (i > 67 && i < 256)
@@ -118,7 +118,6 @@ VirtualImage::VirtualImage() {
 		else
 			image.write((uint8_t)0xff);
 	
-	Serial.println("Written blank file");
 	root.rewindDirectory();
 	image_count = 0;
 	while (true) {
@@ -151,10 +150,12 @@ VirtualImage::VirtualImage() {
 			image.write((uint8_t)0x01);
 			// Fix the FAT entry as well
 			image.seek(image_count);
-			image.write(0xc0);
+			image.write(0xc1);
 			image_count++;
 		}
 		entry.close();
+		Serial.print("after close Ram: ");
+		Serial.println(FreeRam());
 	}
 	image.close();
 	root.close();
@@ -184,6 +185,29 @@ char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	return sector_data;
 }
 
+// false if the config didn't change, true if it did?
 boolean VirtualImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
-	return false;
+	char name[13];
+	
+	// Setup data on track 0
+	if (track != 0)
+		return false;
+	
+	// Parse sector data
+	// Sector 1 is the name of the first virtual disk image
+	// Sector 2 is the name of the second virtual disk image
+	
+	if (sector == 1) {
+		Serial.print("requesting new disk 1: ");
+		memcpy(name, data, 12);
+		name[12] = '\0';
+		Serial.println(name);
+	}
+	if (sector == 2) {
+		Serial.print("requesting new disk 2: ");
+		memcpy(name, data, 12);
+		name[12] = '\0';
+		Serial.println(name);
+	}
+	return true;
 }

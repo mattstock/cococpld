@@ -7,8 +7,10 @@ class CocoDisk {
 
 	public:
 
+	CocoDisk();
 	CocoDisk(const char *disk1, const char *disk2);
 	~CocoDisk();
+	void setup(const char *disk1, const char *disk2);
 	void setDrive(uint8_t d);
 	void restore();
 	void seek(uint16_t track);
