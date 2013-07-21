@@ -27,12 +27,10 @@ void CocoDisk::setDrive(uint8_t d) {
 		return;
 	if (disk != NULL)
 		delete disk;
-	if (d == 0) {
-		Serial.println("Before DECB new");
-		disk = new DECBImage(diskname1);
-	}
+	if (d == 0)
+		disk = new CocoImage(diskname1);
 	if (d == 1)
-		disk = new DECBImage(diskname2);
+		disk = new CocoImage(diskname2);
 	if (d == 2)
 		disk = new VirtualImage();
 	if (disk == NULL) {
@@ -103,6 +101,12 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	uint16_t sector_size;
 	char *sector_data;
 	
+	Serial.print("Read sector: ");
+	Serial.print(side);
+	Serial.print(",");
+	Serial.print(track, HEX);
+	Serial.print(",");
+	Serial.println(sector, HEX);
 	
 	if (disk == NULL) {
 		setRegister(RW(FDCSTAT), 0x80); // throw error
@@ -117,6 +121,7 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 
 	// The first byte uses a simple busy wait on the Coco side
 	// making this loop somewhat complicated on the head and tail.
+	delayMicroseconds(50);
 	for (uint16_t i = 0; i < sector_size; i++) {
 		if (sector_data[i] < 0x0f)
 			Serial.print("0");
@@ -196,7 +201,7 @@ void CocoDisk::writeTrack() {
 void CocoDisk::forceInt() {
 	Serial.println("FORCE INT");
 	setRegister(RW(FDCSTAT), (track ? 0x00 : 0x04));
-	setNMI(true);
+//	setNMI(true);
 }
 
 // Wait until the DRO bit changes to 0

@@ -74,8 +74,6 @@ void fdc() {
 				drive = 2;
 				disk.setDrive(2);
 			}
-			Serial.print("Ram: ");
-			Serial.println(FreeRam());
 		}
 		
 		if (digitalRead(CMDINT_PIN)) {

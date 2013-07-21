@@ -7,9 +7,6 @@
 
 #include "CocoImage.h"
 
-CocoImage::~CocoImage() {
-}
-
 uint16_t CocoImage::getSectorSize() {
 	return sector_size;
 }
@@ -20,63 +17,43 @@ uint32_t CocoImage::findSector(uint8_t side, uint8_t track, uint8_t sector) {
 	return 1L*track*(max_sides*sectors_per_track*sector_size) + 1L*side*(sectors_per_track*sector_size) + (sector-1)*sector_size;
 }
 
-RBFImage::RBFImage(char *name) {
+CocoImage::CocoImage(char *name) {	
 	image = SD.open(name, FILE_WRITE);
 	if (!image) {
 		Serial.println("Failed to open Disk");
 		return;
 	}
-			
-	image.seek(3);
-	sectors_per_track = image.read();
-	sector_size = 256;
-			
-	image.seek(16);
-	max_sides = (image.read() & 0x01) + 1;
-}
 
-RBFImage::~RBFImage() {
-	image.close();
-}
-
-char *RBFImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
-	char *tmp = (char *)malloc(sector_size);
-
-	image.seek(findSector(side, track, sector));
-	image.readBytes(tmp, sector_size);
-	return tmp;
-};
-
-boolean RBFImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
-	image.seek(findSector(side, track, sector));
-	image.write((uint8_t *)data, sector_size);
-	return true;
-}
-
-DECBImage::DECBImage(char *name) {
-	image = SD.open(name, FILE_WRITE);
-	if (!image) {
-		Serial.println("Failed to open Disk");
-		return;
-	}
 	sectors_per_track = 18;
 	sector_size = 256;
-	if (image.size() == sectors_per_track*sector_size*35L)
-		max_sides = 1;
-	else
-		max_sides = 2;
-	Serial.println(max_sides, HEX);
+			
+	if (!strncasecmp("rbf", &(name[strlen(name)-3]), 3)) {
+		image.seek(3);
+		sectors_per_track = image.read();
+		
+		image.seek(16);
+		max_sides = (image.read() & 0x01) + 1;
+		Serial.println("RBF image");
+	}
+	
+	if (!strncasecmp("dec", &(name[strlen(name)-3]), 3)) {
+		if (image.size() == sectors_per_track*sector_size*35L)
+			max_sides = 1;
+		else
+			max_sides = 2;
+		Serial.println("DECB image");
+	}
 }
 
-DECBImage::~DECBImage() {
+CocoImage::~CocoImage() {
 	image.close();
 }
 
-char *DECBImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
+char *CocoImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	char *tmp = (char *)malloc(sector_size);
 	uint32_t pos = findSector(side, track, sector);
-//	Serial.print("pos = ");
-//	Serial.println(pos, HEX);
+	//	Serial.print("pos = ");
+	//	Serial.println(pos, HEX);
 	image.seek(pos);
 	if (image.readBytes(tmp, sector_size) != sector_size) {
 		Serial.println("Failed to read from image");
@@ -85,7 +62,7 @@ char *DECBImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	return tmp;
 };
 
-boolean DECBImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
+boolean CocoImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
 	image.seek(findSector(side, track, sector));
 	image.write((uint8_t *)data, sector_size);
 	return true;
@@ -99,6 +76,7 @@ VirtualImage::VirtualImage() {
 	char *name;
 	char filename[11];
 	int idx;
+	uint8_t image_count;
 	
 	sectors_per_track = 18;
 	sector_size = 256;
@@ -127,8 +105,6 @@ VirtualImage::VirtualImage() {
 		if (!entry.isDirectory()) {
 			image.seek(sector_size+image_count*32L);
 			name = entry.name();
-			if (strncasecmp("dsk", &(name[strlen(name)-3]), 3))
-				continue;
 			Serial.print(name);
 			Serial.print(": ");
 			Serial.print(sector_size+image_count*32L, HEX);
@@ -154,16 +130,10 @@ VirtualImage::VirtualImage() {
 			image_count++;
 		}
 		entry.close();
-		Serial.print("after close Ram: ");
-		Serial.println(FreeRam());
 	}
 	image.close();
 	root.close();
 	image = SD.open("track17.dat"); // RO copy
-}
-
-VirtualImage::~VirtualImage() {
-	image.close();
 }
 
 char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
