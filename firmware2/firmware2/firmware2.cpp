@@ -24,18 +24,26 @@ char *config[MAX_CONFIG];
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
+		if (config[FLOPPY0] != NULL)
+			free(config[FLOPPY0]);
 		config[FLOPPY0] = (char *) malloc(13);
 		strcpy(config[FLOPPY0], &(line[8]));
 	}
 	if (!strncmp("floppy1 ", line, 8)) {
+		if (config[FLOPPY1] != NULL)
+			free(config[FLOPPY1]);
 		config[FLOPPY1] = (char *) malloc(13);
 		strcpy(config[FLOPPY1], &(line[8]));
 	}
 	if (!strncmp("rom ", line, 4)) {
+		if (config[ROM] != NULL)
+			free(config[ROM]);
 		config[ROM] = (char *) malloc(13);
 		strcpy(config[ROM], &(line[4]));
 	}
 	if (!strncmp("floppy-rom ", line, 11)) {
+		if (config[DSKROM] != NULL)
+			free(config[DSKROM]);
 		config[DSKROM] = (char *) malloc(13);
 		strcpy(config[DSKROM], &(line[11]));
 	}
@@ -52,9 +60,6 @@ void loadSetup() {
 
 	Serial.println("Loading config file");
 	
-	for (int i=0; i < MAX_CONFIG; i++)
-		config[i] = NULL;
-		
 	while (f.available()) {
 		line[idx++] = f.read();
 		if (line[idx-1] == '\r') {
@@ -94,7 +99,10 @@ void setup() {
 	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
-	
+
+	for (int i=0; i < MAX_CONFIG; i++)
+		config[i] = NULL;
+		
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
 		Serial.println("microSD failed");

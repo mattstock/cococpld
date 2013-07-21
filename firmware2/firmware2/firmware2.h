@@ -13,4 +13,6 @@
 
 extern char *config[];
 
+extern void loadSetup();
+
 #endif
