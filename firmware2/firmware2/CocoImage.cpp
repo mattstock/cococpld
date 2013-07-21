@@ -65,7 +65,7 @@ char *CocoImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 boolean CocoImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
 	image.seek(findSector(side, track, sector));
 	image.write((uint8_t *)data, sector_size);
-	return true;
+	return false;
 }
 
 VirtualImage::VirtualImage() {	
@@ -138,46 +138,57 @@ VirtualImage::VirtualImage() {
 
 char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 	char *sector_data = (char *)malloc(sector_size);
+	File f;
+	uint16_t fs;
 	
 	Serial.print("track = ");
 	Serial.println(track, HEX);
+
+	// Default
+	for (uint16_t i = 0; i < sector_size; i++)
+		sector_data[i] = 0x20;
 	
-	// Unless it's the directory track, we ignore it for now
-	if (track != 0x11) {
-	  for (uint16_t i = 0; i < sector_size; i++)
-	    sector_data[i] = 0x20;
-	  return sector_data;
+	// Directory track
+	if (track == 0x11) {	
+		// We only keep sectors 2-11, so offset and pull from the disk file.
+		image.seek(sector_size*(sector-2));
+		image.readBytes(sector_data, sector_size);
 	}
 	
-	// We only keep sectors 2-11, so offset and pull from the disk file.
-	image.seek(sector_size*(sector-2));
-	image.readBytes(sector_data, sector_size);
+	// track 0, sector 1 is a dump of the contents of the setup file
+	if (track == 0x00 && sector == 0x01) {
+		f = SD.open("setup.txt");
+		if (f) {
+			fs = (f.size() <= sector_size ? f.size() : sector_size); 		
+			f.readBytes(sector_data, fs);
+			f.close();
+		}
+	}
+	
 	return sector_data;
 }
 
 // false if the config didn't change, true if it did?
 boolean VirtualImage::putSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
-	char name[13];
+	File f;
 	
-	// Setup data on track 0
-	if (track != 0)
-		return false;
-	
-	// Parse sector data
-	// Sector 1 is the name of the first virtual disk image
-	// Sector 2 is the name of the second virtual disk image
-	
-	if (sector == 1) {
-		Serial.print("requesting new disk 1: ");
-		memcpy(name, data, 12);
-		name[12] = '\0';
-		Serial.println(name);
-	}
-	if (sector == 2) {
-		Serial.print("requesting new disk 2: ");
-		memcpy(name, data, 12);
-		name[12] = '\0';
-		Serial.println(name);
+	// track 0, sector 1 is a dump of the contents of the setup file
+	if (track == 0x00 && sector == 0x01) {
+		f = SD.open("setup.new",FILE_WRITE);
+		if (!f) {
+			Serial.println("Failed to open new setup file");
+			return false;
+		}
+		
+		// We're given sector_size bytes, but we need to stop at the first null.
+		for (int i=0; i < sector_size; i++) {
+			if (data[i] == 0x00)
+				break;
+			f.write(data[i]);
+		}
+		
+		f.close();
+		// TODO rename setup file
 	}
 	return true;
 }

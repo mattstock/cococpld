@@ -18,7 +18,7 @@ class CocoDisk {
 	void stepin();
 	void stepout();
 	void readSector(uint8_t side, uint8_t sector);
-	void writeSector(uint8_t side, uint8_t sector);
+	boolean writeSector(uint8_t side, uint8_t sector);
 	void readAddress();
 	void readTrack();
 	void writeTrack();

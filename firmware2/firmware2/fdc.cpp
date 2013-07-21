@@ -94,8 +94,12 @@ void fdc() {
 				disk.stepout();
 			if ((command & 0xf1) == 0x80)
 				disk.readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
-			if ((command & 0xf0) == 0xa0)
-				disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
+			if ((command & 0xf0) == 0xa0) {
+				if (disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)])) {
+					loadSetup();
+					disk.setup(config[FLOPPY0], config[FLOPPY1]);
+				}
+			}
 			if ((command & 0xfb) == 0xc0)
 				disk.readAddress();
 			if ((command & 0xfb) == 0xe0)

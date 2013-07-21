@@ -24,20 +24,28 @@ char *config[MAX_CONFIG];
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
+//		if (config[FLOPPY0] != NULL)
+//			free(config[FLOPPY0]);
 		config[FLOPPY0] = (char *) malloc(13);
-		strcpy(config[FLOPPY0], &(line[8]));
+		strncpy(config[FLOPPY0], &(line[8]), 13);
 	}
 	if (!strncmp("floppy1 ", line, 8)) {
+//		if (config[FLOPPY1] != NULL)
+//			free(config[FLOPPY1]);
 		config[FLOPPY1] = (char *) malloc(13);
-		strcpy(config[FLOPPY1], &(line[8]));
+		strncpy(config[FLOPPY1], &(line[8]), 13);
 	}
 	if (!strncmp("rom ", line, 4)) {
+//		if (config[ROM] != NULL)
+//			free(config[ROM]);
 		config[ROM] = (char *) malloc(13);
-		strcpy(config[ROM], &(line[4]));
+		strncpy(config[ROM], &(line[4]), 13);
 	}
 	if (!strncmp("floppy-rom ", line, 11)) {
+//		if (config[DSKROM] != NULL)
+//			free(config[DSKROM]);
 		config[DSKROM] = (char *) malloc(13);
-		strcpy(config[DSKROM], &(line[11]));
+		strncpy(config[DSKROM], &(line[11]),13);
 	}
 }
 
@@ -50,11 +58,11 @@ void loadSetup() {
 	if (!f)
 	  return;
 
-	Serial.println("Loading config file");
-	
 	for (int i=0; i < MAX_CONFIG; i++)
 		config[i] = NULL;
-		
+
+	Serial.println("Loading config file");
+	
 	while (f.available()) {
 		line[idx++] = f.read();
 		if (line[idx-1] == '\r') {
@@ -94,7 +102,7 @@ void setup() {
 	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
-	
+
 	// sdcard setup
 	if (!SD.begin(SDSELECT_PIN)) {
 		Serial.println("microSD failed");
@@ -108,8 +116,6 @@ void setup() {
 	// Ethernet setup
 //	Ethernet.begin(mac);
 		
-	Serial.print("Ram: ");
-	Serial.println(FreeRam());
 	Serial.println("Going into fdc");
 	fdc();
 	Serial.print("Fail");

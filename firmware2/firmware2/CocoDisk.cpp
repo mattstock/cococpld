@@ -6,6 +6,7 @@ CocoDisk::CocoDisk() {
 }
 
 CocoDisk::CocoDisk(const char *disk1, const char *disk2) {
+	disk = NULL;
 	this->setup(disk1, disk2);
 }
 
@@ -15,7 +16,8 @@ CocoDisk::~CocoDisk() {
 }
 
 void CocoDisk::setup(const char *disk1, const char *disk2) {
-	disk = NULL;
+	if (disk != NULL)
+		delete disk;
 	strncpy(diskname1, disk1, 13);
 	strncpy(diskname2, disk2, 13);
 }
@@ -119,15 +121,13 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	sector_data = (char *)malloc(sector_size);
 	sector_data = disk->getSector(side, track, sector);
 
-	// The first byte uses a simple busy wait on the Coco side
-	// making this loop somewhat complicated on the head and tail.
-	delayMicroseconds(50);
+//	delayMicroseconds(50);
 	for (uint16_t i = 0; i < sector_size; i++) {
-		if (sector_data[i] < 0x0f)
+/*		if (sector_data[i] < 0x0f)
 			Serial.print("0");
 		Serial.print(sector_data[i], HEX);
 		if (((i+1) % 16) == 0)
-			Serial.println("");
+			Serial.println(""); */
 		setRegister(RW(FDCDAT), sector_data[i]);
 		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)
@@ -141,14 +141,16 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	free(sector_data);
 }
 
-void CocoDisk::writeSector(uint8_t side, uint8_t sector) {
+// Returns true if the config file needs reloading
+boolean CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 	uint16_t sector_size;
 	char *sector_data;
-
+	boolean result;
+	
 	if (disk == NULL) {
 		setRegister(RW(FDCSTAT), 0x80); // throw error
 		setNMI(true);
-		return;
+		return false;
 	}
 	
 	setRegister(RW(FDCSTAT), 0x01); // BUSY
@@ -165,8 +167,9 @@ void CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
 	setNMI(true);
-	disk->putSector(side, track, sector, sector_data);
+	result = disk->putSector(side, track, sector, sector_data);
 	free(sector_data);
+	return result;	
 }
 
 void CocoDisk::readAddress() {
