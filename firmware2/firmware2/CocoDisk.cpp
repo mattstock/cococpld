@@ -3,6 +3,7 @@
 #include "busio.h"
 
 CocoDisk::CocoDisk() {
+	disk = NULL;
 }
 
 CocoDisk::CocoDisk(const char *disk1, const char *disk2) {
@@ -123,11 +124,11 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 
 //	delayMicroseconds(50);
 	for (uint16_t i = 0; i < sector_size; i++) {
-/*		if (sector_data[i] < 0x0f)
+		if (sector_data[i] < 0x0f)
 			Serial.print("0");
 		Serial.print(sector_data[i], HEX);
 		if (((i+1) % 16) == 0)
-			Serial.println(""); */
+			Serial.println(""); 
 		setRegister(RW(FDCDAT), sector_data[i]);
 		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)

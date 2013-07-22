@@ -34,9 +34,7 @@ void fdc() {
 	uint8_t command = 0;
 	uint8_t drive = 100;
 	uint8_t control = 0;
-	CocoDisk disk;
-	
-	disk.setup(config[FLOPPY0], config[FLOPPY1]);
+	CocoDisk disk(config[FLOPPY0], config[FLOPPY1]);
 	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
