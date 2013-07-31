@@ -37,7 +37,7 @@ $Descr USLegal 14000 8500
 encoding utf-8
 Sheet 1 4
 Title "Color Computer FDC Ethernet Controller"
-Date "4 jul 2013"
+Date "31 jul 2013"
 Rev "2.0"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -413,7 +413,7 @@ F38 "MISO" I R 4100 2600 60
 F39 "MOSI" O R 4100 2700 60 
 $EndSheet
 $Sheet
-S 9950 1600 2600 2350
+S 6900 1400 2600 2350
 U 51D5AFBF
 F0 "Ethernet" 50
 F1 "ethernet.sch" 50
@@ -557,4 +557,69 @@ Wire Wire Line
 	2250 5000 3000 5000
 Wire Wire Line
 	2250 5100 3000 5100
+$Comp
+L MICROSD CN?
+U 1 1 51F8FA6A
+P 6250 4850
+F 0 "CN?" H 6350 5250 60  0000 C CNN
+F 1 "MICROSD" H 6400 4450 60  0000 C CNN
+F 2 "" H 8000 3900 60  0000 C CNN
+F 3 "" H 8000 3900 60  0000 C CNN
+	1    6250 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4100 2950 4950 2950
+Wire Wire Line
+	4950 2950 4950 4600
+Wire Wire Line
+	4950 4600 5950 4600
+Wire Wire Line
+	4100 2700 5050 2700
+Wire Wire Line
+	5050 2700 5050 4700
+Wire Wire Line
+	5050 4700 5950 4700
+Wire Wire Line
+	4100 2600 5150 2600
+Wire Wire Line
+	5150 2600 5150 5100
+Wire Wire Line
+	5150 5100 5950 5100
+Wire Wire Line
+	4100 2500 5200 2500
+Wire Wire Line
+	5200 2500 5200 4900
+Wire Wire Line
+	5200 4900 5950 4900
+$Comp
+L GND #PWR?
+U 1 1 51F90ACD
+P 5800 5250
+F 0 "#PWR?" H 5800 5250 30  0001 C CNN
+F 1 "GND" H 5800 5180 30  0001 C CNN
+F 2 "" H 5800 5250 60  0001 C CNN
+F 3 "" H 5800 5250 60  0001 C CNN
+	1    5800 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3.3V #PWR?
+U 1 1 51F90AD3
+P 5800 4500
+F 0 "#PWR?" H 5800 4460 30  0001 C CNN
+F 1 "+3.3V" H 5800 4610 30  0000 C CNN
+F 2 "" H 5800 4500 60  0001 C CNN
+F 3 "" H 5800 4500 60  0001 C CNN
+	1    5800 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 4500 5800 4800
+Wire Wire Line
+	5800 4800 5950 4800
+Wire Wire Line
+	5800 5250 5800 5000
+Wire Wire Line
+	5800 5000 5950 5000
 $EndSCHEMATC

@@ -37,7 +37,7 @@ $Descr USLegal 14000 8500
 encoding utf-8
 Sheet 2 4
 Title "Color Computer FDC Ethernet Controller"
-Date "4 jul 2013"
+Date "31 jul 2013"
 Rev "2.0"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""

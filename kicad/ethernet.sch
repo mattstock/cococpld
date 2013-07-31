@@ -33,11 +33,11 @@ LIBS:colorcomputer
 LIBS:cococpld-cache
 EELAYER 27 0
 EELAYER END
-$Descr A4 11693 8268
+$Descr USLegal 14000 8500
 encoding utf-8
-Sheet 1 4
+Sheet 4 4
 Title "Color Computer FDC Ethernet Controller"
-Date "4 jul 2013"
+Date "31 jul 2013"
 Rev "2.0"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -45,4 +45,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L W5100 U?
+U 1 1 51F843B7
+P 6850 4000
+F 0 "U?" H 8050 5500 60  0000 C CNN
+F 1 "W5100" H 6850 4000 60  0000 C CNN
+F 2 "" H 6850 4000 60  0000 C CNN
+F 3 "" H 6850 4000 60  0000 C CNN
+	1    6850 4000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
