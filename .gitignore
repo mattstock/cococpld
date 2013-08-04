@@ -3,6 +3,7 @@
 *.dsn
 *.ses
 *.bck
+*-bak
 output/
 Debug/
 output_files/

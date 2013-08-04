@@ -1,12 +1,13 @@
 `timescale 1ns/1ns
 
-module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, c_reset_n, sram_addrbus, c_rw,
-					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset, led, intr, a_databus, a_addrbus, a_rw, a_sel);
+module cocofdc (c_eclk, c_cts_n, c_scs_n, sram_databus, c_databus, c_addrbus, c_nmi_n, c_halt_n, sram_addrbus, c_rw,
+					sram_we_n, sram_oe_n, sram_ce_n, c_slenb_n, clock_50, reset_n, led, intr, a_databus, a_addrbus, a_rw, a_sel, c_power, levelin, levelout);
 
 input [14:0] c_addrbus;
 input [15:0] a_addrbus;
 input a_rw;
 input a_sel;
+input c_power;
 inout [7:0] a_databus;
 output reg [15:0] sram_addrbus; // Memory address bus
 inout reg [7:0] sram_databus; // Memory databus
@@ -18,14 +19,15 @@ input c_eclk; // 1 = memory half of Coco bus cycle
 output c_slenb_n;
 output c_nmi_n;
 input c_rw; // Coco read/write
-input c_reset_n; // 0 = Coco reset
+input reset_n; 
 output [3:0] led;
 output reg sram_we_n;
 output sram_oe_n;
 output c_halt_n;
 output [1:0] intr;
 input clock_50;
-input reset;
+input [2:0] levelin;
+output [2:0] levelout;
 
 parameter COCO_W = 2'b00, COCO_R = 2'b10, AVR_W = 2'b01, AVR_R = 2'b11;
 
@@ -69,13 +71,16 @@ wire scs_falling_edge = (scs_edge[2:1] == 2'b01); // it's flipped because of the
 wire avr_falling_edge = (avr_edge[2:1] == 2'b10);
 wire c_regselect = ~c_scs_n & c_eclk;
 wire c_memselect = ~c_cts_n;
-wire c_select = c_reset_n & (c_regselect | c_memselect);
+wire c_select = c_power & (c_regselect | c_memselect);
 
 assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz); 
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
 assign a_databus = (a_rw & a_sel ? avr_readbuf : 8'bz);
+
+// I need some level converters
+assign levelout = levelin;
 
 assign led = { intr, dskreg[7] & halt };
 
@@ -87,8 +92,8 @@ always @(posedge clock_50) begin
   avr_edge <= {avr_edge[1:0], a_sel};
 end
 
-always @(negedge c_reset_n or posedge clock_50) begin
-  if (!c_reset_n) begin
+always @(negedge reset_n or posedge clock_50) begin
+  if (!reset_n) begin
 	 intr <= 2'b00;
 	 counter_50 <= 3'b0;
 	 sram_databus <= 8'bz;
@@ -101,9 +106,9 @@ always @(negedge c_reset_n or posedge clock_50) begin
  end else begin
     if (avr_falling_edge)
 	   req[2] <= 1'b1;
-    if (scs_falling_edge && c_reset_n) 
+    if (scs_falling_edge && c_power) 
 	   req[1] <= 1'b1;
-    if (cts_falling_edge && c_reset_n)
+    if (cts_falling_edge && c_power)
 		req[0] <= 1'b1;
 	 if (counter_50) begin // Deal with SRAM timing and buffering
 		counter_50 <= counter_50 - 1'b1; // doesn't apply until next tick!
