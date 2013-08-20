@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-05-31 BZR 4019)-stable date = 8/3/2013 3:08:56 PM
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = Tue 20 Aug 2013 01:27:50 PM EDT
 
 BeginCmp
 TimeStamp = /51FBBEA8;
@@ -134,6 +134,48 @@ IdModule  = DO-214AA(SMB);
 EndCmp
 
 BeginCmp
+TimeStamp = /52140346;
+Reference = D8;
+ValeurCmp = CP;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /52140352;
+Reference = D9;
+ValeurCmp = EP;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/5213E54E;
+Reference = D10;
+ValeurCmp = A0;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/5213E542;
+Reference = D11;
+ValeurCmp = A1;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/5213E554;
+Reference = D12;
+ValeurCmp = A2;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/5213E53C;
+Reference = D13;
+ValeurCmp = A3;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
 TimeStamp = /51D5AFBD/51D5E753;
 Reference = IC1;
 ValeurCmp = ATMEGA2560-A;
@@ -239,6 +281,20 @@ IdModule  = 1pin;
 EndCmp
 
 BeginCmp
+TimeStamp = /5213B460;
+Reference = P15;
+ValeurCmp = JTAG SEL;
+IdModule  = pin_array_3x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /52143458;
+Reference = P16;
+ValeurCmp = ICSP;
+IdModule  = pin_array_3x2;
+EndCmp
+
+BeginCmp
 TimeStamp = /51D5AFBD/51D60CE0;
 Reference = R1;
 ValeurCmp = 1M;
@@ -253,22 +309,36 @@ IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /51D5AFBD/51FC56DA;
+TimeStamp = /521440CB;
 Reference = R3;
-ValeurCmp = 1k;
+ValeurCmp = 150;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
 TimeStamp = /51FDC1E2;
 Reference = R4;
-ValeurCmp = R;
+ValeurCmp = 47k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5214458A;
+Reference = R5;
+ValeurCmp = 150;
 IdModule  = SM0805;
 EndCmp
 
 BeginCmp
 TimeStamp = /51D5A817/51FC143C;
 Reference = RP1;
+ValeurCmp = 150;
+IdModule  = CAY16-J4;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/5213E55D;
+Reference = RP2;
 ValeurCmp = 150;
 IdModule  = CAY16-J4;
 EndCmp
