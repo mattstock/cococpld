@@ -84,19 +84,35 @@ void loadSetup() {
 }
 
 void setup() {
+	// Serial port for debugging output
 	Serial.begin(115200);
+	
+	// SPI used for microSD and WizNet (if plugged in)
 	SPI.begin();
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 	SPI.setDataMode(SPI_MODE0);
 
+	// Mode pin - not standard Arduino pin
+	CLEAR(DDRE, PE6);
+	SET(PORTE, PE6); // use pullup
+
+	// Configure these as interrupts eventually
 	pinMode(CMDINT_PIN, INPUT);
 	pinMode(CFGINT_PIN, INPUT);
+	
+	// Default SS pin - set to known state
 	pinMode(USBSELECT_PIN, OUTPUT);
 	digitalWrite(USBSELECT_PIN, HIGH);
+	
+	// For Wiznet module SPI select
 	pinMode(ETHSELECT_PIN, OUTPUT);
 	digitalWrite(ETHSELECT_PIN, HIGH);
+	
+	// To signal we have something for the CPLD
 	pinMode(COCOSELECT_PIN, OUTPUT);
 	digitalWrite(COCOSELECT_PIN, HIGH);
+	
+	// microSD SPI select
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
 	
@@ -112,14 +128,13 @@ void setup() {
 
 	loadSetup();
 
-//	byte mac[] = { 0xE3, 0x4A, 0xBE, 0xC0, 0x3D, 0x3D };  // Load from setup file in the production version
-	// Ethernet setup
-//	Ethernet.begin(mac);
-		
-	Serial.println("Going into fdc");
-	fdc();
-	Serial.print("Fail");
-	while (1);
+	if (PINE & (1 << PE6)) {
+		Serial.println("Peripheral mode");
+		fdc();
+	} else {
+		Serial.println("ROM mode");
+		// TODO add ROM load of default ROM image and wait
+	}
 }
 
 void loop() {
