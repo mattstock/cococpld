@@ -6,6 +6,7 @@
  
 #define ETHSELECT_PIN 10
 #define SDSELECT_PIN 4
+#define COCORW_PIN 41
 #define COCOSELECT_PIN 39
 #define USBSELECT_PIN 53
 #define CFGINT_PIN 2

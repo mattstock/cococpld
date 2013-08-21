@@ -37,7 +37,7 @@ $Descr USLegal 14000 8500
 encoding utf-8
 Sheet 1 3
 Title "Color Computer FDC Ethernet Controller"
-Date "20 aug 2013"
+Date "21 aug 2013"
 Rev "2.1"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -345,10 +345,6 @@ Text Label 2150 6850 2    60   ~ 0
 TCK
 Text Label 2150 7050 2    60   ~ 0
 TMS
-Text Label 2150 6950 2    60   ~ 0
-TDO
-Text Label 2150 7250 2    60   ~ 0
-TDI
 $Comp
 L GND #PWR10
 U 1 1 51D5B8DC
@@ -892,33 +888,14 @@ Wire Wire Line
 	10800 2500 11450 2500
 Wire Wire Line
 	5300 4850 7200 4850
-$Comp
-L CONN_3X2 P15
-U 1 1 5213B460
-P 4350 7000
-F 0 "P15" H 4350 7250 50  0000 C CNN
-F 1 "JTAG SEL" V 4350 7050 40  0000 C CNN
-F 2 "" H 4350 7000 60  0000 C CNN
-F 3 "" H 4350 7000 60  0000 C CNN
-	1    4350 7000
-	1    0    0    -1  
-$EndComp
-Text Label 3950 6950 2    60   ~ 0
-TDO
-Text Label 4750 6950 0    60   ~ 0
-TDI
 Text Label 5300 5300 0    60   ~ 0
 C_TDO
 Text Label 7200 5300 2    60   ~ 0
 A_TDI
-Text Label 3950 6850 2    60   ~ 0
+Text Label 2150 6950 2    60   ~ 0
 A_TDO
-Text Label 4750 7050 0    60   ~ 0
+Text Label 2150 7250 2    60   ~ 0
 C_TDI
-Text Label 3950 7050 2    60   ~ 0
-A_TDI
-Text Label 4750 6850 0    60   ~ 0
-C_TDO
 $Comp
 L CONN_3X2 P16
 U 1 1 52143458
@@ -1026,4 +1003,6 @@ F 3 "~" H 11950 5700 30  0000 C CNN
 $EndComp
 Wire Wire Line
 	12200 5700 12200 6150
+Wire Wire Line
+	5300 5300 7200 5300
 $EndSCHEMATC

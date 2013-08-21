@@ -96,6 +96,20 @@ void setup() {
 	CLEAR(DDRE, PE6);
 	SET(PORTE, PE6); // use pullup
 
+        // Configure address, data, and signal lines
+        DDRL = 0x00; // Data bus set to inputs for now
+        PORTL = 0x00; // No pullups
+
+	// To signal we have something for the CPLD
+	pinMode(COCOSELECT_PIN, OUTPUT);
+	digitalWrite(COCOSELECT_PIN, HIGH);
+	
+        DDRA = 0xff; // Address lines L
+        DDRC = 0xff; // Address lines H
+
+        pinMode(COCORW_PIN, OUTPUT);
+	digitalWrite(COCORW_PIN, HIGH);
+
 	// Configure these as interrupts eventually
 	pinMode(CMDINT_PIN, INPUT);
 	pinMode(CFGINT_PIN, INPUT);
@@ -107,10 +121,6 @@ void setup() {
 	// For Wiznet module SPI select
 	pinMode(ETHSELECT_PIN, OUTPUT);
 	digitalWrite(ETHSELECT_PIN, HIGH);
-	
-	// To signal we have something for the CPLD
-	pinMode(COCOSELECT_PIN, OUTPUT);
-	digitalWrite(COCOSELECT_PIN, HIGH);
 	
 	// microSD SPI select
 	pinMode(SDSELECT_PIN, OUTPUT);
@@ -134,6 +144,11 @@ void setup() {
 	} else {
 		Serial.println("ROM mode");
 		// TODO add ROM load of default ROM image and wait
+	        if (programROM(SD.open(config[yROM])) != 0) {
+		  Serial.println("Can't find ROM image");
+                } else {
+		  Serial.println("ROM loaded");
+		}
 	}
 }
 
