@@ -29,7 +29,7 @@ int verifyROM(File dataFile) {
 }
 
 void eraseROM() {			
-	uint16_t address = 0x0000;
+	uint16_t address = 0x1000;
 	setAddress(address);
 	while (address != 0xffff) {
 		setData(0x00);

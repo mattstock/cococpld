@@ -13,8 +13,8 @@ void setAddress(uint16_t addr) {
 void setRegister(uint8_t i, uint8_t d) {
 	setAddress(i);
 	reg[i] = d;
-	setData(d);
 	digitalWrite(COCORW_PIN, LOW);
+	setData(d);
 	digitalWrite(COCOSELECT_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
@@ -39,7 +39,7 @@ void loadConfigReg() {
 uint8_t readData() {
 	uint8_t b;
 	
-        DDRL = 0x00;
+    DDRL = 0x00;
 	digitalWrite(COCORW_PIN, HIGH);
 	digitalWrite(COCOSELECT_PIN, LOW);
 	b = PINL;
@@ -48,8 +48,9 @@ uint8_t readData() {
 }
 
 void setData(uint8_t b) {
+ 	digitalWrite(COCORW_PIN, LOW);
+    DDRL = 0xff;
 	digitalWrite(COCOSELECT_PIN, LOW);
-        DDRL = 0xff;
 	PORTL = b;
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }

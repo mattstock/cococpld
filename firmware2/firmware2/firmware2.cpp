@@ -86,6 +86,7 @@ void loadSetup() {
 void setup() {
 	// Serial port for debugging output
 	Serial.begin(115200);
+	Serial1.begin(115200);
 	
 	// SPI used for microSD and WizNet (if plugged in)
 	SPI.begin();
@@ -141,18 +142,105 @@ void setup() {
 	if (PINE & (1 << PE6)) {
 		Serial.println("Peripheral mode");
 		fdc();
-	} else {
-		Serial.println("ROM mode");
-		// TODO add ROM load of default ROM image and wait
-	        if (programROM(SD.open(config[yROM])) != 0) {
-		  Serial.println("Can't find ROM image");
-                } else {
-		  Serial.println("ROM loaded");
+	}
+	
+	// Go into the loop for the test mode
+	Serial.println("Test mode");
+/*	        if (programROM(SD.open(config[ROM])) != 0) {
+				Serial.println("Can't find ROM image");
+			} else {
+				if (verifyROM(SD.open(config[ROM])) != 0) {
+					Serial.println("ROM verify failed");
+				}
+				Serial.println("ROM loaded");
+			} */
+}
+
+char cmd[30];
+
+void readLine() {
+	int index = 0;
+	
+	while (1) {
+		if (Serial.available() > 0) {
+			cmd[index] = Serial.read();
+			cmd[index+1] = '\0';
+			Serial.write(&(cmd[index]));
+			if (cmd[index] == '\r') {
+				Serial.println("");
+				cmd[index] = '\0';
+				index = 0;
+				return;
+			}
+			index++;
 		}
+		
+	}
+	
+}
+
+char a2h(char c) {
+	if (c < 'a') {
+		return c-48;
+	} else {
+		return c-97+10;
 	}
 }
 
+boolean rw = true, sel = true;
+char d;
+
 void loop() {
+/*	if (Serial.available() > 0) {
+		a[0] = Serial.read();
+		a[1] = '\0';
+		Serial1.write(a);
+	}
+	if (Serial1.available() >0) {
+		a[0] = Serial1.read();
+		a[1] = '\0';
+		Serial.write(a);
+	}*/
+	Serial.print("BEXKAT> ");
+	readLine();
+	switch (cmd[0]) {
+	case 'r':
+		digitalWrite(COCORW_PIN, HIGH);
+		DDRL = 0x00;
+		break;
+	case 'w':
+		digitalWrite(COCORW_PIN, LOW);
+		DDRL = 0xff;
+		break;
+	case 'x':
+		if (digitalRead(COCORW_PIN) == HIGH) {
+			digitalWrite(COCOSELECT_PIN, LOW);
+			d = PINL;
+			digitalWrite(COCOSELECT_PIN, HIGH);
+			Serial.print("Data on bus: ");
+			Serial.println(d, HEX);
+		} else {
+			PORTL = d;
+			digitalWrite(COCOSELECT_PIN, LOW);
+			digitalWrite(COCOSELECT_PIN, HIGH);
+			Serial.print("Wrote on bus: ");
+			Serial.println(d, HEX);	
+		}
+		break;
+	case 'e':
+		eraseROM();
+		Serial.println("SRAM erased");
+		break;
+	case 'a':
+		PORTC = (a2h(cmd[1]) << 4) + a2h(cmd[2]);
+		PORTA = (a2h(cmd[3]) << 4) + a2h(cmd[4]);
+		Serial.println("Address set");
+		break;
+	case 'd':
+		d = (a2h(cmd[1]) << 4) + a2h(cmd[2]);
+		Serial.println("Data set");
+		break;
+	}
 }
 
 extern void arduinomain(void);
