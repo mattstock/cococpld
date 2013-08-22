@@ -49,6 +49,7 @@ reg halt;
 reg [7:0] dskreg;			// 0xff40 kept in CPLD
 reg [7:0] fdcstatus;    // 0xff48 read kept in CPLD
 
+reg [3:0] led;
 
 // We have to handle shared access to the SRAM bus by both the Coco and the SPI bus.  Fortunately, both of them
 // are extremely slow compared to the 20ns CPLD clock and SRAM speeds (<= 55ns).  So our goal is to track when the SRAM
@@ -77,12 +78,12 @@ assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz);
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
-assign a_databus = (a_rw & a_sel ? avr_readbuf : 8'bz);
+assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'bz);
 
 // I need some level converters
 assign levelout = levelin;
 
-assign led = { intr, dskreg[7] & halt };
+//assign led = a_databus[3:0];
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -103,8 +104,9 @@ always @(negedge reset_n or posedge clock_50) begin
 	 dskreg <= 8'h0;
  	 nmi <= 1'b0;
 	 halt <= 1'b0;
+	 led <= 4'h0;
  end else begin
-    if (avr_falling_edge)
+   if (avr_falling_edge)
 	   req[2] <= 1'b1;
     if (scs_falling_edge && c_power) 
 	   req[1] <= 1'b1;
@@ -199,6 +201,7 @@ endtask
 task avr_command;
 begin
   if (a_rw) begin
+    led[0] <= 1'b1;
     if (a_addrbus == 16'h0000) begin  // Read from $ff40
 	   avr_readbuf <= dskreg;
 	   intr[0] <= 1'b0;
@@ -213,6 +216,7 @@ begin
 		actor <= 1'b1;
  	 end
   end else begin
+    led[1] <= 1'b1;
     if (a_addrbus == 16'h0011) begin // Write to $ff48
       fdcstatus <= a_databus;
     end else if (a_addrbus == 16'h0100) begin // Magic control port
