@@ -205,27 +205,11 @@ void loop() {
 	readLine();
 	switch (cmd[0]) {
 	case 'r':
-		digitalWrite(COCORW_PIN, HIGH);
-		DDRL = 0x00;
+		Serial.println(readData(), HEX);
 		break;
 	case 'w':
-		digitalWrite(COCORW_PIN, LOW);
-		DDRL = 0xff;
-		break;
-	case 'x':
-		if (digitalRead(COCORW_PIN) == HIGH) {
-			digitalWrite(COCOSELECT_PIN, LOW);
-			d = PINL;
-			digitalWrite(COCOSELECT_PIN, HIGH);
-			Serial.print("Data on bus: ");
-			Serial.println(d, HEX);
-		} else {
-			PORTL = d;
-			digitalWrite(COCOSELECT_PIN, LOW);
-			digitalWrite(COCOSELECT_PIN, HIGH);
-			Serial.print("Wrote on bus: ");
-			Serial.println(d, HEX);	
-		}
+		setData((a2h(cmd[1]) << 4) + a2h(cmd[2]));
+		Serial.println("Data written");
 		break;
 	case 'e':
 		eraseROM();
@@ -235,10 +219,6 @@ void loop() {
 		PORTC = (a2h(cmd[1]) << 4) + a2h(cmd[2]);
 		PORTA = (a2h(cmd[3]) << 4) + a2h(cmd[4]);
 		Serial.println("Address set");
-		break;
-	case 'd':
-		d = (a2h(cmd[1]) << 4) + a2h(cmd[2]);
-		Serial.println("Data set");
 		break;
 	}
 }

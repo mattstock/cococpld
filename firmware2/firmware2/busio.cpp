@@ -50,8 +50,8 @@ uint8_t readData() {
 void setData(uint8_t b) {
  	digitalWrite(COCORW_PIN, LOW);
     DDRL = 0xff;
-	digitalWrite(COCOSELECT_PIN, LOW);
 	PORTL = b;
+	digitalWrite(COCOSELECT_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
