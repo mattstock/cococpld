@@ -145,15 +145,9 @@ void setup() {
 	}
 	
 	// Go into the loop for the test mode
-	Serial.println("Test mode");
-/*	        if (programROM(SD.open(config[ROM])) != 0) {
-				Serial.println("Can't find ROM image");
-			} else {
-				if (verifyROM(SD.open(config[ROM])) != 0) {
-					Serial.println("ROM verify failed");
-				}
-				Serial.println("ROM loaded");
-			} */
+//	Serial.println("Test mode");
+	programROM(SD.open(config[ROM]));
+	while (1);
 }
 
 char cmd[30];
@@ -187,9 +181,6 @@ char a2h(char c) {
 	}
 }
 
-boolean rw = true, sel = true;
-char d;
-
 void loop() {
 /*	if (Serial.available() > 0) {
 		a[0] = Serial.read();
@@ -210,6 +201,10 @@ void loop() {
 	case 'w':
 		setData((a2h(cmd[1]) << 4) + a2h(cmd[2]));
 		Serial.println("Data written");
+		break;
+	case 'x':
+		programROM(SD.open(config[ROM]));
+		Serial.println("ROM programmed");
 		break;
 	case 'e':
 		eraseROM();

@@ -53,7 +53,7 @@ void CocoDisk::restore() {
 	setRegister(RW(FDCSEC), 0x01);
 	track = 0;
 	ddir = true;
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::seek(uint16_t track) {
@@ -63,7 +63,7 @@ void CocoDisk::seek(uint16_t track) {
 	Serial.println(track, HEX);
 	setRegister(RW(FDCTRK), track);
 	setRegister(RW(FDCSTAT), (track ? 0x00 : 0x04)); // Set track 0;
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::step() {
@@ -76,7 +76,7 @@ void CocoDisk::step() {
 	Serial.println(track, HEX);
 	setRegister(RW(FDCTRK), track);
 	setRegister(RW(FDCSTAT), (track ? 0x20 : 0x24));
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::stepin() {
@@ -97,7 +97,7 @@ void CocoDisk::stepout() {
 	ddir = true;
 	setRegister(RW(FDCTRK), track);
 	setRegister(RW(FDCSTAT), 0x20);
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::readSector(uint8_t side, uint8_t sector) {
@@ -113,7 +113,7 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	
 	if (disk == NULL) {
 		setRegister(RW(FDCSTAT), 0x80); // throw error
-		setNMI(true);
+		setNMI();
 		return;
 	}
 	
@@ -132,13 +132,13 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 		setRegister(RW(FDCDAT), sector_data[i]);
 		setRegister(RW(FDCSTAT), 0x02);
 		if (i != 0)
-			setHALT(false);
+			clearHALT();
 		if (i != sector_size-1)
 			waitDR();
 	}
 	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
-	setNMI(true);
+	setNMI();
 	free(sector_data);
 }
 
@@ -150,7 +150,7 @@ boolean CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 	
 	if (disk == NULL) {
 		setRegister(RW(FDCSTAT), 0x80); // throw error
-		setNMI(true);
+		setNMI();
 		return false;
 	}
 	
@@ -160,14 +160,14 @@ boolean CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 	for (uint16_t i=0; i < sector_size; i++) {
 		setRegister(RW(FDCSTAT), 0x03);
 		if (i != 0)
-			setHALT(false);
+			clearHALT();
 		waitDR();
 		loadRegisters();
 		sector_data[i] = reg[RR(FDCDAT)];
 	}
 	setRegister(RW(FDCSEC), sector);
 	setRegister(RW(FDCSTAT), 0x00);
-	setNMI(true);
+	setNMI();
 	result = disk->putSector(side, track, sector, sector_data);
 	free(sector_data);
 	return result;	
@@ -178,28 +178,28 @@ void CocoDisk::readAddress() {
 	Serial.print("READ ADDRESS ");
 	setRegister(RW(FDCSTAT), 0x03); // BUSY, DRO
 	setRegister(RW(FDCDAT), track);
-	setHALT(false);
+	clearHALT();
 	setRegister(RW(FDCDAT), 0x00);
-	setHALT(false);
+	clearHALT();
 	setRegister(RW(FDCDAT), 0x01); // Random sector
-	setHALT(false);
+	clearHALT();
 	setRegister(RW(FDCDAT), 0x01);
-	setHALT(false);
+	clearHALT();
 	setRegister(RW(FDCDAT), 0x00); // CRC1
-	setHALT(false);
+	clearHALT();
 	setRegister(RW(FDCDAT), 0x00); // CRC2
 	setRegister(RW(FDCSTAT), 0x00); // clear BUSY
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::readTrack() {
 	setRegister(RW(FDCSTAT), 0x80); // throw error
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::writeTrack() {
 	setRegister(RW(FDCSTAT), 0x80); // throw error
-	setNMI(true);
+	setNMI();
 }
 
 void CocoDisk::forceInt() {
@@ -215,7 +215,7 @@ void CocoDisk::waitDR() {
 		delayMicroseconds(1);
 		i++;
 		if (i == 30) {
-			setHALT(false);
+			clearHALT();
 			i=0;
 		}
 		loadStatusReg();

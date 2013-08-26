@@ -55,16 +55,16 @@ void setData(uint8_t b) {
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
-void setNMI(boolean s) {
-        setAddress(0x0100);
+void setNMI() {
+    setAddress(0x0100);
 	setData(0x02);
 	digitalWrite(COCORW_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
-void setHALT(boolean s) {
-        setAddress(0x0100);
+void clearHALT() {
+    setAddress(0x0100);
 	setData(0x01);
 	digitalWrite(COCORW_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, LOW);

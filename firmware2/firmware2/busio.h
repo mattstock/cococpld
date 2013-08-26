@@ -22,8 +22,8 @@ void loadRegisters();
 void loadStatusReg();
 void loadConfigReg();
 void setRegister(uint8_t i, uint8_t d);
-void setNMI(boolean s);
-void setHALT(boolean s);
+void setNMI();
+void clearHALT();
 
 uint8_t readData();
 void setData(uint8_t b);

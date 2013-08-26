@@ -31,7 +31,7 @@ output [2:0] levelout;
 
 parameter COCO_W = 2'b00, COCO_R = 2'b10, AVR_W = 2'b01, AVR_R = 2'b11;
 
-reg [2:0] counter_50;     // 50MHz counter for SRAM read/write   
+reg [1:0] counter_50;     // 50MHz counter for SRAM read/write   
 reg [1:0] intr;               // HIGH to indicate SCS register changes since last SPI read
 reg [2:0] eclk_edge;     // Synchonizer for Coco E clock and 50MHz CPLD clock
 reg [2:0] cts_edge;
@@ -48,8 +48,6 @@ reg nmi;                // Set if NMI output to Coco
 reg halt;
 reg [7:0] dskreg;			// 0xff40 kept in CPLD
 reg [7:0] fdcstatus;    // 0xff48 read kept in CPLD
-
-reg [3:0] led;
 
 // We have to handle shared access to the SRAM bus by both the Coco and the SPI bus.  Fortunately, both of them
 // are extremely slow compared to the 20ns CPLD clock and SRAM speeds (<= 55ns).  So our goal is to track when the SRAM
@@ -72,18 +70,18 @@ wire scs_falling_edge = (scs_edge[2:1] == 2'b01); // it's flipped because of the
 wire avr_falling_edge = (avr_edge[2:1] == 2'b10);
 wire c_regselect = ~c_scs_n & c_eclk;
 wire c_memselect = ~c_cts_n;
-wire c_select = c_power & (c_regselect | c_memselect);
+wire c_select = (c_regselect | c_memselect);
 
-assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz); 
+assign c_databus = (c_rw & c_select ? c_readbuf : 8'hzz); 
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
-assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'bz);
+assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'hzz);
 
 // I need some level converters
 assign levelout = levelin;
 
-//assign led = a_databus[3:0];
+assign led = { req, dskreg[7] & halt };
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -96,25 +94,24 @@ end
 always @(negedge reset_n or posedge clock_50) begin
   if (!reset_n) begin
 	 intr <= 2'b00;
-	 counter_50 <= 3'b0;
-	 sram_databus <= 8'bz;
+	 counter_50 <= 2'b0;
+	 sram_databus <= 8'hzz;
 	 sram_we_n <= 1'b1;
 	 req <= 3'b0;
  	 fdcstatus <= 8'b00000100;
-	 dskreg <= 8'h0;
+	 dskreg <= 8'b10000000;
  	 nmi <= 1'b0;
-	 halt <= 1'b0;
-	 led <= 4'h0;
+	 halt <= 1'b1;
  end else begin
    if (avr_falling_edge)
 	   req[2] <= 1'b1;
-    if (scs_falling_edge && c_power) 
+   if (scs_falling_edge && c_power) 
 	   req[1] <= 1'b1;
-    if (cts_falling_edge && c_power)
+   if (cts_falling_edge && c_power)
 		req[0] <= 1'b1;
-	 if (counter_50) begin // Deal with SRAM timing and buffering
+	if (counter_50) begin // Deal with SRAM timing and buffering
 		counter_50 <= counter_50 - 1'b1; // doesn't apply until next tick!
-	   if (counter_50 == 3'h1) // Last count in cycle
+	   if (counter_50 == 2'h1) // Last count in cycle
 		    case ({sram_we_n, actor})
 	       COCO_R: begin
 			   if (c_regselect && c_addrbus[3:0] == 4'hb) begin
@@ -177,7 +174,7 @@ end
 task scs_handler;
 begin
   actor <= 1'b0;
-  counter_50 <= 3'h4;
+  counter_50 <= 2'h3;
   sram_addrbus[15:0] <= { 11'b0000000000, c_addrbus[3:0], c_rw}; 
   if (c_rw)
     sram_databus <= 8'bz;
@@ -191,7 +188,7 @@ endtask
 task cts_handler;
 begin
     actor <= 1'b0;  // Coco
-    counter_50 <= 3'h6;
+    counter_50 <= 2'h3;
     sram_addrbus[15:0] <= { 1'b1, c_addrbus[14:0]};
     sram_databus <= 8'bz;
     sram_we_n <= 1'b1;	   
@@ -201,7 +198,6 @@ endtask
 task avr_command;
 begin
   if (a_rw) begin
-    led[0] <= 1'b1;
     if (a_addrbus == 16'h0000) begin  // Read from $ff40
 	   avr_readbuf <= dskreg;
 	   intr[0] <= 1'b0;
@@ -209,14 +205,13 @@ begin
  	   avr_readbuf <= fdcstatus;
 		intr[1] <= 1'b0;
 	 end else begin
-	   counter_50 <= 3'h4; // Use a 4 tick read cycle 20ns
+	   counter_50 <= 2'h3; // Use a 3 tick read cycle 60ns for 55ns memory
 		sram_addrbus <= a_addrbus;
 		sram_databus <= 8'bz;
 	   sram_we_n <= 1'b1;
 		actor <= 1'b1;
  	 end
   end else begin
-    led[1] <= 1'b1;
     if (a_addrbus == 16'h0011) begin // Write to $ff48
       fdcstatus <= a_databus;
     end else if (a_addrbus == 16'h0100) begin // Magic control port
@@ -228,7 +223,7 @@ begin
 		  halt <= 1'b0;	 
 	   end
     end else begin
-      counter_50 <= 3'h4; // Use a 4 tick write cycle 20ns
+      counter_50 <= 2'h3;
 	   sram_addrbus[15:0] <= a_addrbus;
 	   sram_databus[7:0] <= a_databus;
 	   sram_we_n <= 1'b0;
