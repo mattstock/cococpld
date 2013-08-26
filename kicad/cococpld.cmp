@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = Tue 20 Aug 2013 01:27:50 PM EDT
+Cmp-Mod V01 Created by CvPcb (2013-05-31 BZR 4019)-stable date = 8/24/2013 9:50:21 PM
 
 BeginCmp
 TimeStamp = /51FBBEA8;
@@ -81,6 +81,27 @@ BeginCmp
 TimeStamp = /51D5AFBD/51D60D24;
 Reference = C12;
 ValeurCmp = 22pF;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/52196D2B;
+Reference = C13;
+ValeurCmp = C;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/52196D3A;
+Reference = C14;
+ValeurCmp = C;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /51D5AFBD/52196D49;
+Reference = C15;
+ValeurCmp = C;
 IdModule  = SM0805;
 EndCmp
 
@@ -278,13 +299,6 @@ TimeStamp = /51FC65FD;
 Reference = P14;
 ValeurCmp = TST;
 IdModule  = 1pin;
-EndCmp
-
-BeginCmp
-TimeStamp = /5213B460;
-Reference = P15;
-ValeurCmp = JTAG SEL;
-IdModule  = pin_array_3x2;
 EndCmp
 
 BeginCmp
