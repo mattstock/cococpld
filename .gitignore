@@ -11,7 +11,7 @@ output_files/
 db/
 incremental_db/
 timing/
-simulation/
+modelsim/
 testbench/
 *_sim/
 *sopc[_i]*

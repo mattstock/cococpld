@@ -10,7 +10,7 @@ input a_sel;
 input c_power;
 inout [7:0] a_databus;
 output reg [15:0] sram_addrbus; // Memory address bus
-inout reg [7:0] sram_databus; // Memory databus
+inout [7:0] sram_databus; // Memory databus
 output sram_ce_n;
 inout [7:0] c_databus;
 input c_scs_n; // 0 = Coco register read/write 
@@ -40,7 +40,7 @@ reg [2:0] avr_edge;
 
 reg [7:0] avr_readbuf;
 reg [7:0] c_readbuf;    // SRAM stores in this register for the fairly long E Coco read cycle
-reg [7:0] writebuf;     // If the SRAM is in use, writes a buffered here
+reg [7:0] sram_writebuf;
 reg actor;              // Who initiated read or write cycle, or added to pending: 0 = coco, 1 = spi
 reg [2:0] req;				// Flags for pending requests { SPI, SCS, CTS }
 
@@ -72,7 +72,8 @@ wire c_regselect = ~c_scs_n & c_eclk;
 wire c_memselect = ~c_cts_n;
 wire c_select = (c_regselect | c_memselect);
 
-assign c_databus = (c_rw & c_select ? c_readbuf : 8'hzz); 
+assign c_databus = (c_rw & c_select ? c_readbuf : 8'hzz);
+assign sram_databus = (sram_oe_n ? sram_writebuf : 8'hzz); 
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
 assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
 
@@ -81,7 +82,7 @@ assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'hzz);
 // I need some level converters
 assign levelout = levelin;
 
-assign led = { req, dskreg[7] & halt };
+assign led = { 2'b00, nmi, ~(dskreg[7] & halt) };
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -95,7 +96,7 @@ always @(negedge reset_n or posedge clock_50) begin
   if (!reset_n) begin
 	 intr <= 2'b00;
 	 counter_50 <= 2'b0;
-	 sram_databus <= 8'hzz;
+	 sram_addrbus <= 16'h2000;
 	 sram_we_n <= 1'b1;
 	 req <= 3'b0;
  	 fdcstatus <= 8'b00000100;
@@ -117,7 +118,7 @@ always @(negedge reset_n or posedge clock_50) begin
 			   if (c_regselect && c_addrbus[3:0] == 4'hb) begin
 				  fdcstatus[1] <= 1'b0;
 				  halt <= 1'b1;
-			     c_readbuf <= sram_databus[7:0];
+			     c_readbuf <= sram_databus;
 				end else if (c_regselect && c_addrbus[3:0] == 4'h8) begin
 				  dskreg[7] <= 1'b0;
 				  nmi <= 1'b0;
@@ -176,11 +177,9 @@ begin
   actor <= 1'b0;
   counter_50 <= 2'h3;
   sram_addrbus[15:0] <= { 11'b0000000000, c_addrbus[3:0], c_rw}; 
-  if (c_rw)
-    sram_databus <= 8'bz;
-  else begin
+  if (!c_rw) begin
     sram_we_n <= 1'b0;	   
-    sram_databus <= c_databus;
+    sram_writebuf <= c_databus;
   end
 end
 endtask
@@ -190,7 +189,6 @@ begin
     actor <= 1'b0;  // Coco
     counter_50 <= 2'h3;
     sram_addrbus[15:0] <= { 1'b1, c_addrbus[14:0]};
-    sram_databus <= 8'bz;
     sram_we_n <= 1'b1;	   
 end
 endtask
@@ -207,7 +205,6 @@ begin
 	 end else begin
 	   counter_50 <= 2'h3; // Use a 3 tick read cycle 60ns for 55ns memory
 		sram_addrbus <= a_addrbus;
-		sram_databus <= 8'bz;
 	   sram_we_n <= 1'b1;
 		actor <= 1'b1;
  	 end
@@ -225,7 +222,7 @@ begin
     end else begin
       counter_50 <= 2'h3;
 	   sram_addrbus[15:0] <= a_addrbus;
-	   sram_databus[7:0] <= a_databus;
+	   sram_writebuf <= a_databus;
 	   sram_we_n <= 1'b0;
 	   actor <= 1'b1;
 	 end
