@@ -31,7 +31,7 @@ output [2:0] levelout;
 
 parameter COCO_W = 2'b00, COCO_R = 2'b10, AVR_W = 2'b01, AVR_R = 2'b11;
 
-reg [1:0] counter_50;     // 50MHz counter for SRAM read/write   
+reg [2:0] counter_50;     // 50MHz counter for SRAM read/write   
 reg [1:0] intr;               // HIGH to indicate SCS register changes since last SPI read
 reg [2:0] eclk_edge;     // Synchonizer for Coco E clock and 50MHz CPLD clock
 reg [2:0] cts_edge;
@@ -45,7 +45,6 @@ reg actor;              // Who initiated read or write cycle, or added to pendin
 reg [2:0] req;				// Flags for pending requests { SPI, SCS, CTS }
 
 reg nmi;                // Set if NMI output to Coco
-reg halt;
 reg [7:0] dskreg;			// 0xff40 kept in CPLD
 reg [7:0] fdcstatus;    // 0xff48 read kept in CPLD
 
@@ -71,18 +70,19 @@ wire avr_falling_edge = (avr_edge[2:1] == 2'b10);
 wire c_regselect = ~c_scs_n & c_eclk;
 wire c_memselect = ~c_cts_n;
 wire c_select = (c_regselect | c_memselect);
+wire halt = dskreg[7] & ~fdcstatus[1];
 
 assign c_databus = (c_rw & c_select ? c_readbuf : 8'hzz);
 assign sram_databus = (sram_oe_n ? sram_writebuf : 8'hzz); 
 assign c_nmi_n = (nmi ? 1'b0 : 1'bz); // for FDC
-assign c_halt_n = (dskreg[7] & halt ? 1'b0 : 1'bz); // for FDC
+assign c_halt_n = (halt ? 1'b0 : 1'bz); // for FDC
 
 assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'hzz);
 
 // I need some level converters
 assign levelout = levelin;
 
-assign led = { 2'b00, nmi, ~(dskreg[7] & halt) };
+assign led = { c_power, c_rw, sram_we_n, halt };
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -102,7 +102,6 @@ always @(negedge reset_n or posedge clock_50) begin
  	 fdcstatus <= 8'b00000100;
 	 dskreg <= 8'b10000000;
  	 nmi <= 1'b0;
-	 halt <= 1'b1;
  end else begin
    if (avr_falling_edge)
 	   req[2] <= 1'b1;
@@ -112,12 +111,11 @@ always @(negedge reset_n or posedge clock_50) begin
 		req[0] <= 1'b1;
 	if (counter_50) begin // Deal with SRAM timing and buffering
 		counter_50 <= counter_50 - 1'b1; // doesn't apply until next tick!
-	   if (counter_50 == 2'h1) // Last count in cycle
+	   if (counter_50 == 3'h1) // Last count in cycle
 		    case ({sram_we_n, actor})
 	       COCO_R: begin
-			   if (c_regselect && c_addrbus[3:0] == 4'hb) begin
+   		   if (c_regselect && c_addrbus[3:0] == 4'hb) begin
 				  fdcstatus[1] <= 1'b0;
-				  halt <= 1'b1;
 			     c_readbuf <= sram_databus;
 				end else if (c_regselect && c_addrbus[3:0] == 4'h8) begin
 				  dskreg[7] <= 1'b0;
@@ -136,13 +134,13 @@ always @(negedge reset_n or posedge clock_50) begin
 				  dskreg <= c_databus;
 				  fdcstatus[0] <= 1'b0;
 				end else if (c_addrbus[3:0] == 4'h8) begin
-			     if (c_databus[7:6] == 2'b10) // Type II operations set halt
-				    halt <= 1'b1;
-				  nmi <= 1'b0;
-				  dskreg[7] <= 1'b0;
+			     if (c_databus[7:6] == 2'b10) begin // Type II operations set halt
+					 fdcstatus[1] <= 1'b0;
+				  end
+//				  nmi <= 1'b0;
+//				  dskreg[7] <= 1'b0;
 				  intr[1] <= 1'b1;
 				end else if (c_addrbus[3:0] == 4'hb) begin
-				  halt <= 1'b1;
 				  fdcstatus[1] <= 1'b0;
 				end
 			   sram_we_n <= 1'b1;
@@ -175,7 +173,7 @@ end
 task scs_handler;
 begin
   actor <= 1'b0;
-  counter_50 <= 2'h3;
+  counter_50 <= 3'h4;
   sram_addrbus[15:0] <= { 11'b0000000000, c_addrbus[3:0], c_rw}; 
   if (!c_rw) begin
     sram_we_n <= 1'b0;	   
@@ -187,7 +185,7 @@ endtask
 task cts_handler;
 begin
     actor <= 1'b0;  // Coco
-    counter_50 <= 2'h3;
+    counter_50 <= 3'h4;
     sram_addrbus[15:0] <= { 1'b1, c_addrbus[14:0]};
     sram_we_n <= 1'b1;	   
 end
@@ -203,7 +201,7 @@ begin
  	   avr_readbuf <= fdcstatus;
 		intr[1] <= 1'b0;
 	 end else begin
-	   counter_50 <= 2'h3; // Use a 3 tick read cycle 60ns for 55ns memory
+	   counter_50 <= 3'h4; // Use a 3 tick read cycle 60ns for 55ns memory
 		sram_addrbus <= a_addrbus;
 	   sram_we_n <= 1'b1;
 		actor <= 1'b1;
@@ -213,14 +211,14 @@ begin
       fdcstatus <= a_databus;
     end else if (a_addrbus == 16'h0100) begin // Magic control port
       if (a_databus[0])
-	     halt <= 1'b0;
-	   if (a_databus[1]) begin
+		  fdcstatus[1] <= 1'b1;
+	   if (a_databus[1])
 		  nmi <= 1'b1;
+		if (a_databus[2]) begin
 		  dskreg[7] <= 1'b0; // halt enable is cleared at the end of each command
-		  halt <= 1'b0;	 
-	   end
+		end
     end else begin
-      counter_50 <= 2'h3;
+      counter_50 <= 3'h4;
 	   sram_addrbus[15:0] <= a_addrbus;
 	   sram_writebuf <= a_databus;
 	   sram_we_n <= 1'b0;
