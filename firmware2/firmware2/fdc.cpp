@@ -61,6 +61,8 @@ void fdc() {
 	setRegister(RR(FDCSEC), 0x01); // sector 1
 	setRegister(RW(FDCSEC), 0x01);
 
+	wakeCoco();
+	
 	while (1) {
 		if (digitalRead(CFGINT_PIN)) {
 //			Serial.println("ConfigInt");

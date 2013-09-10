@@ -146,7 +146,7 @@ char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
 
 	// Default
 	for (uint16_t i = 0; i < sector_size; i++)
-		sector_data[i] = 0x00;
+		sector_data[i] = 'a' + (i % 26);
 	
 	// Directory track
 	if (track == 0x11) {	

@@ -13,10 +13,8 @@ void setAddress(uint16_t addr) {
 void setRegister(uint8_t i, uint8_t d) {
 	setAddress(i);
 	reg[i] = d;
-	digitalWrite(COCORW_PIN, LOW);
 	setData(d);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, HIGH);
+ 
 }
 
 void loadStatusReg() {
@@ -48,25 +46,24 @@ uint8_t readData() {
 }
 
 void setData(uint8_t b) {
- 	digitalWrite(COCORW_PIN, LOW);
-    DDRL = 0xff;
-	PORTL = b;
+	digitalWrite(COCORW_PIN, LOW);
+ 	DDRL = 0xff;
+ 	PORTL = b;
 	digitalWrite(COCOSELECT_PIN, LOW);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
 void setNMI() {
     setAddress(0x0100);
-	setData(0x02);
-	digitalWrite(COCORW_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, HIGH);
+	setData(0x06); // clear halt enable register and trigger nmi
+}
+
+void wakeCoco() {
+    setAddress(0x0100);
+    setData(0x05); // clear halt enable register
 }
 
 void clearHALT() {
     setAddress(0x0100);
-	setData(0x01);
-	digitalWrite(COCORW_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, HIGH);
+	setData(0x01); // clear halt
 }

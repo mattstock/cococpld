@@ -67,6 +67,5 @@ int programROM(File dataFile) {
 	}
 
 	dataFile.close();
-	clearHALT();
 	return 0;
 }

@@ -145,9 +145,11 @@ void setup() {
 	}
 	
 	// Go into the loop for the test mode
-//	Serial.println("Test mode");
+	Serial.println("Test mode");
 	programROM(SD.open(config[ROM]));
-	while (1);
+	wakeCoco();
+
+//	while (1);
 }
 
 char cmd[30];
