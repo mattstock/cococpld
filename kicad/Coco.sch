@@ -37,7 +37,7 @@ $Descr USLegal 14000 8500
 encoding utf-8
 Sheet 2 3
 Title "Color Computer FDC Ethernet Controller"
-Date "25 aug 2013"
+Date "10 sep 2013"
 Rev "2.1"
 Comp "Bexkat Systems LLC 2013"
 Comment1 ""
@@ -461,8 +461,6 @@ Text Label 11750 4450 0    60   ~ 0
 C_~CART
 Text Label 3850 1500 1    60   ~ 0
 LED3
-Text Label 3950 1500 1    60   ~ 0
-M_~CE
 Text Label 6950 1500 1    60   ~ 0
 M_~WE
 NoConn ~ 1450 5100
@@ -726,8 +724,6 @@ F 3 "" H 10300 1800 60  0001 C CNN
 	1    10300 1800
 	-1   0    0    -1  
 $EndComp
-Text Label 12000 1600 0    60   ~ 0
-M_~CE
 $Comp
 L R1LP0108ESF-5SI U5
 U 1 1 51D5AD94
@@ -1011,4 +1007,19 @@ Text Label 4650 6000 3    60   ~ 0
 C_A11
 Text HLabel 5450 1500 1    60   Input ~ 0
 ~RESET
+$Comp
+L GND #PWR?
+U 1 1 522E6ECC
+P 12400 1700
+F 0 "#PWR?" H 12400 1700 30  0001 C CNN
+F 1 "GND" H 12400 1630 30  0001 C CNN
+F 2 "" H 12400 1700 60  0001 C CNN
+F 3 "" H 12400 1700 60  0001 C CNN
+	1    12400 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	12000 1600 12400 1600
+Wire Wire Line
+	12400 1600 12400 1700
 $EndSCHEMATC
