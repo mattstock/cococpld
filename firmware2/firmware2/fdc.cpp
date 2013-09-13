@@ -48,6 +48,10 @@ void fdc() {
 		return;
 	}
 	
+	EICRB = 0x03;
+	EIMSK = 0x10;
+	sei();
+	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
 
@@ -64,9 +68,8 @@ void fdc() {
 	wakeCoco();
 	
 	while (1) {
-		if (digitalRead(CFGINT_PIN)) {
-//			Serial.println("ConfigInt");
-			loadConfigReg();
+		if (control != reg[RR(DSKREG)]) {
+			Serial.println("CommandInt");
 			control = reg[RR(DSKREG)];
 			if (((control & 0x01) == 0x01) && (drive != 0)) {
 				drive = 0;
@@ -83,7 +86,7 @@ void fdc() {
 		}
 		
 		if (digitalRead(CMDINT_PIN)) {
-//			Serial.println("CommandInt");
+			Serial.println("CommandInt");
 			Serial.print("B: ");
 			loadRegisters();
 			printRegs();

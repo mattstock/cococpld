@@ -3,7 +3,7 @@
 #include "fdc.h"
 #include <avr/io.h>
 
-uint8_t reg[31];
+volatile uint8_t reg[31];
 
 void setAddress(uint16_t addr) {
 	PORTC = (addr >> 8) & 0xff;

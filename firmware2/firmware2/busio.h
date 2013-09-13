@@ -15,7 +15,7 @@
 #define CLEAR(port, bit) port &= (0 << bit)
 #define SET(port, bit) port |= (1 << bit)
 
-extern uint8_t reg[];
+extern volatile uint8_t reg[];
 
 void setAddress(uint16_t addr);
 void loadRegisters();

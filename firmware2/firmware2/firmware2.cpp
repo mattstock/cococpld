@@ -17,10 +17,9 @@
 
 char *config[MAX_CONFIG];
 
-/*ISR({Vector Source}_vect) {
-	// ISR code to execute here
-}*/
-
+ISR(INT4_vect) {
+	loadConfigReg();
+}
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {

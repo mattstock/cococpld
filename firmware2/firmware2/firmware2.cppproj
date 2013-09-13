@@ -58,21 +58,21 @@
       </StimuliFile>
       <Channel>
         <host>127.0.0.1</host>
-        <port>62922</port>
+        <port>52297</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
         <InterfaceName>JTAG</InterfaceName>
         <InterfaceProperties>
-          <JtagDbgClock>3030000</JtagDbgClock>
+          <JtagDbgClock>32000</JtagDbgClock>
           <SwdClock>249000</SwdClock>
           <JtagProgClock>7500000</JtagProgClock>
           <IspClock>125000</IspClock>
-          <JtagInChain>true</JtagInChain>
+          <JtagInChain>false</JtagInChain>
           <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
-          <JtagDevicesBefore>1</JtagDevicesBefore>
+          <JtagDevicesBefore>0</JtagDevicesBefore>
           <JtagDevicesAfter>0</JtagDevicesAfter>
-          <JtagInstrBitsBefore>10</JtagInstrBitsBefore>
+          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
           <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
           <PdiClock>4000000</PdiClock>
           <AWireMaxBaud>7500000</AWireMaxBaud>
