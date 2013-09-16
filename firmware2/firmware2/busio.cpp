@@ -29,11 +29,6 @@ void loadRegisters() {
 	}
 }
 
-void loadConfigReg() {
-	setAddress(0x0000);
-	reg[0] = readData();
-}
-
 uint8_t readData() {
 	uint8_t b;
 	

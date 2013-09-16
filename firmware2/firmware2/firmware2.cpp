@@ -17,8 +17,15 @@
 
 char *config[MAX_CONFIG];
 
+// Load config register
 ISR(INT4_vect) {
-	loadConfigReg();
+	PORTC = 0x00;
+	PORTA = 0x00;
+    DDRL = 0x00;
+    digitalWrite(COCORW_PIN, HIGH);
+    digitalWrite(COCOSELECT_PIN, LOW);
+    reg[0] = PINL;
+    digitalWrite(COCOSELECT_PIN, HIGH);	
 }
 
 void parseLine(char *line) {
