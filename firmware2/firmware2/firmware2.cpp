@@ -17,17 +17,6 @@
 
 char *config[MAX_CONFIG];
 
-// Load config register
-ISR(INT4_vect) {
-	PORTC = 0x00;
-	PORTA = 0x00;
-    DDRL = 0x00;
-    digitalWrite(COCORW_PIN, HIGH);
-    digitalWrite(COCOSELECT_PIN, LOW);
-    reg[0] = PINL;
-    digitalWrite(COCOSELECT_PIN, HIGH);	
-}
-
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
 //		if (config[FLOPPY0] != NULL)
@@ -103,18 +92,18 @@ void setup() {
 	CLEAR(DDRE, PE6);
 	SET(PORTE, PE6); // use pullup
 
-        // Configure address, data, and signal lines
-        DDRL = 0x00; // Data bus set to inputs for now
-        PORTL = 0x00; // No pullups
+    // Configure address, data, and signal lines
+    DDRL = 0x00; // Data bus set to inputs for now
+    PORTL = 0x00; // No pullups
 
 	// To signal we have something for the CPLD
 	pinMode(COCOSELECT_PIN, OUTPUT);
 	digitalWrite(COCOSELECT_PIN, HIGH);
 	
-        DDRA = 0xff; // Address lines L
-        DDRC = 0xff; // Address lines H
+	DDRA = 0xff; // Address lines L
+    DDRC = 0xff; // Address lines H
 
-        pinMode(COCORW_PIN, OUTPUT);
+    pinMode(COCORW_PIN, OUTPUT);
 	digitalWrite(COCORW_PIN, HIGH);
 
 	// Configure these as interrupts eventually
@@ -133,6 +122,12 @@ void setup() {
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
 	
+	// A couple of debug pins
+	pinMode(7, OUTPUT);
+	digitalWrite(7, LOW);
+	pinMode(8, OUTPUT);
+	digitalWrite(8, LOW);
+	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
 
@@ -147,6 +142,10 @@ void setup() {
 
 	if (PINE & (1 << PE6)) {
 		Serial.println("Peripheral mode");
+		commandPending = false;
+		controlPending = false;
+		attachInterrupt(0, loadConfig, HIGH);
+		attachInterrupt(1, loadCommand, HIGH);
 		fdc();
 	}
 	

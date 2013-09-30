@@ -16,11 +16,14 @@
 #define SET(port, bit) port |= (1 << bit)
 
 extern volatile uint8_t reg[];
+extern volatile boolean controlPending;
+extern volatile boolean commandPending;
 
 void setAddress(uint16_t addr);
-void loadRegisters();
-void loadStatusReg();
-void loadConfigReg();
+void loadFDCRegisters();
+void loadStatus();
+void loadConfig();
+void loadCommand();
 void setRegister(uint8_t i, uint8_t d);
 void setNMI();
 void wakeCoco();

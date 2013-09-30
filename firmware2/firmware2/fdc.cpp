@@ -48,10 +48,10 @@ void fdc() {
 		return;
 	}
 	
-	EICRB = 0x03;
-	EIMSK = 0x10;
+/*	EICRB = 0x03;
+	EIMSK = 0x10; */
 	sei();
-	
+
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
 
@@ -68,9 +68,11 @@ void fdc() {
 	wakeCoco();
 	
 	while (1) {
-		if (control != reg[RR(DSKREG)]) {
-			Serial.println("CommandInt");
+		if (controlPending) {
 			control = reg[RR(DSKREG)];
+			controlPending = false;
+			Serial.print("ControlInt: ");
+			Serial.println(control, HEX);
 			if (((control & 0x01) == 0x01) && (drive != 0)) {
 				drive = 0;
 				disk.setDrive(0);
@@ -85,12 +87,15 @@ void fdc() {
 			}
 		}
 		
-		if (digitalRead(CMDINT_PIN)) {
-			Serial.println("CommandInt");
-			Serial.print("B: ");
-			loadRegisters();
-			printRegs();
+		if (commandPending) {
 			command = reg[RR(FDCCMD)];
+			commandPending = false;
+			loadStatus();
+			Serial.print("CommandInt: ");
+			Serial.println(command, HEX);
+			loadFDCRegisters();
+			Serial.print("B: ");
+			printRegs();
 			if ((command & 0xf0) == 0)
 				disk.restore();
 			if ((command & 0xf0) == 0x10)

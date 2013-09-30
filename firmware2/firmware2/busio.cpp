@@ -4,6 +4,8 @@
 #include <avr/io.h>
 
 volatile uint8_t reg[31];
+volatile boolean controlPending;
+volatile boolean commandPending;
 
 void setAddress(uint16_t addr) {
 	PORTC = (addr >> 8) & 0xff;
@@ -17,16 +19,46 @@ void setRegister(uint8_t i, uint8_t d) {
  
 }
 
-void loadStatusReg() {
-	setAddress(0x0011);
-	reg[17] = readData(); 
+// Load config register
+void loadConfig() {
+	if (controlPending)
+		digitalWrite(7, HIGH);
+	PORTC = 0x00;
+	PORTA = 0x00;
+	DDRL = 0x00;
+	digitalWrite(COCORW_PIN, HIGH);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[0] = PINL;
+	digitalWrite(COCOSELECT_PIN, HIGH);
+	controlPending = true;
 }
 
-void loadRegisters() {
-	for (uint8_t i=2; i < 31; i++) { // pull from SPI
-		setAddress(i);
-		reg[i] = readData();
-	}
+// Load command register
+void loadCommand() {
+	if (commandPending)
+		digitalWrite(8, HIGH);
+	PORTC = 0x00;
+	PORTA = 0x10;
+	DDRL = 0x00;
+	digitalWrite(COCORW_PIN, HIGH);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[0x10] = PINL;
+	digitalWrite(COCOSELECT_PIN, HIGH);
+	commandPending = true;
+}
+
+void loadStatus() {
+	setAddress(RW(FDCSTAT));
+	reg[RW(FDCSTAT)] = readData(); 
+}
+
+void loadFDCRegisters() {
+	setAddress(RR(FDCDAT));
+	reg[RR(FDCDAT)] = readData();
+	setAddress(RR(FDCSEC));
+	reg[RR(FDCSEC)] = readData();
+	setAddress(RR(FDCTRK));
+	reg[RR(FDCTRK)] = readData();
 }
 
 uint8_t readData() {

@@ -123,11 +123,11 @@ void CocoDisk::readSector(uint8_t side, uint8_t sector) {
 	sector_data = disk->getSector(side, track, sector);
 
 	for (uint16_t i = 0; i < sector_size; i++) {
-		if (sector_data[i] < 0x0f)
+/*		if (sector_data[i] < 0x0f)
 			Serial.print("0");
 		Serial.print(sector_data[i], HEX);
 		if (((i+1) % 16) == 0)
-			Serial.println("");
+			Serial.println(""); */
 		setRegister(RW(FDCDAT), sector_data[i]);
 //		if (i != 0)
 			clearHALT();
@@ -161,7 +161,7 @@ boolean CocoDisk::writeSector(uint8_t side, uint8_t sector) {
 		if (i != 0)
 			clearHALT();
 		waitDR();
-		loadRegisters();
+		loadFDCRegisters();
 		sector_data[i] = reg[RR(FDCDAT)];
 	}
 	setRegister(RW(FDCSEC), sector);
@@ -210,7 +210,7 @@ void CocoDisk::forceInt() {
 // Wait until the DRO bit changes to 0
 void CocoDisk::waitDR() {
 	int i=0;
-	loadStatusReg();
+	loadStatus();
 	while (reg[RW(FDCSTAT)] & 0x02) {
 /*		Serial.print(">");
 		i++;
@@ -219,7 +219,7 @@ void CocoDisk::waitDR() {
 			clearHALT();
 			i=0;
 		}*/
-		loadStatusReg();
+		loadStatus();
 	}
 
 }

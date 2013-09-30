@@ -58,7 +58,7 @@
       </StimuliFile>
       <Channel>
         <host>127.0.0.1</host>
-        <port>52297</port>
+        <port>62544</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
