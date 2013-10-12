@@ -17,13 +17,16 @@
 
 extern volatile uint8_t reg[];
 extern volatile boolean controlPending;
-extern volatile boolean commandPending;
+// Ring buffer for commands, why not!?
+extern volatile uint8_t cmdcnt;
+extern volatile uint8_t cmdlist[];
 
 void setAddress(uint16_t addr);
 void loadFDCRegisters();
 void loadStatus();
 void loadConfig();
 void loadCommand();
+void dumpCommands();
 void setRegister(uint8_t i, uint8_t d);
 void setNMI();
 void wakeCoco();

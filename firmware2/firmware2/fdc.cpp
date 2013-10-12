@@ -2,7 +2,8 @@
 #include "busio.h"
 #include "fdc.h"
 #include "firmware2.h"
-#include "DMKDisk.h"
+#include "CocoDisk.h"
+#include <util/atomic.h>
 
 uint32_t findRBFSector(File file, uint8_t side, uint32_t tracklen, uint16_t track, uint8_t sector) {
   return (side+1)*(track*tracklen+(sector-1)*256);
@@ -31,7 +32,7 @@ void printRegs() {
 
 // Start to handle FDC instructions
 void fdc() {
-	uint8_t command = 0;
+	uint8_t commandIndex = 0;
 	uint8_t drive = 100;
 	uint8_t control = 0;
 	CocoDisk disk(config[FLOPPY0], config[FLOPPY1]);
@@ -87,41 +88,52 @@ void fdc() {
 			}
 		}
 		
-		if (commandPending) {
-			command = reg[RR(FDCCMD)];
-			commandPending = false;
+		if (commandIndex != cmdcnt) {
+			Serial.print("i: ");
+			Serial.print(commandIndex);
+			Serial.print(", c: ");
+			Serial.println(cmdcnt);
+			ATOMIC_BLOCK(ATOMIC_FORCEON) {
+				reg[RR(FDCCMD)] = cmdlist[commandIndex++];
+			}
+			loadFDCRegisters();
 			loadStatus();
 			Serial.print("CommandInt: ");
-			Serial.println(command, HEX);
-			loadFDCRegisters();
+			Serial.println(reg[RR(FDCCMD)], HEX);
 			Serial.print("B: ");
 			printRegs();
-			if ((command & 0xf0) == 0)
+			if ((reg[RR(FDCCMD)] & 0xf0) == 0)
 				disk.restore();
-			if ((command & 0xf0) == 0x10)
+			if ((reg[RR(FDCCMD)] & 0xf0) == 0x10)
 				disk.seek(reg[RR(FDCDAT)]);
-			if ((command & 0xe0) == 0x20)
+			if ((reg[RR(FDCCMD)] & 0xe0) == 0x20)
 				disk.step();
-			if ((command & 0xe0) == 0x40)
+			if ((reg[RR(FDCCMD)] & 0xe0) == 0x40)
 				disk.stepin();
-			if ((command & 0xe0) == 0x60)
+			if ((reg[RR(FDCCMD)] & 0xe0) == 0x60)
 				disk.stepout();
-			if ((command & 0xf1) == 0x80)
+			if ((reg[RR(FDCCMD)] & 0xf1) == 0x80)
 				disk.readSector((control & 0x40) == 0x40, reg[RR(FDCSEC)]);
-			if ((command & 0xf0) == 0xa0) {
+			if ((reg[RR(FDCCMD)] & 0xf0) == 0xa0) {
 				if (disk.writeSector((control & 0x40) == 0x40, reg[RR(FDCSEC)])) {
 					loadSetup();
 					disk.setup(config[FLOPPY0], config[FLOPPY1]);
 				}
 			}
-			if ((command & 0xfb) == 0xc0)
+			if ((reg[RR(FDCCMD)] & 0xfb) == 0xc0)
 				disk.readAddress();
-			if ((command & 0xfb) == 0xe0)
+			if ((reg[RR(FDCCMD)] & 0xfb) == 0xe0)
 				disk.readTrack();
-			if ((command & 0xfb) == 0xf0)
+			if ((reg[RR(FDCCMD)] & 0xfb) == 0xf0)
 				disk.writeTrack();
-			if ((command & 0xf8) == 0xd0)
+			if ((reg[RR(FDCCMD)] & 0xf8) == 0xd0)
 				disk.forceInt();
+		}
+		
+		if (digitalRead(10) == LOW) {
+			Serial.println("Commands: ");
+			dumpCommands();
+			delay(2000);
 		}
 	}
 	Serial.println("Exiting fdc()");

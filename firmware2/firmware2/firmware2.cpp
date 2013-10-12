@@ -19,26 +19,18 @@ char *config[MAX_CONFIG];
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
-//		if (config[FLOPPY0] != NULL)
-//			free(config[FLOPPY0]);
 		config[FLOPPY0] = (char *) malloc(13);
 		strncpy(config[FLOPPY0], &(line[8]), 13);
 	}
 	if (!strncmp("floppy1 ", line, 8)) {
-//		if (config[FLOPPY1] != NULL)
-//			free(config[FLOPPY1]);
 		config[FLOPPY1] = (char *) malloc(13);
 		strncpy(config[FLOPPY1], &(line[8]), 13);
 	}
 	if (!strncmp("rom ", line, 4)) {
-//		if (config[ROM] != NULL)
-//			free(config[ROM]);
 		config[ROM] = (char *) malloc(13);
 		strncpy(config[ROM], &(line[4]), 13);
 	}
 	if (!strncmp("floppy-rom ", line, 11)) {
-//		if (config[DSKROM] != NULL)
-//			free(config[DSKROM]);
 		config[DSKROM] = (char *) malloc(13);
 		strncpy(config[DSKROM], &(line[11]),13);
 	}
@@ -81,7 +73,6 @@ void loadSetup() {
 void setup() {
 	// Serial port for debugging output
 	Serial.begin(115200);
-	Serial1.begin(115200);
 	
 	// SPI used for microSD and WizNet (if plugged in)
 	SPI.begin();
@@ -122,11 +113,13 @@ void setup() {
 	pinMode(SDSELECT_PIN, OUTPUT);
 	digitalWrite(SDSELECT_PIN, HIGH);
 	
-	// A couple of debug pins
+	// A few debug pins
 	pinMode(7, OUTPUT);
 	digitalWrite(7, LOW);
 	pinMode(8, OUTPUT);
 	digitalWrite(8, LOW);
+	pinMode(10, OUTPUT);
+	digitalWrite(10, HIGH); // Enable internal pullup
 	
 	Serial.print("Ram: ");
 	Serial.println(FreeRam());
@@ -142,10 +135,9 @@ void setup() {
 
 	if (PINE & (1 << PE6)) {
 		Serial.println("Peripheral mode");
-		commandPending = false;
 		controlPending = false;
 		attachInterrupt(0, loadConfig, HIGH);
-		attachInterrupt(1, loadCommand, HIGH);
+		attachInterrupt(1, loadCommand, RISING);
 		fdc();
 	}
 	
@@ -153,8 +145,6 @@ void setup() {
 	Serial.println("Test mode");
 	programROM(SD.open(config[ROM]));
 	wakeCoco();
-
-//	while (1);
 }
 
 char cmd[30];
@@ -189,16 +179,6 @@ char a2h(char c) {
 }
 
 void loop() {
-/*	if (Serial.available() > 0) {
-		a[0] = Serial.read();
-		a[1] = '\0';
-		Serial1.write(a);
-	}
-	if (Serial1.available() >0) {
-		a[0] = Serial1.read();
-		a[1] = '\0';
-		Serial.write(a);
-	}*/
 	Serial.print("BEXKAT> ");
 	readLine();
 	switch (cmd[0]) {

@@ -27,13 +27,14 @@ class CocoDisk {
 	protected:
 
 	void waitDR();
-
+	void loadActiveImage();
+	
 	char diskname1[13];
 	char diskname2[13];
 	CocoImage *disk;
 	uint32_t track;
 	boolean ddir;
-
+	uint8_t active;
 };
 
 #endif

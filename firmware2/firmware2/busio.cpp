@@ -2,10 +2,12 @@
 #include "rom.h"
 #include "fdc.h"
 #include <avr/io.h>
+#include <util/atomic.h>
 
 volatile uint8_t reg[31];
 volatile boolean controlPending;
-volatile boolean commandPending;
+volatile uint8_t cmdcnt = 0;
+volatile uint8_t cmdlist[256];
 
 void setAddress(uint16_t addr) {
 	PORTC = (addr >> 8) & 0xff;
@@ -35,30 +37,52 @@ void loadConfig() {
 
 // Load command register
 void loadCommand() {
-	if (commandPending)
-		digitalWrite(8, HIGH);
 	PORTC = 0x00;
-	PORTA = 0x10;
+	PORTA = RR(FDCCMD);
 	DDRL = 0x00;
 	digitalWrite(COCORW_PIN, HIGH);
 	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[0x10] = PINL;
+	cmdlist[cmdcnt++] = PINL;
 	digitalWrite(COCOSELECT_PIN, HIGH);
-	commandPending = true;
+}
+
+void dumpCommands() {
+	uint8_t m;
+
+	m = cmdcnt; // copy the index to avoid atomicity issues
+	for (uint8_t i=0; i < m; i++) {
+		Serial.print(cmdlist[i], HEX);
+		Serial.print(", ");
+	}
+	Serial.println();
 }
 
 void loadStatus() {
-	setAddress(RW(FDCSTAT));
-	reg[RW(FDCSTAT)] = readData(); 
+	PORTC = 0x00;
+	PORTA = RW(FDCSTAT);
+	DDRL = 0x00;
+	digitalWrite(COCORW_PIN, HIGH);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[RW(FDCSTAT)] = PINL; 
+	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
 void loadFDCRegisters() {
-	setAddress(RR(FDCDAT));
-	reg[RR(FDCDAT)] = readData();
-	setAddress(RR(FDCSEC));
-	reg[RR(FDCSEC)] = readData();
-	setAddress(RR(FDCTRK));
-	reg[RR(FDCTRK)] = readData();
+	PORTC = 0x00;
+	DDRL = 0x00;
+	digitalWrite(COCORW_PIN, HIGH);
+	PORTA = RR(FDCDAT);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[RR(FDCDAT)] = PINL;
+	digitalWrite(COCOSELECT_PIN, HIGH);
+	PORTA = RR(FDCSEC);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[RR(FDCSEC)] = PINL;
+	digitalWrite(COCOSELECT_PIN, HIGH);
+	PORTA = RR(FDCTRK);
+	digitalWrite(COCOSELECT_PIN, LOW);
+	reg[RR(FDCTRK)] = PINL;
+	digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
 uint8_t readData() {
@@ -82,12 +106,12 @@ void setData(uint8_t b) {
 
 void setNMI() {
     setAddress(0x0100);
-	setData(0x06); // clear halt enable register and trigger nmi
+	setData(0x06); // clear halt enable register, and trigger nmi
 }
 
 void wakeCoco() {
     setAddress(0x0100);
-    setData(0x05); // clear halt enable register
+    setData(0x05); // clear halt enable register, clear halt
 }
 
 void clearHALT() {
