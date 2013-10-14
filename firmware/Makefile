@@ -8,7 +8,7 @@ MCU_TARGET=atmega2560
 AVRDUDE_TARGET=m2560
 OPTIMIZE=
 DEFS=-DARDUINO=105
-LIBS=-lm
+LIBS=-lm -larduino -lsd -lspi
 HZ=16000000UL
 
 PRG=firmware
@@ -19,15 +19,21 @@ OUT_OBJS=$(addprefix $(OUT_DIR)/,$(OBJS))
 
 override CFLAGS        = -g -Iarduino-core -ISPI -ISD -IEthernet -DF_CPU=$(HZ) -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
 override CXXFLAGS	= $(CFLAGS)
-override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map
+override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map -Larduino-core -LSPI -LSD -LEthernet
 
 all: $(OUT_DIR)/$(PRG).elf lst text
 
-$(OUT_DIR)/$(PRG).elf: arduino-core/output/core.a $(OUT_OBJS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+$(OUT_DIR)/$(PRG).elf: arduino-core/libarduino.a SPI/libspi.a SD/libsd.a $(OUT_OBJS)
+	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(OUT_OBJS) $(LIBS)
 
-arduino-core/output/core.a:
+arduino-core/libarduino.a:
 	cd arduino-core; make
+
+SPI/libspi.a:
+	cd SPI; make
+
+SD/libsd.a:
+	cd SD; make
 
 $(OUT_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -37,6 +43,8 @@ $(OUT_DIR)/%.o: %.c
 
 clean:
 	cd arduino-core; make clean
+	cd SPI; make clean
+	cd SD; make clean
 	rm -f $(OUT_DIR)/*.o $(OUT_DIR)/$(PRG).elf *.bak $(OUT_DIR)/*.hex
 	rm -f $(OUT_DIR)/*.lst $(OUT_DIR)/*.map
 
