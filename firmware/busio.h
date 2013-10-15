@@ -12,9 +12,6 @@
 #define CFGINT_PIN 2
 #define CMDINT_PIN 3
 
-#define CLEAR(port, bit) port &= (0 << bit)
-#define SET(port, bit) port |= (1 << bit)
-
 extern volatile uint8_t reg[];
 extern volatile boolean controlPending;
 // Ring buffer for commands, why not!?

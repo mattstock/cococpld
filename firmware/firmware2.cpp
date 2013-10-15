@@ -80,8 +80,8 @@ void setup() {
 	SPI.setDataMode(SPI_MODE0);
 
 	// Mode pin - not standard Arduino pin
-	CLEAR(DDRE, PE6);
-	SET(PORTE, PE6); // use pullup
+	DDRE &= ~_BV(PE6);
+	PORTE |= _BV(PE6); // use pullup
 
     // Configure address, data, and signal lines
     DDRL = 0x00; // Data bus set to inputs for now
