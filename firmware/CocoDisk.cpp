@@ -3,39 +3,39 @@
 #include "busio.h"
 
 CocoDisk::CocoDisk() {
-	disk = NULL;
+  disk = NULL;
 }
 
 CocoDisk::CocoDisk(const char *disk1, const char *disk2) {
-	disk = NULL;
-	active = 9;
-	this->setup(disk1, disk2);
+  disk = NULL;
+  active = 9;
+  this->setup(disk1, disk2);
 }
 
 CocoDisk::~CocoDisk() {
-	if (disk != NULL)
-		delete disk;
-	disk = NULL;
-	active = 9;
+  if (disk != NULL)
+    delete disk;
+  disk = NULL;
+  active = 9;
 }
 
 void CocoDisk::setup(const char *disk1, const char *disk2) {
-	if (disk != NULL)
-		delete disk;
-	disk = NULL;
-	strncpy(diskname1, disk1, 13);
-	strncpy(diskname2, disk2, 13);
+  if (disk != NULL)
+    delete disk;
+  disk = NULL;
+  strncpy(diskname1, disk1, 13);
+  strncpy(diskname2, disk2, 13);
 }
 
 void CocoDisk::setDrive(uint8_t d) {
-	Serial.print("setting drive: ");
-	Serial.println(d, HEX);
-	if (d > 2)
-		return;
-	if (disk != NULL)
-		delete disk;
-	disk = NULL;
-	active = d;	
+  Serial.print("New drive: ");
+  Serial.println(d, HEX);
+  if (d > 2)
+    return;
+  if (disk != NULL)
+    delete disk;
+  disk = NULL;
+  active = d;	
 }
 
 void CocoDisk::restore() {
@@ -91,67 +91,60 @@ void CocoDisk::stepout() {
 }
 
 void CocoDisk::readSector(uint8_t side, uint8_t sector) {
-	uint16_t sector_size;
-	char *sector_data;
-	
-	Serial.print("Read sector: ");
-	Serial.print(side);
-	Serial.print(",");
-	Serial.print(track, HEX);
-	Serial.print(",");
-	Serial.println(sector, HEX);
-	
-	if (disk == NULL)
-		loadActiveImage();
-	
-	sector_size = disk->getSectorSize();
-	sector_data = (char *)malloc(sector_size);
-	sector_data = disk->getSector(side, track, sector);
+  char *sector_data;
 
-	for (uint16_t i = 0; i < sector_size; i++) {
-/*		if (sector_data[i] < 0x0f)
-			Serial.print("0");
-		Serial.print(sector_data[i], HEX);
-		if (((i+1) % 16) == 0)
-			Serial.println(""); */
-		setRegister(RW(FDCDAT), sector_data[i]);
-//		if (i != 0)
-			clearHALT();
-		if (i != sector_size-1)
-			waitDR();
-	}
-	setRegister(RW(FDCSEC), sector);
-	setRegister(RW(FDCSTAT), 0x00);
-	Serial.println("Done with block write");
-	setNMI();
-	free(sector_data);
+  Serial.print("RSEC: ");
+  Serial.print(side);
+  Serial.print(", ");
+  Serial.print(track, HEX);
+  Serial.print(", ");
+  Serial.println(sector, HEX);
+  
+  if (disk == NULL) {
+    loadActiveImage();
+    sector_size = disk->getSectorSize();
+  }
+
+  sector_data = disk->getSector(side, track, sector);
+  
+  for (uint16_t i = 0; i < sector_size; i++) {
+    setRegister(RW(FDCDAT), sector_data[i]);
+    clearHALT();
+    if (i != sector_size-1)
+      waitDR();
+  }
+  setRegister(RW(FDCSEC), sector);
+  setRegister(RW(FDCSTAT), 0x00);
+  Serial.println("Done with block write");
+  setNMI();
+  free(sector_data);
 }
 
 // Returns true if the config file needs reloading
 boolean CocoDisk::writeSector(uint8_t side, uint8_t sector) {
-	uint16_t sector_size;
-	char *sector_data;
-	boolean result;
-	
-	if (disk == NULL)
-		loadActiveImage();
-	
-	sector_size = disk->getSectorSize();
-	sector_data = (char *)malloc(sector_size);
-	for (uint16_t i=0; i < sector_size; i++) {
-		setRegister(RW(FDCSTAT), 0x03);
-		if (i != 0)
-			clearHALT();
-		waitDR();
-		loadFDCRegisters();
-		sector_data[i] = reg[RR(FDCDAT)];
-	}
-	setRegister(RW(FDCSEC), sector);
-	setRegister(RW(FDCSTAT), 0x00);
-	setNMI();
-	result = disk->putSector(side, track, sector, sector_data);
-	free(sector_data);
-	return result;	
+  char *sector_data;
+  boolean result;
+  
+  if (disk == NULL) {
+    loadActiveImage();
+    sector_size = disk->getSectorSize();
+  }
+
+  sector_data = (char *)malloc(sector_size);
+  for (uint16_t i=0; i < sector_size; i++) {
+    setRegister(RW(FDCSTAT), 0x03);
+    if (i != 0)
+      clearHALT();
+    waitDR();
+    loadFDCRegisters();
+    sector_data[i] = reg[RR(FDCDAT)];
+  }
+  setRegister(RW(FDCSEC), sector);
+  setRegister(RW(FDCSTAT), 0x00);
+  setNMI();
+  result = disk->putSector(side, track, sector, sector_data);
+  free(sector_data);
+  return result;	
 }
 
 void CocoDisk::readAddress() {
