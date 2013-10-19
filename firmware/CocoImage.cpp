@@ -8,7 +8,7 @@
 #include "CocoImage.h"
 
 uint16_t CocoImage::getSectorSize() {
-	return sector_size;
+  return sector_size;
 }
 
 uint32_t CocoImage::findSector(uint8_t side, uint8_t track, uint8_t sector) {
@@ -51,17 +51,12 @@ CocoImage::~CocoImage() {
   image.close();
 }
 
-char *CocoImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
-  char *tmp = (char *)malloc(sector_size);
+void CocoImage::getSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
   uint32_t pos = findSector(side, track, sector);
-  //	Serial.print("pos = ");
-  //	Serial.println(pos, HEX);
   image.seek(pos);
-  if (image.readBytes(tmp, sector_size) != sector_size) {
+  if (image.readBytes(data, sector_size) != sector_size) {
     Serial.println("Failed to read from image");
-    return NULL;
   }
-  return tmp;
 };
 
 boolean CocoImage::putSector(uint8_t side, uint16_t track,
@@ -139,8 +134,7 @@ VirtualImage::VirtualImage() {
   image = SD.open("track17.dat"); // RO copy
 }
 
-char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
-  char *sector_data = (char *)malloc(sector_size);
+void VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector, char *data) {
   File f;
   uint16_t fs;
   
@@ -149,13 +143,13 @@ char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
   
   // Default
   for (uint16_t i = 0; i < sector_size; i++)
-    sector_data[i] = 'a' + (i % 26);
+    data[i] = 'a' + (i % 26);
   
   // Directory track
   if (track == 0x11) {	
     // We only keep sectors 2-11, so offset and pull from the disk file.
     image.seek(sector_size*(sector-2));
-    image.readBytes(sector_data, sector_size);
+    image.readBytes(data, sector_size);
   }
   
   // track 0, sector 1 is a dump of the contents of the setup file
@@ -163,12 +157,10 @@ char *VirtualImage::getSector(uint8_t side, uint16_t track, uint16_t sector) {
     f = SD.open("setup.txt");
     if (f) {
       fs = (f.size() <= sector_size ? f.size() : sector_size); 		
-      f.readBytes(sector_data, fs);
+      f.readBytes(data, fs);
       f.close();
     }
   }
-  
-  return sector_data;
 }
 
 // false if the config didn't change, true if it did?

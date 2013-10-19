@@ -34,6 +34,7 @@ class CocoDisk {
   uint32_t track;
   boolean ddir;
   uint8_t active;
+  char *sector_data;
   uint16_t sector_size;
 };
 

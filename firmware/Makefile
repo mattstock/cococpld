@@ -6,7 +6,7 @@ PROGRAMMER=jtag3
 PORT=usb
 MCU_TARGET=atmega2560 
 AVRDUDE_TARGET=m2560
-OPTIMIZE=
+OPTIMIZE=-Os
 DEFS=-DARDUINO=105
 LIBS=-lm -larduino -lsd -lspi
 HZ=16000000UL
@@ -18,7 +18,7 @@ OUT_DIR=output
 OUT_OBJS=$(addprefix $(OUT_DIR)/,$(OBJS))
 
 override CFLAGS        = -g -Iarduino-core -ISPI -ISD -IEthernet -DF_CPU=$(HZ) -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
-override CXXFLAGS	= $(CFLAGS)
+override CXXFLAGS	= $(CFLAGS) -std=c++11
 override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map -Larduino-core -LSPI -LSD -LEthernet
 
 all: $(OUT_DIR)/$(PRG).elf lst text
@@ -40,7 +40,7 @@ SD/libsd.a:
 
 $(OUT_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
-	
+
 $(OUT_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
