@@ -47,6 +47,7 @@ reg [2:0] req;				// Flags for pending requests { SPI, SCS, CTS }
 reg nmi;                // Set if NMI output to Coco
 reg [7:0] dskreg;			// 0xff40 kept in CPLD
 reg [7:0] fdcstatus;    // 0xff48 read kept in CPLD
+reg overflow;
 
 // We have to handle shared access to the SRAM bus by both the Coco and the SPI bus.  Fortunately, both of them
 // are extremely slow compared to the 20ns CPLD clock and SRAM speeds (<= 55ns).  So our goal is to track when the SRAM
@@ -82,7 +83,7 @@ assign a_databus = (a_rw & ~a_sel ? avr_readbuf : 8'hzz);
 // I need some level converters
 assign levelout = levelin;
 
-assign led = { c_power, c_rw, sram_we_n, halt };
+assign led = 4'b0110;
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 always @(posedge clock_50) begin
@@ -94,7 +95,7 @@ end
 
 always @(negedge reset_n or posedge clock_50) begin
   if (!reset_n) begin
-	 intr <= 2'b00;
+	 intr <= 2'b11;
 	 counter_50 <= 2'b0;
 	 sram_addrbus <= 16'h2000;
 	 sram_we_n <= 1'b1;
@@ -102,6 +103,7 @@ always @(negedge reset_n or posedge clock_50) begin
  	 fdcstatus <= 8'b00000100;
 	 dskreg <= 8'b10000000;
  	 nmi <= 1'b0;
+	 overflow <= 1'b0;
  end else begin
    if (avr_falling_edge)
 	   req[2] <= 1'b1;
@@ -130,16 +132,18 @@ always @(negedge reset_n or posedge clock_50) begin
 			 end
 			 COCO_W: begin
 			   if (c_addrbus[3:0] == 4'h0) begin
-				  intr[0] <= 1'b1;
+			     if (~intr[0])
+				    overflow <= 1'b1;
+				  intr[0] <= 1'b0;
 				  dskreg <= c_databus;
 				  fdcstatus[0] <= 1'b0;
 				end else if (c_addrbus[3:0] == 4'h8) begin
 			     if (c_databus[7:6] == 2'b10) begin // Type II operations set halt
 					 fdcstatus[1] <= 1'b0;
 				  end
-//				  nmi <= 1'b0;
-//				  dskreg[7] <= 1'b0;
-				  intr[1] <= 1'b1;
+				  if (~intr[1])
+					overflow <= 1'b1;
+				  intr[1] <= 1'b0;
 				end else if (c_addrbus[3:0] == 4'hb) begin
 				  fdcstatus[1] <= 1'b0;
 				end
@@ -196,10 +200,10 @@ begin
   if (a_rw) begin
     if (a_addrbus == 16'h0000) begin  // Read from $ff40
 	   avr_readbuf <= dskreg;
-	   intr[0] <= 1'b0;
+	   intr[0] <= 1'b1;
  	 end else if (a_addrbus == 16'h0011) begin // Read from $ff48 status reg
  	   avr_readbuf <= fdcstatus;
-		intr[1] <= 1'b0;
+		intr[1] <= 1'b1;
 	 end else begin
 	   counter_50 <= 3'h4; // Use a 3 tick read cycle 60ns for 55ns memory
 		sram_addrbus <= a_addrbus;
