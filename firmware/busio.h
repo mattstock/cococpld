@@ -7,7 +7,7 @@
 #define ETHSELECT_PIN 10
 #define SDSELECT_PIN 4
 #define COCORW_PIN 41
-#define COCOSELECT_PIN 38 // 39 on v2.0 hardware!
+#define COCOSELECT_PIN 38 // 39 on v2.0 hardware, 38 on FPGA board/mega
 #define USBSELECT_PIN 53
 #define CFGINT_PIN 2
 #define CMDINT_PIN 3

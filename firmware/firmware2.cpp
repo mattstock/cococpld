@@ -114,8 +114,8 @@ void setup() {
   digitalWrite(SDSELECT_PIN, HIGH);
   
   // A few debug pins
-  pinMode(7, OUTPUT);
-  digitalWrite(7, LOW);
+  pinMode(9, OUTPUT);
+  digitalWrite(9, LOW);
   pinMode(8, OUTPUT);
   digitalWrite(8, LOW);
   pinMode(11, INPUT_PULLUP);
@@ -142,8 +142,8 @@ void setup() {
   
   Serial.println("Peripheral mode");
   controlPending = false;
-  attachInterrupt(0, loadConfig, HIGH);
-  attachInterrupt(1, loadCommand, RISING);
+  attachInterrupt(0, loadConfig, FALLING);
+  attachInterrupt(1, loadCommand, FALLING);
   fdc();
 }
 

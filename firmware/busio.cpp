@@ -23,16 +23,16 @@ void setRegister(uint8_t i, uint8_t d) {
 
 // Load config register
 void loadConfig() {
-	if (controlPending)
-		digitalWrite(7, HIGH);
-	PORTC = 0x00;
-	PORTA = 0x00;
-	DDRL = 0x00;
-	digitalWrite(COCORW_PIN, HIGH);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[0] = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
-	controlPending = true;
+  if (controlPending)
+    digitalWrite(9, HIGH);
+  PORTC = 0x00;
+  PORTA = 0x00;
+  DDRL = 0x00;
+  digitalWrite(COCORW_PIN, HIGH);
+  digitalWrite(COCOSELECT_PIN, LOW);
+  reg[0] = PINL;
+  digitalWrite(COCOSELECT_PIN, HIGH);
+  controlPending = true;
 }
 
 // Load command register

@@ -6,6 +6,8 @@ PROGRAMMER=jtag3
 PORT=usb
 MCU_TARGET=atmega2560 
 AVRDUDE_TARGET=m2560
+SERIAL=/dev/ttyACM0
+BAUD=115200
 OPTIMIZE=-Os
 DEFS=-DARDUINO=105
 LIBS=-lm -larduino -lsd -lspi
@@ -65,6 +67,9 @@ hex:  $(OUT_DIR)/$(PRG).hex
 
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%.elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+
+serial:
+	stty -F $(SERIAL) $(BAUD) igncr
 
 # command to program chip (invoked by running "make install")
 install:  $(OUT_DIR)/$(PRG).hex
