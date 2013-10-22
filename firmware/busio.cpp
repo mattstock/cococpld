@@ -4,117 +4,128 @@
 #include <avr/io.h>
 #include <util/atomic.h>
 
-volatile uint8_t reg[31];
+volatile uint8_t dskreg;
+volatile uint8_t fdcstat;
+volatile uint8_t fdccmd;
+volatile uint8_t fdctrk;
+volatile uint8_t fdcsec;
+volatile uint8_t fdcdat;
 volatile boolean controlPending;
-volatile uint8_t cmdcnt = 0;
-volatile uint8_t cmdlist[256];
+volatile boolean commandPending;
 
 void setAddress(uint16_t addr) {
-	PORTC = (addr >> 8) & 0xff;
-	PORTA = addr & 0xff;
-}
-
-void setRegister(uint8_t i, uint8_t d) {
-	setAddress(i);
-	reg[i] = d;
-	setData(d);
- 
+  PORTC = (addr >> 8) & 0xff;
+  PORTA = addr & 0xff;
 }
 
 // Load config register
 void loadConfig() {
   if (controlPending)
     digitalWrite(9, HIGH);
-  PORTC = 0x00;
-  PORTA = 0x00;
+  PORTC = (DSKREG >> 8) & 0xff;
+  PORTA = DSKREG & 0xff;
   DDRL = 0x00;
   digitalWrite(COCORW_PIN, HIGH);
   digitalWrite(COCOSELECT_PIN, LOW);
-  reg[0] = PINL;
+  dskreg = PINL;
   digitalWrite(COCOSELECT_PIN, HIGH);
   controlPending = true;
 }
 
-// Load command register
-void loadCommand() {
-	PORTC = 0x00;
-	PORTA = RR(FDCCMD);
-	DDRL = 0x00;
-	digitalWrite(COCORW_PIN, HIGH);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	cmdlist[cmdcnt++] = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
+void setRegister(uint16_t i, uint8_t d) {
+  setAddress(i);
+  setData(d);
+  switch (i) {
+  case DSKREG:
+    dskreg = d;
+    break;
+  case FDCSTAT:
+    fdcstat = d;
+    break;
+  case FDCCMD:
+    fdccmd = d;
+    break;
+  case FDCTRK:
+    fdctrk = d;
+    break;
+  case FDCSEC:
+    fdcsec = d;
+    break;
+  case FDCDAT:
+    fdcdat = d;
+    break;
+  }
 }
 
-void dumpCommands() {
-	uint8_t m;
-
-	m = cmdcnt; // copy the index to avoid atomicity issues
-	for (uint8_t i=0; i < m; i++) {
-		Serial.print(cmdlist[i], HEX);
-		Serial.print(", ");
-	}
-	Serial.println();
+// Load command register
+void loadCommand() {
+  PORTC = (FDCCMD >> 8) & 0xff;
+  PORTA = FDCCMD & 0xff;
+  DDRL = 0x00;
+  digitalWrite(COCORW_PIN, HIGH);
+  digitalWrite(COCOSELECT_PIN, LOW);
+  fdccmd = PINL;
+  digitalWrite(COCOSELECT_PIN, HIGH);
+  commandPending = true;
 }
 
 void loadStatus() {
-	PORTC = 0x00;
-	PORTA = RW(FDCSTAT);
-	DDRL = 0x00;
-	digitalWrite(COCORW_PIN, HIGH);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[RW(FDCSTAT)] = PINL; 
-	digitalWrite(COCOSELECT_PIN, HIGH);
+  PORTC = (FDCSTAT >> 8) & 0xff;
+  PORTA = FDCSTAT & 0xff;
+  DDRL = 0x00;
+  digitalWrite(COCORW_PIN, HIGH);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    fdcstat = PINL; 
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
 }
 
 void loadFDCRegisters() {
-	PORTC = 0x00;
-	DDRL = 0x00;
-	digitalWrite(COCORW_PIN, HIGH);
-	PORTA = RR(FDCDAT);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[RR(FDCDAT)] = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
-	PORTA = RR(FDCSEC);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[RR(FDCSEC)] = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
-	PORTA = RR(FDCTRK);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	reg[RR(FDCTRK)] = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
+  setAddress(FDCDAT);
+  fdcdat = readData();
+  setAddress(FDCSEC);
+  fdcsec = readData();
+  setAddress(FDCTRK);
+  fdctrk = readData();
 }
 
 uint8_t readData() {
-	uint8_t b;
-	
-    DDRL = 0x00;
-	digitalWrite(COCORW_PIN, HIGH);
-	digitalWrite(COCOSELECT_PIN, LOW);
-	b = PINL;
-	digitalWrite(COCOSELECT_PIN, HIGH);
-	return b;
+  uint8_t b;
+  
+  DDRL = 0x00;
+  digitalWrite(COCORW_PIN, HIGH);
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    b = PINL;
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
+  return b;
 }
 
 void setData(uint8_t b) {
-	digitalWrite(COCORW_PIN, LOW);
- 	DDRL = 0xff;
- 	PORTL = b;
-	digitalWrite(COCOSELECT_PIN, LOW);
-	digitalWrite(COCOSELECT_PIN, HIGH);
+  digitalWrite(COCORW_PIN, LOW);
+  DDRL = 0xff;
+  PORTL = b;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
+  digitalWrite(COCORW_PIN, HIGH);
 }
 
 void setNMI() {
-    setAddress(0x0100);
-	setData(0x06); // clear halt enable register, and trigger nmi
+  setAddress(MAGIC);
+  setData(0x06); // clear halt enable register, and trigger nmi
 }
 
 void wakeCoco() {
-    setAddress(0x0100);
-    setData(0x05); // clear halt enable register, clear halt
+  setAddress(MAGIC);
+  setData(0x05); // clear halt enable register, clear halt
 }
 
 void clearHALT() {
-    setAddress(0x0100);
-	setData(0x01); // clear halt
+  setAddress(MAGIC);
+  setData(0x01); // clear halt
 }

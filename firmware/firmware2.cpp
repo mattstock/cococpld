@@ -14,6 +14,7 @@
 #include "rom.h"
 #include "fdc.h"
 #include "busio.h"
+#include "debug.h"
 
 char *config[MAX_CONFIG];
 
@@ -118,7 +119,6 @@ void setup() {
   digitalWrite(9, LOW);
   pinMode(8, OUTPUT);
   digitalWrite(8, LOW);
-  pinMode(11, INPUT_PULLUP);
   
   Serial.print("Ram: ");
   Serial.println(FreeRam());
@@ -132,24 +132,26 @@ void setup() {
   
   loadSetup();
   
-  if (!(PINE & _BV(PE6))) {
+  if (true) {   // !(PINE & _BV(PE6))) {
     // Go into the loop for the test mode
     Serial.println("Test mode");
     programROM(SD.open(config[ROM]));
     wakeCoco();
-    while (1);
+  } else {
+    Serial.println("Peripheral mode");
+    controlPending = false;
+    commandPending = false;
+    attachInterrupt(0, loadConfig, FALLING);
+    attachInterrupt(1, loadCommand, FALLING);
+    fdc();
   }
-  
-  Serial.println("Peripheral mode");
-  controlPending = false;
-  attachInterrupt(0, loadConfig, FALLING);
-  attachInterrupt(1, loadCommand, FALLING);
-  fdc();
 }
 
 extern void arduinomain(void);
 
-void loop() {}
+void loop() {
+  debugCommand();
+}
 
 int main(void) {
 	arduinomain();

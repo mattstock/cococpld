@@ -12,19 +12,21 @@
 #define CFGINT_PIN 2
 #define CMDINT_PIN 3
 
-extern volatile uint8_t reg[];
+extern volatile uint8_t dskreg;
+extern volatile uint8_t fdcstat;
+extern volatile uint8_t fdccmd;
+extern volatile uint8_t fdctrk;
+extern volatile uint8_t fdcsec;
+extern volatile uint8_t fdcdat;
 extern volatile boolean controlPending;
-// Ring buffer for commands, why not!?
-extern volatile uint8_t cmdcnt;
-extern volatile uint8_t cmdlist[];
+extern volatile boolean commandPending;
 
 void setAddress(uint16_t addr);
 void loadFDCRegisters();
 void loadStatus();
 void loadConfig();
 void loadCommand();
-void dumpCommands();
-void setRegister(uint8_t i, uint8_t d);
+void setRegister(uint16_t i, uint8_t d);
 void setNMI();
 void wakeCoco();
 void clearHALT();

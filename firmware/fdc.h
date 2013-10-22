@@ -1,15 +1,14 @@
 #ifndef FDC_H
 #define FDC_H
 
-#define DSKREG 0xff40
-#define FDCCMD 0xff48
-#define FDCSTAT 0xff48
-#define FDCTRK 0xff49
-#define FDCSEC 0xff4a
-#define FDCDAT 0xff4b
+#define MAGIC 0x7f00
+#define DSKREG 0x7f40
+#define FDCCMD 0x7f48
+#define FDCSTAT 0x7f08
+#define FDCTRK 0x7f49
+#define FDCSEC 0x7f4a
+#define FDCDAT 0x7f4b
 #define TRACKSIZE 0x1900
-#define RR(x) (2*(x-DSKREG))
-#define RW(x) (2*(x-DSKREG)+1)
 
 void fdc();
 

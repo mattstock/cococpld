@@ -14,7 +14,7 @@ LIBS=-lm -larduino -lsd -lspi
 HZ=16000000UL
 
 PRG=firmware
-OBJS=firmware2.o rom.o fdc.o CocoImage.o CocoDisk.o busio.o
+OBJS=firmware2.o rom.o fdc.o CocoImage.o CocoDisk.o busio.o debug.o
 
 OUT_DIR=output
 OUT_OBJS=$(addprefix $(OUT_DIR)/,$(OBJS))
