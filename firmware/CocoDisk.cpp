@@ -196,12 +196,20 @@ void CocoDisk::waitDR() {
 }
 
 void CocoDisk::loadActiveImage() {
-  if (active == 0)
+  switch (active) {
+  case 0:
     disk = new CocoImage(diskname1);
-  if (active == 1)
+    break;
+  case 1:
     disk = new CocoImage(diskname2);
-  if (active == 2)
+    break;
+  case 2:
     disk = new VirtualImage();
+    break;
+  default:
+    Serial.println("no disk selected!");
+    break;
+  }
   if (disk == NULL) {
     Serial.println("Disk memory allocation failed");
     while (1);
