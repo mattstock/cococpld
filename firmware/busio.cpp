@@ -117,15 +117,15 @@ void setData(uint8_t b) {
 
 void setNMI() {
   setAddress(MAGIC);
-  setData(0x06); // clear halt enable register, and trigger nmi
+  setData(0b00001100); // clear halt enable register, and trigger nmi
 }
 
 void wakeCoco() {
   setAddress(MAGIC);
-  setData(0x05); // clear halt enable register, clear halt
+  setData(0b00001010); // clear halt enable register, clear halt
 }
 
 void clearHALT() {
   setAddress(MAGIC);
-  setData(0x01); // clear halt
+  setData(0b00000010); // clear halt
 }

@@ -18,20 +18,6 @@ void fdc() {
   Serial.print("Ram: ");
   Serial.println(FreeRam());
   
-  if (programROM(SD.open(config[DSKROM])) != 0) {
-    Serial.println("ROM programming failure!");
-    return;
-  }
-  if (verifyROM(SD.open(config[DSKROM])) != 0) {
-    Serial.println("ROM verify failure!");
-    return;
-  }
-    
-  Serial.print("Ram: ");
-  Serial.println(FreeRam());
-  
-  Serial.println("Programmed the disk rom");
-  
   // Set reset register values for FDC
   setRegister(DSKREG, 0x00);
   setRegister(FDCSTAT, 0x04);

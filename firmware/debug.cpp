@@ -49,9 +49,19 @@ void debugCommand() {
     setData((a2h(cmd[1]) << 4) + a2h(cmd[2]));
     Serial.println("Data written");
     break;
-  case 'x':
-    programROM(SD.open(config[ROM]));
-    Serial.println("ROM programmed");
+  case 'd':
+    if (cmd[1] == 'r') 
+      programROM(SD.open(config[ROM]));
+    else
+      programROM(SD.open(config[DSKROM]));
+    Serial.println("Flash programmed");
+    break;
+  case 'v':
+    if (cmd[1] == 'r')
+      verifyROM(SD.open(config[ROM]));
+    else
+      verifyROM(SD.open(config[DSKROM]));
+    Serial.println("Flash verify");
     break;
   case 'f':
     Serial.println("Peripheral mode");
@@ -62,8 +72,8 @@ void debugCommand() {
     fdc();
     break;
   case 'e':
-    eraseROM();
-    Serial.println("SRAM erased");
+    eraseFlash();
+    Serial.println("FLASH erased");
     break;
   case 'i':
     controlPending = false;

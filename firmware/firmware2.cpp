@@ -135,8 +135,6 @@ void setup() {
   if (true) {   // !(PINE & _BV(PE6))) {
     // Go into the loop for the test mode
     Serial.println("Test mode");
-    programROM(SD.open(config[ROM]));
-    wakeCoco();
   } else {
     Serial.println("Peripheral mode");
     controlPending = false;

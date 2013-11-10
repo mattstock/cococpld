@@ -3,7 +3,7 @@
 
 #include <SD.h>
 
-void eraseROM();
+void eraseFlash();
 int programROM(File file);
 void viewROM();
 int verifyROM(File file);
