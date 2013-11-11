@@ -4,6 +4,7 @@
 #include <SD.h>
 
 void eraseFlash();
+void unlockFlash();
 int programROM(File file);
 void viewROM();
 int verifyROM(File file);

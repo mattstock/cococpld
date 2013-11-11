@@ -17,7 +17,7 @@ int verifyROM(File dataFile) {
   else
     address = 0x8000;
  
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x01);
   
   while (dataFile.available()) {
@@ -35,7 +35,7 @@ int verifyROM(File dataFile) {
     address++;
   }
   
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x00);
 
   dataFile.close();
@@ -46,7 +46,7 @@ void eraseFlash() {
   uint8_t v1, v2;
 
   // Set program mode
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x01);
 
   // Flash chip erase
@@ -67,9 +67,20 @@ void eraseFlash() {
   // TODO wait until erase is complete before continue!
 
   // Unset program mode
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x00);
 }
+
+void unlockFlash() {
+  // Unlock bypass mode
+  setAddress(0x0aaa);
+  setData(0xaa);
+  setAddress(0x0555);
+  setData(0x55);
+  setAddress(0x0aaa);
+  setData(0x20);
+}
+
 
 int programROM(File dataFile) {
   uint16_t address;
@@ -85,16 +96,10 @@ int programROM(File dataFile) {
   else
     address = 0x8000;
 
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x01);
 
-  // Unlock bypass mode
-  setAddress(0x0aaa);
-  setData(0xaa);
-  setAddress(0x0555);
-  setData(0x55);
-  setAddress(0x0aaa);
-  setData(0x20);
+  // flashUnlock();
   while (dataFile.available()) {
     setData(0xa0);
     setAddress(address);
@@ -104,7 +109,7 @@ int programROM(File dataFile) {
     address++;
   }
 
-  setAddress(0x7f00);
+  setAddress(0xff50);
   setData(0x00);
 
   dataFile.close();
