@@ -80,24 +80,10 @@ void setup() {
   SPI.setClockDivider(SPI_CLOCK_DIV4);
   SPI.setDataMode(SPI_MODE0);
   
-  // Mode pin - not standard Arduino pin
-  DDRE &= ~_BV(PE6);
-  PORTE |= _BV(PE6); // use pullup
-  
-  // Configure address, data, and signal lines
-  DDRL = 0x00; // Data bus set to inputs for now
-  PORTL = 0x00; // No pullups
-  
-  // To signal we have something for the CPLD
+  // To signal we have something for the Coco
   pinMode(COCOSELECT_PIN, OUTPUT);
   digitalWrite(COCOSELECT_PIN, HIGH);
-  
-  DDRA = 0xff; // Address lines L
-  DDRC = 0xff; // Address lines H
-  
-  pinMode(COCORW_PIN, OUTPUT);
-  digitalWrite(COCORW_PIN, HIGH);
-  
+
   // Configure these as interrupts eventually
   pinMode(CMDINT_PIN, INPUT);
   pinMode(CFGINT_PIN, INPUT);
@@ -114,20 +100,13 @@ void setup() {
   pinMode(SDSELECT_PIN, OUTPUT);
   digitalWrite(SDSELECT_PIN, HIGH);
   
-  // A few debug pins
-  pinMode(9, OUTPUT);
-  digitalWrite(9, LOW);
-  pinMode(8, OUTPUT);
-  digitalWrite(8, LOW);
-  
   Serial.print("Ram: ");
   Serial.println(FreeRam());
   
   // sdcard setup
   if (!SD.begin(SDSELECT_PIN)) {
     Serial.println("microSD failed");
-    // don't do anything more:
-    while (1);
+    fault();
   }
   
   loadSetup();

@@ -6,11 +6,16 @@
  
 #define ETHSELECT_PIN 10
 #define SDSELECT_PIN 4
-#define COCORW_PIN 41
-#define COCOSELECT_PIN 38 // 39 on v2.0 hardware, 38 on FPGA board/mega
+#define COCOSELECT_PIN 38
 #define USBSELECT_PIN 53
 #define CFGINT_PIN 2
 #define CMDINT_PIN 3
+
+#define CMD_SET_ADDR 0x01
+#define CMD_WRITE_BYTE 0x02
+#define CMD_READ_BYTE 0x03
+#define CMD_READ_STATUS 0x04
+#define CMD_DEV_CONTROL 0x05
 
 extern volatile uint8_t dskreg;
 extern volatile uint8_t fdcstat;

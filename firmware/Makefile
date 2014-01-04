@@ -2,7 +2,9 @@ CC=avr-gcc
 CXX=avr-g++
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
+#PROGRAMMER=jtag3isp
 PROGRAMMER=jtag3
+#PROGRAMMER=avrisp2
 PORT=usb
 MCU_TARGET=atmega2560 
 AVRDUDE_TARGET=m2560
@@ -73,6 +75,6 @@ serial:
 
 # command to program chip (invoked by running "make install")
 install:  $(OUT_DIR)/$(PRG).hex
-	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v  \
+	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -B 10 -P $(PORT) -v  \
          -U flash:w:$(OUT_DIR)/$(PRG).hex 
 

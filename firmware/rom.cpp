@@ -16,13 +16,10 @@ int verifyROM(File dataFile) {
     address = 0xc000;
   else
     address = 0x8000;
- 
-  setAddress(0xff50);
-  setData(0x01);
-  
+
+  setAddress(address);
   while (dataFile.available()) {
     disk = dataFile.read();
-    setAddress(address);
     stored = readData();
     if (stored != disk) {
       Serial.print(address, HEX);
@@ -35,9 +32,6 @@ int verifyROM(File dataFile) {
     address++;
   }
   
-  setAddress(0xff50);
-  setData(0x00);
-
   dataFile.close();
   return 0;
 }
@@ -96,21 +90,11 @@ int programROM(File dataFile) {
   else
     address = 0x8000;
 
-  setAddress(0xff50);
-  setData(0x01);
-
-  // flashUnlock();
+  setAddress(address);
   while (dataFile.available()) {
-    setData(0xa0);
-    setAddress(address);
     uint8_t d = dataFile.read();		
     setData(d);
-    while (readData() != d);
-    address++;
   }
-
-  setAddress(0xff50);
-  setData(0x00);
 
   dataFile.close();
   return 0;

@@ -14,21 +14,17 @@ volatile boolean controlPending;
 volatile boolean commandPending;
 
 void setAddress(uint16_t addr) {
-  PORTC = (addr >> 8) & 0xff;
-  PORTA = addr & 0xff;
+  digitalWrite(COCOSELECT_PIN, LOW);
+  SPI.transfer(CMD_SET_ADDR);
+  SPI.transfer((addr >> 8) & 0xff);
+  SPI.transfer(addr & 0xff);
+  digitalWrite(COCOSELECT_PIN, HIGH);
 }
 
 // Load config register
 void loadConfig() {
-  if (controlPending)
-    digitalWrite(9, HIGH);
-  PORTC = (DSKREG >> 8) & 0xff;
-  PORTA = DSKREG & 0xff;
-  DDRL = 0x00;
-  digitalWrite(COCORW_PIN, HIGH);
-  digitalWrite(COCOSELECT_PIN, LOW);
-  dskreg = PINL;
-  digitalWrite(COCOSELECT_PIN, HIGH);
+  setAddress(DSKREG);
+  dskreg = readData();
   controlPending = true;
 }
 
@@ -38,9 +34,6 @@ void setRegister(uint16_t i, uint8_t d) {
   switch (i) {
   case DSKREG:
     dskreg = d;
-    break;
-  case FDCSTAT:
-    fdcstat = d;
     break;
   case FDCCMD:
     fdccmd = d;
@@ -59,25 +52,16 @@ void setRegister(uint16_t i, uint8_t d) {
 
 // Load command register
 void loadCommand() {
-  PORTC = (FDCCMD >> 8) & 0xff;
-  PORTA = FDCCMD & 0xff;
-  DDRL = 0x00;
-  digitalWrite(COCORW_PIN, HIGH);
-  digitalWrite(COCOSELECT_PIN, LOW);
-  fdccmd = PINL;
-  digitalWrite(COCOSELECT_PIN, HIGH);
+  setAddress(FDCCMD);
+  fdccmd = readData();
   commandPending = true;
 }
 
 void loadStatus() {
-  PORTC = (FDCSTAT >> 8) & 0xff;
-  PORTA = FDCSTAT & 0xff;
-  DDRL = 0x00;
-  digitalWrite(COCORW_PIN, HIGH);
-
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     digitalWrite(COCOSELECT_PIN, LOW);
-    fdcstat = PINL; 
+    SPI.transfer(CMD_READ_STATUS);
+    fdcstat = SPI.transfer(0xff);
     digitalWrite(COCOSELECT_PIN, HIGH);
   }
 }
@@ -94,38 +78,47 @@ void loadFDCRegisters() {
 uint8_t readData() {
   uint8_t b;
   
-  DDRL = 0x00;
-  digitalWrite(COCORW_PIN, HIGH);
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     digitalWrite(COCOSELECT_PIN, LOW);
-    b = PINL;
+    SPI.transfer(CMD_READ_BYTE);
+    b = SPI.transfer(0xff);
     digitalWrite(COCOSELECT_PIN, HIGH);
   }
   return b;
 }
 
 void setData(uint8_t b) {
-  digitalWrite(COCORW_PIN, LOW);
-  DDRL = 0xff;
-  PORTL = b;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     digitalWrite(COCOSELECT_PIN, LOW);
+    SPI.transfer(CMD_WRITE_BYTE);
+    SPI.transfer(b);
     digitalWrite(COCOSELECT_PIN, HIGH);
   }
-  digitalWrite(COCORW_PIN, HIGH);
 }
 
 void setNMI() {
-  setAddress(MAGIC);
-  setData(0b00001100); // clear halt enable register, and trigger nmi
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    SPI.transfer(CMD_DEV_CONTROL);
+    SPI.transfer(0b00001100);
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
 }
 
 void wakeCoco() {
-  setAddress(MAGIC);
-  setData(0b00001010); // clear halt enable register, clear halt
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    SPI.transfer(CMD_DEV_CONTROL);
+    SPI.transfer(0b00001010);
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
 }
 
 void clearHALT() {
-  setAddress(MAGIC);
-  setData(0b00000010); // clear halt
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    SPI.transfer(CMD_DEV_CONTROL);
+    SPI.transfer(0b00000010);
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
 }
