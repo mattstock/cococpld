@@ -27,7 +27,7 @@ override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map -Larduino-core -LSPI -LS
 
 all: $(OUT_DIR)/$(PRG).elf lst text
 
-$(OUT_DIR)/$(PRG).elf: arduino-core/libarduino.a Wire/libwire.a SPI/libspi.a SD/libsd.a LCD/liblcd.a $(OUT_DIR) $(OUT_OBJS)
+$(OUT_DIR)/$(PRG).elf: arduino-core/libarduino.a Ethernet/libethernet.a Wire/libwire.a SPI/libspi.a SD/libsd.a LCD/liblcd.a $(OUT_DIR) $(OUT_OBJS)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(OUT_OBJS) $(LIBS)
 
 $(OUT_DIR):
@@ -61,6 +61,10 @@ clean:
 	cd arduino-core; make clean
 	cd SPI; make clean
 	cd SD; make clean
+	cd Ethernet; make clean
+	cd LCD; make clean
+	cd Wire; make clean
+	cd arduino-core; make clean
 	rm -f $(OUT_DIR)/*.o $(OUT_DIR)/$(PRG).elf *.bak $(OUT_DIR)/*.hex
 	rm -f $(OUT_DIR)/*.lst $(OUT_DIR)/*.map
 	rmdir $(OUT_DIR)
