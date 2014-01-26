@@ -23,56 +23,66 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 EthernetClient client;
 
 void parseLine(char *line) {
-	if (!strncmp("floppy0 ", line, 8)) {
-		config[FLOPPY0] = (char *) malloc(13);
-		strncpy(config[FLOPPY0], &(line[8]), 13);
-	}
-	if (!strncmp("floppy1 ", line, 8)) {
-		config[FLOPPY1] = (char *) malloc(13);
-		strncpy(config[FLOPPY1], &(line[8]), 13);
-	}
-	if (!strncmp("rom ", line, 4)) {
-		config[ROM] = (char *) malloc(13);
-		strncpy(config[ROM], &(line[4]), 13);
-	}
-	if (!strncmp("floppy-rom ", line, 11)) {
-		config[DSKROM] = (char *) malloc(13);
-		strncpy(config[DSKROM], &(line[11]),13);
-	}
+  if (!strncmp("floppy0 ", line, 8)) {
+    config[FLOPPY0] = (char *) malloc(13);
+    strncpy(config[FLOPPY0], &(line[8]), 13);
+  }
+  if (!strncmp("floppy1 ", line, 8)) {
+    config[FLOPPY1] = (char *) malloc(13);
+    strncpy(config[FLOPPY1], &(line[8]), 13);
+  }
+  if (!strncmp("rom ", line, 4)) {
+    config[ROM] = (char *) malloc(13);
+    strncpy(config[ROM], &(line[4]), 13);
+  }
+  if (!strncmp("floppy-rom ", line, 11)) {
+    config[DSKROM] = (char *) malloc(13);
+    strncpy(config[DSKROM], &(line[11]),13);
+  }
 }
 
 // Pull data from setup.txt if available
 void loadSetup() {
-	File f = SD.open("setup.txt");
-	char line[30];
-	uint8_t idx = 0;
-	
-	if (!f)
-	  return;
-
-	for (int i=0; i < MAX_CONFIG; i++)
-		config[i] = NULL;
-
-	Serial.println("Loading config file");
-	
-	while (f.available()) {
-		line[idx++] = f.read();
-		if (line[idx-1] == '\r') {
-			idx--;
-			continue;
-		}
-		if (line[idx-1] == '\n') {
-			line[idx-1] = '\0';
-#ifdef DEBUG
-			Serial.print("Parsing = |");
-			Serial.print(line);
-			Serial.println("|");
-#endif
-			parseLine(line);
-			idx = 0;
-		}
-	}
-	f.close();
+  char line[30];
+  uint8_t idx = 0;
+  
+  if (client.connect("www.bexkat.com", 80)) {
+    Serial.println("connected.");
+    client.println("GET /coco/setup.txt HTTP/1.1");
+    client.println("Host: www.bexkat.com");
+    client.println("Connection: close");
+    client.println();
+  } else {
+    Serial.println("failed to pull setup");
+    return;
+  }
+  
+  for (int i=0; i < MAX_CONFIG; i++)
+    config[i] = NULL;
+  
+  Serial.println("Loading config file");
+  
+  while (client.connected()) {
+    if (client.available()) {
+      line[idx++] = client.read();
+      if (idx == 30) {
+	Serial.print("Truncating line.");
+	line[idx-1] = '\n';
+      }
+      if (line[idx-1] == '\r') {
+	idx--;
+	continue;
+      }
+      if (line[idx-1] == '\n') {
+	line[idx-1] = '\0';
+	Serial.print("Parsing = |");
+	Serial.print(line);
+	Serial.println("|");
+	parseLine(line);
+	idx = 0;
+      }
+    }
+  }
 }
 
 void setup() {
@@ -113,36 +123,23 @@ void setup() {
   // sdcard setup
   if (!SD.begin(SDSELECT_PIN)) {
     Serial.println("microSD failed");
-    fault();
+    //fault();
   }
   
-  loadSetup();
- 
-  /* 
   byte mac[] = { 0xaa, 0xbb, 0xcc, 0x00, 0x01, 0xed };
   if (Ethernet.begin(mac) == 0) {
     Serial.println("ethernet DHCP failure.");
-  } else {
-    delay(1000);
-    Serial.print("connecting... ");
-    if (client.connect("www.bexkat.com", 80)) {
-      Serial.println("connected.");
-      client.println("GET /coco/test.txt HTTP/1.1");
-      client.println("Host: www.bexkat.com");
-      client.println("Connection: close");
-      client.println();
-    } else {
-      Serial.println("failed.");
-    }
   }
-  */
 
+  loadSetup();
+
+  Serial.println("goo");
   uint8_t b = lcd.readButtons();
   if (b & BUTTON_SELECT) { // Hold select during reset will go into test mode
     // Go into the loop for the test mode
-    lcd.print("Test mode");
+    Serial.println("Test mode");
   } else {
-    lcd.print("Peripheral mode");
+    Serial.println("Peripheral mode");
     controlPending = false;
     commandPending = false;
     attachInterrupt(0, loadConfig, FALLING);
@@ -154,15 +151,6 @@ void setup() {
 extern void arduinomain(void);
 
 void loop() {
-  /* if (client.available()) {
-    char c = client.read();
-    Serial.print(c);
-  }
-  if (!client.connected()) {
-    Serial.println("disconnected");
-    client.stop();
-    while (1);
-    } */
   debugCommand();
 }
 
