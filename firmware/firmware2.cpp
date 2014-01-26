@@ -10,6 +10,7 @@
 #include <avr/interrupt.h> 
 #include <Arduino.h>
 #include <Ethernet.h>
+#include <Adafruit_RGBLCDShield.h>
 #include "firmware2.h"
 #include "rom.h"
 #include "fdc.h"
@@ -17,6 +18,7 @@
 #include "debug.h"
 
 char *config[MAX_CONFIG];
+Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
@@ -75,6 +77,9 @@ void setup() {
   // Serial port for debugging output
   Serial.begin(115200);
   
+  lcd.begin(16,2);
+  lcd.print("Testing");
+
   // SPI used for microSD and WizNet (if plugged in)
   SPI.begin();
   SPI.setClockDivider(SPI_CLOCK_DIV4);

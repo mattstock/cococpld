@@ -12,7 +12,7 @@ SERIAL=/dev/ttyACM0
 BAUD=115200
 OPTIMIZE=-Os
 DEFS=-DARDUINO=105
-LIBS=-lm -larduino -lsd -lspi
+LIBS=-lm -larduino -lsd -lspi -llcd -lwire
 HZ=16000000UL
 
 PRG=firmware
@@ -21,13 +21,13 @@ OBJS=firmware2.o rom.o fdc.o CocoImage.o CocoDisk.o busio.o debug.o
 OUT_DIR=output
 OUT_OBJS=$(addprefix $(OUT_DIR)/,$(OBJS))
 
-override CFLAGS        = -g -Iarduino-core -ISPI -ISD -IEthernet -DF_CPU=$(HZ) -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
+override CFLAGS        = -g -Iarduino-core -ISPI -ISD -IEthernet -ILCD -IWire -DF_CPU=$(HZ) -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
 override CXXFLAGS	= $(CFLAGS) -std=c++11
-override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map -Larduino-core -LSPI -LSD -LEthernet
+override LDFLAGS       = -Wl,-Map,$(OUT_DIR)/$(PRG).map -Larduino-core -LSPI -LSD -LLCD -LEthernet -LWire
 
 all: $(OUT_DIR)/$(PRG).elf lst text
 
-$(OUT_DIR)/$(PRG).elf: arduino-core/libarduino.a SPI/libspi.a SD/libsd.a $(OUT_DIR) $(OUT_OBJS)
+$(OUT_DIR)/$(PRG).elf: arduino-core/libarduino.a Wire/libwire.a SPI/libspi.a SD/libsd.a LCD/liblcd.a $(OUT_DIR) $(OUT_OBJS)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(OUT_OBJS) $(LIBS)
 
 $(OUT_DIR):
@@ -41,6 +41,12 @@ SPI/libspi.a:
 
 SD/libsd.a:
 	cd SD; make
+
+LCD/liblcd.a:
+	cd LCD; make
+
+Wire/libwire.a:
+	cd Wire; make
 
 $(OUT_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -75,6 +81,6 @@ serial:
 
 # command to program chip (invoked by running "make install")
 install:  $(OUT_DIR)/$(PRG).hex
-	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -B 10 -P $(PORT) -v  \
+	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -B 1 -P $(PORT) -v  \
          -U flash:w:$(OUT_DIR)/$(PRG).hex 
 

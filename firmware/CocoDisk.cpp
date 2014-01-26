@@ -53,6 +53,7 @@ void CocoDisk::restore() {
   Serial.println("RESTORE");
   setRegister(FDCTRK, 0x00); // track 0
   setRegister(FDCSEC, 0x01); // sector 1
+  
   setRegister(FDCSTAT, 0x04); // clear busy flag last
   track = 0;
   ddir = true;
