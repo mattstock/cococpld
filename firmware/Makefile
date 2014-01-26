@@ -12,7 +12,7 @@ SERIAL=/dev/ttyACM0
 BAUD=115200
 OPTIMIZE=-Os
 DEFS=-DARDUINO=105
-LIBS=-lm -larduino -lsd -lspi -llcd -lwire
+LIBS=-lm -lethernet -larduino -lsd -lspi -llcd -lwire
 HZ=16000000UL
 
 PRG=firmware
@@ -38,6 +38,9 @@ arduino-core/libarduino.a:
 
 SPI/libspi.a:
 	cd SPI; make
+
+Ethernet/libethernet.a:
+	cd Ethernet; make
 
 SD/libsd.a:
 	cd SD; make

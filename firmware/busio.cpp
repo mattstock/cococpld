@@ -59,10 +59,7 @@ void loadCommand() {
 
 void loadStatus() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    digitalWrite(COCOSELECT_PIN, LOW);
-    SPI.transfer(CMD_READ_STATUS);
-    fdcstat = SPI.transfer(0xff);
-    digitalWrite(COCOSELECT_PIN, HIGH);
+    fdcstat = readStatus();
   }
 }
 
@@ -73,6 +70,16 @@ void loadFDCRegisters() {
   fdcsec = readData();
   setAddress(FDCTRK);
   fdctrk = readData();
+}
+
+uint8_t readStatus() {
+  uint8_t tmp;
+
+  digitalWrite(COCOSELECT_PIN, LOW);
+  SPI.transfer(CMD_READ_STATUS);
+  tmp = SPI.transfer(0xff);
+  digitalWrite(COCOSELECT_PIN, HIGH);
+  return tmp;
 }
 
 uint8_t readData() {

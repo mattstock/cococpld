@@ -36,6 +36,7 @@ void setNMI();
 void wakeCoco();
 void clearHALT();
 
+uint8_t readStatus();
 uint8_t readData();
 void setData(uint8_t b);
 

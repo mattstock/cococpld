@@ -43,7 +43,10 @@ void debugCommand() {
   readLine();
   switch (cmd[0]) {
   case 'r':
-    Serial.println(readData(), HEX);
+    if (cmd[1] == 's')
+      Serial.println(readStatus(), HEX);
+    else
+      Serial.println(readData(), HEX);
     break;
   case 'w':
     setData((a2h(cmd[1]) << 4) + a2h(cmd[2]));
@@ -86,6 +89,9 @@ void debugCommand() {
     setAddress((a2h(cmd[1]) << 12) + (a2h(cmd[2]) << 8) +
 	       (a2h(cmd[3]) << 4) + a2h(cmd[4]));
     Serial.println("Address set");
+    break;
+  case 'h':
+    wakeCoco();
     break;
   }
 }

@@ -46,6 +46,8 @@ void fdc() {
     }
     
     if (commandPending) {
+      Serial.print("Command: ");
+      Serial.println(fdccmd, HEX);
       commandPending = false;
       loadFDCRegisters();
       loadStatus();

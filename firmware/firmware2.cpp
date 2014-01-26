@@ -20,6 +20,8 @@
 char *config[MAX_CONFIG];
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
+EthernetClient client;
+
 void parseLine(char *line) {
 	if (!strncmp("floppy0 ", line, 8)) {
 		config[FLOPPY0] = (char *) malloc(13);
@@ -76,9 +78,9 @@ void loadSetup() {
 void setup() {
   // Serial port for debugging output
   Serial.begin(115200);
-  
+
+  // LCD init
   lcd.begin(16,2);
-  lcd.print("Testing");
 
   // SPI used for microSD and WizNet (if plugged in)
   SPI.begin();
@@ -115,12 +117,32 @@ void setup() {
   }
   
   loadSetup();
-  
-  if (true) {   // !(PINE & _BV(PE6))) {
-    // Go into the loop for the test mode
-    Serial.println("Test mode");
+ 
+  /* 
+  byte mac[] = { 0xaa, 0xbb, 0xcc, 0x00, 0x01, 0xed };
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("ethernet DHCP failure.");
   } else {
-    Serial.println("Peripheral mode");
+    delay(1000);
+    Serial.print("connecting... ");
+    if (client.connect("www.bexkat.com", 80)) {
+      Serial.println("connected.");
+      client.println("GET /coco/test.txt HTTP/1.1");
+      client.println("Host: www.bexkat.com");
+      client.println("Connection: close");
+      client.println();
+    } else {
+      Serial.println("failed.");
+    }
+  }
+  */
+
+  uint8_t b = lcd.readButtons();
+  if (b & BUTTON_SELECT) { // Hold select during reset will go into test mode
+    // Go into the loop for the test mode
+    lcd.print("Test mode");
+  } else {
+    lcd.print("Peripheral mode");
     controlPending = false;
     commandPending = false;
     attachInterrupt(0, loadConfig, FALLING);
@@ -132,6 +154,15 @@ void setup() {
 extern void arduinomain(void);
 
 void loop() {
+  /* if (client.available()) {
+    char c = client.read();
+    Serial.print(c);
+  }
+  if (!client.connected()) {
+    Serial.println("disconnected");
+    client.stop();
+    while (1);
+    } */
   debugCommand();
 }
 

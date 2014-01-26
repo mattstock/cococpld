@@ -108,7 +108,7 @@ reg [7:0] datareg;      // 0xff4b
 
 // Some debug info
 assign LEDR = { 3'b0, c_rw, ~c_dataen_n, spi_rx_flag, spi_tx_flag, nmi, halt, avr_control };
-assign LEDG = (SW[7] ? spi_tx : c_databus);
+assign LEDG = (KEY[1] ? spi_tx : c_databus);
 
 wire reset_n = KEY[0];
 wire c_power = SW[1];
@@ -118,7 +118,7 @@ wire [7:0] spi_rx;
 
 assign c_cart_n = (SW[0] ? c_qclk : 1'bz);
 
-assign c_dataen_n = ~((~c_scs_n & c_eclk) | ~c_cts_n) | ~c_power;
+assign c_dataen_n = ~((c_regselect | c_memselect) & c_power);
 
 // Coco interrupt logic
 wire fdc_halt = dskreg[7] & ~fdcstatus[1]; // high if FDC logic would halt coco
@@ -163,7 +163,7 @@ always @(negedge reset_n or posedge clock_50) begin
     sram_we_n <= 1'b1;
     cocobuf <= 8'h00;
     srambuf <= 8'h00;
-    avr_control <= 1'b0;
+    avr_control <= 1'b1;
     dsk_cmd_intr <= 1'b1;
     dsk_cfg_intr <= 1'b1;
     req <= 3'b000;
@@ -319,8 +319,6 @@ endtask
 
 task scs_handler;
 begin
-  actor <= 1'b0;
-  counter_50 <= 3'h6;
   if (c_rw)
     case (c_addrbus)
       16'hff48: begin
@@ -335,6 +333,10 @@ begin
       16'hff4b: begin
         fdcstatus[1] <= 1'b0;
         cocobuf <= datareg;
+      end
+      default: begin
+        actor <= 1'b0;
+        counter_50 <= 3'h6;
       end
     endcase else
     case (c_addrbus)
@@ -357,11 +359,15 @@ begin
         fdcstatus[1] <= 1'b0;
         datareg <= c_databus;
       end
+      default: begin
+        actor <= 1'b0;
+        counter_50 <= 3'h6;
+      end
     endcase
 end
 endtask
 
-SEG7_LUT_4 h0(HEX0, HEX1, HEX2, HEX3, SW[7] ? spi_addr : c_addrbus );
+SEG7_LUT_4 h0(HEX0, HEX1, HEX2, HEX3, KEY[1] ? spi_addr : c_addrbus );
 SPI_slave spi0(.clk(clock_50), .SCK(sclk), .MISO(miso), .MOSI(mosi), .SSEL(ss), .byte_received(spi_rx_flag), .byte_received_data(spi_rx),
 	.byte_send_data(spi_tx), .byte_send(spi_tx_flag));
 	
