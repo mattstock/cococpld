@@ -72,7 +72,8 @@ assign fl_databus = 8'b0;
 
 reg actor;
 
-reg [2:0] counter_50;     // 50MHz counter for SRAM read/write   
+reg [2:0] mem_delay;     // 50MHz counter for SRAM read/write   
+reg [11:0] intr_delay;   // Delay counter to fix a bug in NOS9
 reg [2:0] cts_edge;
 reg [2:0] scs_edge;
 
@@ -160,6 +161,8 @@ always @(negedge reset_n or posedge clock_50) begin
     spi_addr <= 16'hffff;
     spi_tx <= 8'h00;
     spi_tx_flag <= 1'b0;
+    mem_delay <= 'b0;
+    intr_delay <= 'b0;
     sram_we_n <= 1'b1;
     cocobuf <= 8'h00;
     srambuf <= 8'h00;
@@ -179,9 +182,14 @@ always @(negedge reset_n or posedge clock_50) begin
       req[1] <= 1'b1;
     if (cts_falling_edge)
       req[0] <= 1'b1;
-    if (counter_50) begin // Deal with memory timing and buffering
-      counter_50 <= counter_50 - 1'b1; // doesn't apply until next tick!
-      if (counter_50 == 3'h1)
+    if (intr_delay) begin // We delay the command interrupt to address some out of order memory assignments
+      intr_delay <= intr_delay - 1'b1;
+      if (intr_delay == 'h1)
+        dsk_cmd_intr <= 1'b0;        
+    end
+    if (mem_delay) begin // Deal with memory timing and buffering
+      mem_delay <= mem_delay - 1'b1; // doesn't apply until next tick!
+      if (mem_delay == 3'h1)
         case ({sram_we_n, actor})
           COCO_R:
             cocobuf <= sram_databus[7:0];
@@ -221,7 +229,7 @@ end
 task cts_handler;
 begin
   actor <= 1'b0;
-  counter_50 <= 3'h6;
+  mem_delay <= 3'h6;
   sram_we_n <= 1'b1;
 end
 endtask
@@ -259,7 +267,7 @@ begin
               spi_tx_flag <= 1'b1;
             end
             default: begin
-              counter_50 <= 3'h6;
+              mem_delay <= 3'h6;
               actor <= 1'b1;
             end
           endcase
@@ -296,7 +304,7 @@ begin
         16'hff4b:
           datareg <= spi_rx;
         default: begin
-          counter_50 <= 3'h6;
+          mem_delay <= 3'h6;
           srambuf <= spi_rx;
           sram_we_n <= 1'b0;
           actor <= 1'b1;
@@ -336,7 +344,7 @@ begin
       end
       default: begin
         actor <= 1'b0;
-        counter_50 <= 3'h6;
+        mem_delay <= 3'h6;
       end
     endcase else
     case (c_addrbus)
@@ -349,7 +357,7 @@ begin
         fdccmd <= c_databus; 
         if (c_databus[7:6] == 2'b10) // Type II operations set halt
           fdcstatus[1] <= 1'b0;
-        dsk_cmd_intr <= 1'b0;
+        intr_delay <= 12'd3250; // 3250*20ns = ~65ms
       end
       16'hff49:
         fdcsec <= c_databus;
@@ -361,7 +369,7 @@ begin
       end
       default: begin
         actor <= 1'b0;
-        counter_50 <= 3'h6;
+        mem_delay <= 3'h6;
       end
     endcase
 end
