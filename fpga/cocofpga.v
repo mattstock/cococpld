@@ -1,7 +1,7 @@
 module cocofpga(SW, KEY, HEX0, HEX1, HEX2, HEX3, LEDR, LEDG, clock_50,
 			c_addrbus, c_databus, c_eclk, c_slenb_n, c_rw, c_cts_n, c_qclk, c_cart_n,
 			c_scs_n, c_dataen_n, c_reset_n, c_halt_n, c_nmi_n, 
-			miso, mosi, ss, sclk, dsk_cfg_intr, dsk_cmd_intr,
+			miso, mosi, ss, sclk, dsk_cfg_intr, dsk_cmd_intr, eth_cmd_intr,
 			sram_addrbus, sram_databus, sram_oe_n, sram_ce_n, sram_we_n, sram_ub_n, sram_lb_n,
 			fl_addrbus, fl_databus, fl_oe_n, fl_ce_n, fl_we_n, fl_rst_n);
 
@@ -53,8 +53,9 @@ input mosi;
 output miso;
 input ss;
 input sclk;
-output reg dsk_cmd_intr;
-output reg dsk_cfg_intr;
+output dsk_cmd_intr;
+output dsk_cfg_intr;
+output eth_cmd_intr;
 
 // SRAM
 assign sram_ce_n = 1'b0;
@@ -90,12 +91,20 @@ reg [15:0] spi_addr;
 reg [7:0] srambuf;
 reg sram_we_n;
 
+reg dsk_cmd_intr;
+reg dsk_cfg_intr;
 reg [7:0] dskreg;			// 0xff40
 reg [7:0] fdcstatus;    // 0xff48 (r)
 reg [7:0] fdccmd;       // 0xff48 (w)
 reg [7:0] fdcsec;
 reg [7:0] fdctrk;
 reg [7:0] datareg;      // 0xff4b
+
+reg eth_cmd_intr;
+reg [7:0] ethcmd;
+reg [7:0] ethcocoin;
+reg [7:0] ethcocoout;
+reg [7:0] ethstatus;
 
 // We have to handle shared access to the SRAM bus by both the Coco and the SPI bus.  Fortunately, both of them
 // are extremely slow compared to the 20ns CPLD clock and SRAM speeds (<= 55ns).  So our goal is to track when the SRAM
@@ -108,7 +117,7 @@ reg [7:0] datareg;      // 0xff4b
 // 50MHz CPLD clock = 20ns
 
 // Some debug info
-assign LEDR = { 3'b0, c_rw, ~c_dataen_n, spi_rx_flag, spi_tx_flag, nmi, halt, avr_control };
+assign LEDR = { ~eth_cmd_intr, ~dsk_cmd_intr, ~dsk_cfg_intr, c_rw, ~c_dataen_n, spi_rx_flag, spi_tx_flag, nmi, halt, avr_control };
 assign LEDG = (KEY[1] ? spi_tx : c_databus);
 
 wire reset_n = KEY[0];
@@ -169,6 +178,7 @@ always @(negedge reset_n or posedge clock_50) begin
     avr_control <= 1'b1;
     dsk_cmd_intr <= 1'b1;
     dsk_cfg_intr <= 1'b1;
+    eth_cmd_intr <= 1'b1;
     req <= 3'b000;
     fdcstatus <= 8'b00000100;
     dskreg <= 8'b0;
@@ -266,6 +276,15 @@ begin
               spi_tx <= datareg;
               spi_tx_flag <= 1'b1;
             end
+            16'hff50: begin
+              spi_tx <= ethcmd;
+              spi_tx_flag <= 1'b1;
+              eth_cmd_intr <= 1'b1;
+            end
+            16'hff51: begin
+              spi_tx <= ethcocoout;
+              spi_tx_flag <= 1'b1;
+            end
             default: begin
               mem_delay <= 3'h6;
               actor <= 1'b1;
@@ -303,6 +322,10 @@ begin
           fdctrk <= spi_rx;
         16'hff4b:
           datareg <= spi_rx;
+        16'hff52:
+          ethstatus <= spi_rx;
+        16'hff53:
+          ethcocoin <= spi_rx;
         default: begin
           mem_delay <= 3'h6;
           srambuf <= spi_rx;
@@ -342,6 +365,12 @@ begin
         fdcstatus[1] <= 1'b0;
         cocobuf <= datareg;
       end
+      16'hff52: begin
+        nmi <= 1'b0;
+        cocobuf <= ethstatus;
+      end
+      16'hff53:
+        cocobuf <= ethcocoin;
       default: begin
         actor <= 1'b0;
         mem_delay <= 3'h6;
@@ -367,6 +396,12 @@ begin
         fdcstatus[1] <= 1'b0;
         datareg <= c_databus;
       end
+      16'hff50: begin
+        eth_cmd_intr <= 1'b0;
+        ethcmd <= c_databus;
+      end
+      16'hff51:
+        ethcocoout <= c_databus;
       default: begin
         actor <= 1'b0;
         mem_delay <= 3'h6;
