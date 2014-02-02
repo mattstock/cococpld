@@ -18,7 +18,7 @@
 #include "debug.h"
 
 char *config[MAX_CONFIG];
-Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+//Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 EthernetClient client;
 
@@ -89,8 +89,18 @@ void setup() {
   // Serial port for debugging output
   Serial.begin(115200);
 
-  // LCD init
-  lcd.begin(16,2);
+  // Set defaults for bus enable banks
+  pinMode(BANK0_ENABLE_PIN, OUTPUT);
+  pinMode(BANK1_ENABLE_PIN, OUTPUT);
+  pinMode(BANK2_ENABLE_PIN, OUTPUT);
+  pinMode(BANK3_ENABLE_PIN, OUTPUT);
+  digitalWrite(BANK0_ENABLE_PIN, LOW);
+  digitalWrite(BANK1_ENABLE_PIN, HIGH); // need to tristate MISO
+  digitalWrite(BANK2_ENABLE_PIN, LOW);
+  digitalWrite(BANK3_ENABLE_PIN, LOW);
+
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
 
   // SPI used for microSD and WizNet (if plugged in)
   SPI.begin();
@@ -104,7 +114,8 @@ void setup() {
   // Configure these as interrupts eventually
   pinMode(CMDINT_PIN, INPUT);
   pinMode(CFGINT_PIN, INPUT);
-  
+  pinMode(CMDETH_PIN, INPUT);
+
   // Default SS pin - set to known state
   pinMode(USBSELECT_PIN, OUTPUT);
   digitalWrite(USBSELECT_PIN, HIGH);
@@ -133,19 +144,18 @@ void setup() {
 
   loadSetup();
 
-  Serial.println("goo");
-  uint8_t b = lcd.readButtons();
-  if (b & BUTTON_SELECT) { // Hold select during reset will go into test mode
+  //  uint8_t b = lcd.readButtons();
+  //  if (b & BUTTON_SELECT) { // Hold select during reset will go into test mode
     // Go into the loop for the test mode
     Serial.println("Test mode");
-  } else {
+    /*  } else {
     Serial.println("Peripheral mode");
     controlPending = false;
     commandPending = false;
     attachInterrupt(0, loadConfig, FALLING);
     attachInterrupt(1, loadCommand, FALLING);
     fdc();
-  }
+    }*/
 }
 
 extern void arduinomain(void);
