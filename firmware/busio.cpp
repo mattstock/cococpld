@@ -125,8 +125,10 @@ void setNMI() {
 void wakeCoco() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     digitalWrite(COCOSELECT_PIN, LOW);
+    digitalWrite(BANK1_ENABLE_PIN, LOW); // need to tristate MISO
     SPI.transfer(CMD_DEV_CONTROL);
     SPI.transfer(0b00001010);
+    digitalWrite(BANK1_ENABLE_PIN, HIGH); // need to tristate MISO
     digitalWrite(COCOSELECT_PIN, HIGH);
   }
 }
