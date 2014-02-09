@@ -6,10 +6,11 @@
 
 #define FLOPPY0 0
 #define FLOPPY1 1
-#define DSKROM  2
-#define ROM     3
-#define MAC     4
-#define MAX_CONFIG 5
+#define ROM0    2
+#define ROM1    3
+#define ROM2    4
+#define ROM3    5
+#define MAX_CONFIG 6
 
 extern char *config[];
 

@@ -31,13 +31,21 @@ void parseLine(char *line) {
     config[FLOPPY1] = (char *) malloc(13);
     strncpy(config[FLOPPY1], &(line[8]), 13);
   }
-  if (!strncmp("rom ", line, 4)) {
-    config[ROM] = (char *) malloc(13);
-    strncpy(config[ROM], &(line[4]), 13);
+  if (!strncmp("rom0 ", line, 5)) {
+    config[ROM0] = (char *) malloc(13);
+    strncpy(config[ROM0], &(line[5]), 13);
+  }
+  if (!strncmp("rom1 ", line, 5)) {
+    config[ROM1] = (char *) malloc(13);
+    strncpy(config[ROM1], &(line[5]), 13);
+  }
+  if (!strncmp("rom2 ", line, 5)) {
+    config[ROM2] = (char *) malloc(13);
+    strncpy(config[ROM2], &(line[5]), 13);
   }
   if (!strncmp("floppy-rom ", line, 11)) {
-    config[DSKROM] = (char *) malloc(13);
-    strncpy(config[DSKROM], &(line[11]),13);
+    config[ROM3] = (char *) malloc(13);
+    strncpy(config[ROM3], &(line[11]),13);
   }
 }
 

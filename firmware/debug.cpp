@@ -53,17 +53,45 @@ void debugCommand() {
     Serial.println("Data written");
     break;
   case 'd':
-    if (cmd[1] == 'r') 
-      programROM(SD.open(config[ROM]));
-    else
-      programROM(SD.open(config[DSKROM]));
+    switch (cmd[1]) {
+    case '0':
+      setBank(0);
+      programROM(SD.open(config[ROM0]));
+      break;
+    case '1':
+      setBank(1);
+      programROM(SD.open(config[ROM1]));
+      break;
+    case '2':
+      setBank(2);
+      programROM(SD.open(config[ROM2]));
+      break;
+    case '3':
+      setBank(3);
+      programROM(SD.open(config[ROM3]));
+      break;
+    }
     Serial.println("Flash programmed");
     break;
   case 'v':
-    if (cmd[1] == 'r')
-      verifyROM(SD.open(config[ROM]));
-    else
-      verifyROM(SD.open(config[DSKROM]));
+    switch (cmd[1]) {
+    case '0':
+      setBank(0);
+      verifyROM(SD.open(config[ROM0]));
+      break;
+    case '1':
+      setBank(1);
+      verifyROM(SD.open(config[ROM1]));
+      break;
+    case '2':
+      setBank(2);
+      verifyROM(SD.open(config[ROM2]));
+      break;
+    case '3':
+      setBank(3);
+      verifyROM(SD.open(config[ROM3]));
+      break;
+    }
     Serial.println("Flash verify");
     break;
   case 'f':
@@ -89,6 +117,9 @@ void debugCommand() {
     setAddress((a2h(cmd[1]) << 12) + (a2h(cmd[2]) << 8) +
 	       (a2h(cmd[3]) << 4) + a2h(cmd[4]));
     Serial.println("Address set");
+    break;
+  case 'b':
+    setBank(atoi((const char *)cmd[1]));
     break;
   case 'h':
     wakeCoco();

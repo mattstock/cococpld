@@ -59,9 +59,7 @@ output eth_cmd_intr;
 
 // SRAM
 assign sram_ce_n = 1'b0;
-assign sram_lb_n = 1'b0;
 assign sram_oe_n = ~sram_we_n;
-assign sram_ub_n = 1'b1;
 
 // FLASH
 assign fl_oe_n = 1'b1;
@@ -77,6 +75,7 @@ reg [2:0] mem_delay;     // 50MHz counter for SRAM read/write
 reg [11:0] intr_delay;   // Delay counter to fix a bug in NOS9
 reg [2:0] cts_edge;
 reg [2:0] scs_edge;
+reg [2:0] mpi_edge;
 
 reg [3:0] spi_state;    // State machine for SPI commands
 reg [7:0] spi_tx;
@@ -86,20 +85,21 @@ reg [2:0] req;				// Flags for pending requests { AVR, SCS }
 
 reg nmi;                // Set if NMI output to Coco
 reg avr_control; // set when AVR wants control of the flash
-
+reg [1:0] avr_cart_sel;
 reg [15:0] spi_addr;
 reg [7:0] srambuf;
 reg sram_we_n;
 
 reg dsk_cmd_intr;
 reg dsk_cfg_intr;
-reg [7:0] dskreg;			// 0xff40
-reg [7:0] fdcstatus;    // 0xff48 (r)
-reg [7:0] fdccmd;       // 0xff48 (w)
+reg [7:0] dskreg;		 // 0xff40
+reg [7:0] fdcstatus; // 0xff48 (r)
+reg [7:0] fdccmd;    // 0xff48 (w)
 reg [7:0] fdcsec;
 reg [7:0] fdctrk;
-reg [7:0] datareg;      // 0xff4b
-
+reg [7:0] datareg;   // 0xff4b
+reg [7:0] mpireg;    // 0xff7f
+reg mpi_use_reg;     // high if Coco pushed value to mpireg; disable the switches, use that instead
 reg eth_cmd_intr;
 reg [7:0] ethcmd;
 reg [7:0] ethcocoin;
@@ -122,13 +122,14 @@ assign LEDG = (KEY[1] ? spi_tx : c_databus);
 
 wire reset_n = KEY[0];
 wire c_power = SW[1];
+wire [1:0] mpi_select_sw = SW[9:8];
 
 wire spi_rx_flag;
 wire [7:0] spi_rx;
 
 assign c_cart_n = (SW[0] ? c_qclk : 1'bz);
 
-assign c_dataen_n = ~((c_regselect | c_memselect) & c_power);
+assign c_dataen_n = ~((c_regselect | c_memselect | c_mpiselect) & c_power);
 
 // Coco interrupt logic
 wire fdc_halt = dskreg[7] & ~fdcstatus[1]; // high if FDC logic would halt coco
@@ -140,15 +141,24 @@ assign c_slenb_n = 1'bz;
 
 wire c_memselect = ~c_cts_n;
 wire c_regselect = ~c_scs_n & c_eclk;
+wire c_mpiselect = c_eclk & (c_addrbus == 16'hff7f);  // This is a cheap hack
 
 assign c_databus = (c_rw ? cocobuf : 8'hzz);
 
-assign sram_addrbus = {2'b00, (actor ? spi_addr : c_addrbus)};
-assign sram_databus = {8'hzz, (sram_we_n ? 8'hzz : srambuf) }; 
+// Bank memory logic
+wire [1:0] mpi_coco_sel = (mpi_use_reg ? mpireg[5:4] : mpi_select_sw);
+assign sram_lb_n = (actor ? avr_cart_sel[0] : mpi_coco_sel[0]);
+assign sram_ub_n = ~sram_lb_n;
+assign sram_addrbus[17] = 1'b0;
+assign sram_addrbus[16] = (actor ? avr_cart_sel[1] : mpi_coco_sel[1]);
+assign sram_addrbus[15:0] = (actor ? spi_addr : c_addrbus);
+assign sram_databus[15:8] = (sram_ub_n | sram_we_n ? 8'hzz : srambuf);
+assign sram_databus[7:0] = (sram_lb_n | sram_we_n ? 8'hzz : srambuf);
 
 // sync E clock, AVR, CTS, SCS with 50MHz osc
 wire cts_falling_edge = (cts_edge[2:1] == 2'b10);
 wire scs_falling_edge = (scs_edge[2:1] == 2'b01); // it's flipped because of the eclk timing
+wire mpi_falling_edge = (mpi_edge[2:1] == 2'b01); // eclk again
 
 // SPI state machine nodes
 parameter SPI_IDLE = 4'h0, SPI_ADDR1 = 4'h1, SPI_ADDR2 = 4'h2, SPI_WRITE = 4'h3, SPI_READ = 4'h4, SPI_DEVCON = 4'h5;
@@ -162,6 +172,7 @@ parameter COCO_W = 2'b00, COCO_R = 2'b10, SPI_W = 2'b01, SPI_R = 2'b11;
 always @(posedge clock_50) begin
   cts_edge <= {cts_edge[1:0], c_cts_n};
   scs_edge <= {scs_edge[1:0], c_regselect};
+  mpi_edge <= {mpi_edge[1:0], c_mpiselect};
 end
 
 always @(negedge reset_n or posedge clock_50) begin
@@ -170,12 +181,15 @@ always @(negedge reset_n or posedge clock_50) begin
     spi_addr <= 16'hffff;
     spi_tx <= 8'h00;
     spi_tx_flag <= 1'b0;
+    mpireg <= 8'h00;
+    mpi_use_reg <= 1'b0;
     mem_delay <= 'b0;
     intr_delay <= 'b0;
     sram_we_n <= 1'b1;
     cocobuf <= 8'h00;
     srambuf <= 8'h00;
     avr_control <= 1'b1;
+    avr_cart_sel <= 2'b00;
     dsk_cmd_intr <= 1'b1;
     dsk_cfg_intr <= 1'b1;
     eth_cmd_intr <= 1'b1;
@@ -188,7 +202,7 @@ always @(negedge reset_n or posedge clock_50) begin
       spi_tx_flag <= 1'b0;
       req[2] <= 1'b1;
     end
-    if (scs_falling_edge && c_power) 
+    if ((scs_falling_edge | mpi_falling_edge) && c_power) 
       req[1] <= 1'b1;
     if (cts_falling_edge)
       req[0] <= 1'b1;
@@ -202,11 +216,11 @@ always @(negedge reset_n or posedge clock_50) begin
       if (mem_delay == 3'h1)
         case ({sram_we_n, actor})
           COCO_R:
-            cocobuf <= sram_databus[7:0];
+            cocobuf <= (sram_ub_n ? sram_databus[7:0] : sram_databus[15:8]);
           SPI_R: begin
             spi_addr <= spi_addr + 1'b1;
             spi_tx_flag <= 1'b1;
-            spi_tx <= sram_databus[7:0];
+            spi_tx <= (sram_ub_n ? sram_databus[7:0] : sram_databus[15:8]);
           end
           COCO_W:
             sram_we_n <= 1'b1;
@@ -342,6 +356,8 @@ begin
         nmi <= 1'b1;
       if (spi_rx[3])
         dskreg[7] <= 1'b0; // halt enable is cleared at the end of each command
+      if (spi_rx[7]) // We are setting ROM page
+        avr_cart_sel <= spi_rx[5:4];
       spi_state <= SPI_IDLE;
     end
   endcase
@@ -371,6 +387,8 @@ begin
       end
       16'hff53:
         cocobuf <= ethcocoin;
+      16'hff7f:
+        cocobuf <= mpireg;
       default: begin
         actor <= 1'b0;
         mem_delay <= 3'h6;
@@ -402,6 +420,10 @@ begin
       end
       16'hff51:
         ethcocoout <= c_databus;
+      16'hff7f: begin
+        mpi_use_reg <= 1'b1;
+        mpireg <= c_databus;
+      end
       default: begin
         actor <= 1'b0;
         mem_delay <= 3'h6;

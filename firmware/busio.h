@@ -40,7 +40,7 @@ void setRegister(uint16_t i, uint8_t d);
 void setNMI();
 void wakeCoco();
 void clearHALT();
-
+void setBank(uint8_t b);
 uint8_t readStatus();
 uint8_t readData();
 void setData(uint8_t b);

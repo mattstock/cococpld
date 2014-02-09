@@ -143,3 +143,16 @@ void clearHALT() {
     digitalWrite(COCOSELECT_PIN, HIGH);
   }
 }
+
+void setBank(uint8_t b) {
+  if (b >= 4)
+    return;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    digitalWrite(COCOSELECT_PIN, LOW);
+    digitalWrite(BANK1_ENABLE_PIN, LOW); // need to tristate MISO
+    SPI.transfer(CMD_DEV_CONTROL);
+    SPI.transfer(0b10000000 + (b << 4));
+    digitalWrite(BANK1_ENABLE_PIN, HIGH); // need to tristate MISO
+    digitalWrite(COCOSELECT_PIN, HIGH);
+  }
+}  
