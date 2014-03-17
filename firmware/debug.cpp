@@ -130,10 +130,9 @@ void debugCommand() {
 void fault() {
   // error blinky
   while (1) {
-    pinMode(13, OUTPUT);
-    digitalWrite(13, HIGH);
+    digitalWrite(LED_PIN, HIGH);
     delay(1000);
-    digitalWrite(13, LOW);
+    digitalWrite(LED_PIN, LOW);
     delay(1000);
   }
 }

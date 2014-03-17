@@ -137,3 +137,4 @@ set_location_assignment PIN_72 -to avr_sclk
 set_location_assignment PIN_83 -to avr_mem_ss
 set_location_assignment PIN_134 -to dsk_cfg_intr
 set_location_assignment PIN_137 -to dsk_cmd_intr
+set_location_assignment PIN_140 -to miso

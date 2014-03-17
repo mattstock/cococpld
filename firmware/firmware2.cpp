@@ -107,8 +107,8 @@ void setup() {
   digitalWrite(BANK2_ENABLE_PIN, LOW);
   digitalWrite(BANK3_ENABLE_PIN, LOW);
 
+  // Status LED on breakout board
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
 
   // SPI used for microSD and WizNet (if plugged in)
   SPI.begin();
@@ -155,15 +155,23 @@ void setup() {
   //  uint8_t b = lcd.readButtons();
   //  if (b & BUTTON_SELECT) { // Hold select during reset will go into test mode
     // Go into the loop for the test mode
-    Serial.println("Test mode");
-    /*  } else {
-    Serial.println("Peripheral mode");
+  //  Serial.println("Test mode");
+  //  } else {
+    Serial.println("Standard mode");
+    setBank(0);
+    programROM(SD.open(config[ROM0]));
+    setBank(1);
+    programROM(SD.open(config[ROM1]));
+    setBank(2);
+    programROM(SD.open(config[ROM2]));
+    setBank(3);
+    programROM(SD.open(config[ROM3]));
     controlPending = false;
     commandPending = false;
     attachInterrupt(0, loadConfig, FALLING);
     attachInterrupt(1, loadCommand, FALLING);
     fdc();
-    }*/
+    //   }*/
 }
 
 extern void arduinomain(void);
