@@ -10,7 +10,7 @@ module cocofdc (
   output c_halt_n,
   inout [7:0] c_databus,
   input [14:0] c_addrbus,
-  input c_reset_n,
+  inout c_reset_n,
   input c_rw,
   inout [7:0] sram_databus,
   output [15:0] sram_addrbus,
@@ -26,11 +26,11 @@ module cocofdc (
   output reg dirty);
 
 // SPI states
-localparam SPI_IDLE = 3'h0, SPI_ADDR1 = 3'h1, SPI_ADDR2 = 3'h2, SPI_WRITE = 3'h3, SPI_READ = 3'h4, SPI_BANK = 3'h5;
+localparam SPI_IDLE = 3'h0, SPI_ADDR1 = 3'h1, SPI_ADDR2 = 3'h2, SPI_WRITE = 3'h3, SPI_READ = 3'h4, SPI_SPECIAL = 3'h5, SPI_REG = 3'h6, SPI_REG2 = 3'h7;
 localparam STATE_IDLE = 2'h0, STATE_MEMREAD = 2'h1, STATE_MEMWRITE = 2'h2;
 
 // SPI command bytes
-localparam SPI_CMD_ADDR = 8'h01, SPI_CMD_WRITE = 8'h02, SPI_CMD_READ = 8'h03, SPI_CMD_BANK = 8'h04;
+localparam SPI_CMD_ADDR = 8'h01, SPI_CMD_WRITE = 8'h02, SPI_CMD_READ = 8'h03, SPI_CMD_SPECIAL = 8'h04, SPI_CMD_REG = 8'h05;
 
 // Data from the SPI bus
 wire spi_input_flag;     // Single clock tick flag indicating there is a byte available from SPI
@@ -49,6 +49,9 @@ reg [7:0] c_readbuf, c_readbuf_next;    // SRAM stores in this register for the 
 reg [2:0] delay, delay_next;     // counter for SRAM read/write timing
 reg scs, scs_next; // SCS or CTS op
 reg [2:0] bank, bank_next;
+reg [3:0] cococtrl, cococtrl_next;
+reg [7:0] cocoreg[7:0], cocoreg_next[7:0];
+reg [2:0] regidx, regidx_next;
 
 // Synchonizers for Coco E clock and CPLD clock
 reg [2:0] eclk_edge;
@@ -77,11 +80,13 @@ assign sram_ce_n = 1'b0;
 assign sram_oe_n = ~sram_we_n;
 assign sram_we_n = ~(state == STATE_MEMWRITE);
 assign sram_databus = (sram_we_n ? 8'hzz : (actor ? spi_readbuf : c_databus ));
-assign sram_addrbus = (actor ? spi_address : (scs ? { 10'h3ff, c_addrbus[5:0]} : { bank, c_addrbus[12:0] }));
+assign sram_addrbus = (actor ? spi_address : { bank, c_addrbus[12:0] });
 assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz); 
-assign c_slenb_n = 1'bz;
-assign c_nmi_n = 1'bz;
-assign c_halt_n = 1'bz;
+assign c_slenb_n = (cococtrl[0] ? 1'b0 : 1'bz);
+assign c_nmi_n = (cococtrl[1] ? 1'b0 : 1'bz);
+assign c_halt_n = (cococtrl[2] ? 1'b0 : 1'bz);
+assign c_reset_n = (cococtrl[3] ? 1'b0 : 1'bz);
+
 assign led = { req, sram_oe_n };
 
 // sync E clock, CTS, SCS with 50MHz osc
@@ -106,6 +111,10 @@ always @(posedge clock_50 or negedge reset) begin
     c_readbuf <= 8'h00;
     scs <= 1'b0;
     bank <= 3'b000;
+    cococtrl <= 4'h0;
+    for (int i=0; i < 8; i = i + 1)
+      cocoreg[i] <= 8'h00;
+    regidx <= 3'h0;
   end else begin
     state <= state_next;
     spi_state <= spi_state_next;
@@ -120,6 +129,10 @@ always @(posedge clock_50 or negedge reset) begin
     c_readbuf <= c_readbuf_next;
     scs <= scs_next;
     bank <= bank_next;
+    cococtrl <= cococtrl_next;
+    for (int i=0; i < 8; i = i + 1)
+      cocoreg[i] <= cocoreg_next[i];
+    regidx <= regidx_next;
   end
 end
 
@@ -136,8 +149,12 @@ always @* begin
   delay_next = delay;
   scs_next = scs;
   bank_next = bank;
+  cococtrl_next = cococtrl;
   c_readbuf_next = c_readbuf;
-  
+  for (int i=0; i < 8; i = i + 1)
+    cocoreg_next[i] = cocoreg[i];
+  regidx_next = regidx;
+
   /* These can queue in any state */
   if (spi_input_flag) begin
     req_next[2] = 1'b1;
@@ -156,7 +173,14 @@ always @* begin
  		      req_next[2] = 1'b0;
 		    end
 		    3'b01x: begin // SCS request pending
-          actor_next = 1'b0; // Coco
+          if (c_rw) begin
+            c_readbuf_next = cocoreg[c_addrbus[2:0]];
+          end else begin
+            cocoreg_next[c_addrbus[2:0]] = c_databus;
+            dirty_next = 1'b1;
+          end
+          state_next = STATE_IDLE;
+/*          actor_next = 1'b0; // Coco
           scs_next = 1'b1;
           if (c_rw) begin
             state_next = STATE_MEMREAD;
@@ -164,7 +188,7 @@ always @* begin
             state_next = STATE_MEMWRITE;
             dirty_next = 1'b1;
           end
-		      req_next[1] = 1'b0;
+		      req_next[1] = 1'b0; */
 		    end
 		    3'b001: begin // CTS request pending
           actor_next = 1'b0;  // Coco
@@ -218,7 +242,8 @@ begin
           spi_state_next = SPI_READ;
 		      actor_next = 1'b1;
 		    end
-        SPI_CMD_BANK: spi_state_next = SPI_BANK; // write to bank register
+        SPI_CMD_REG: spi_state_next = SPI_REG; // write to coco registers
+        SPI_CMD_SPECIAL: spi_state_next = SPI_SPECIAL; // write to control register
 		    default: spi_state_next = SPI_IDLE; // ignore bytes we don't know
 		  endcase
     SPI_ADDR1: begin
@@ -235,12 +260,21 @@ begin
 		  actor_next = 1'b1;
 	  end
 	  SPI_READ: begin // clock out read byte
-		  if (!spi_address[15]) // Clear the read markers
+		  if (spi_address[15:6] == 10'h3ff) // Clear the read markers
 		    dirty_next = 1'b0;
 	    spi_state_next = SPI_IDLE;
 	  end
-    SPI_BANK: begin // write to bank reg
+    SPI_SPECIAL: begin // write to bank reg
       bank_next = spi_readbuf[2:0];
+      cococtrl_next = spi_readbuf[6:3];
+      spi_state_next = SPI_IDLE;
+    end
+    SPI_REG: begin // set coco register
+      regidx_next = spi_readbuf[2:0];
+      spi_state_next = SPI_REG2;
+    end
+    SPI_REG2: begin // write to coco register
+      cocoreg_next[regidx] = spi_readbuf;
       spi_state_next = SPI_IDLE;
     end
     default: spi_state_next = SPI_IDLE;

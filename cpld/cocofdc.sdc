@@ -35,10 +35,10 @@ set_input_delay -clock sclk -max 0ns [get_ports ss]
 set_input_delay -clock sclk -min 0ns [get_ports sclk]
 set_input_delay -clock sclk -max 0ns [get_ports sclk]
 
-# tco constraints
-
 set_output_delay -clock c_eclk -min 0ns [get_ports {c_databus[*]}]
 set_output_delay -clock c_eclk -max 0ns [get_ports {c_databus[*]}]
+set_output_delay -clock clock_50 -min 0ns [get_ports {c_reset_n c_slenb_n c_nmi_n c_halt_n}]
+set_output_delay -clock clock_50 -max 0ns [get_ports {c_reset_n c_slenb_n c_nmi_n c_halt_n}]
 
 set_output_delay -clock clock_50 -min 0ns [get_ports {sram_databus[*]}]
 set_output_delay -clock clock_50 -max 0ns [get_ports {sram_databus[*]}]
