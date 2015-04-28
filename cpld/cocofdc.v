@@ -80,7 +80,7 @@ assign sram_ce_n = 1'b0;
 assign sram_oe_n = ~sram_we_n;
 assign sram_we_n = ~(state == STATE_MEMWRITE);
 assign sram_databus = (sram_we_n ? 8'hzz : (actor ? spi_readbuf : c_databus ));
-assign sram_addrbus = (actor ? spi_address : { bank, c_addrbus[12:0] });
+assign sram_addrbus = (actor ? spi_address : (scs ? { 11'h7ff, c_addrbus[4:0]} : { bank, c_addrbus[12:0] }));
 assign c_databus = (c_rw & c_select ? c_readbuf : 8'bz); 
 assign c_slenb_n = (cococtrl[0] ? 1'b0 : 1'bz);
 assign c_nmi_n = (cococtrl[1] ? 1'b0 : 1'bz);
@@ -111,7 +111,7 @@ always @(posedge clock_50 or negedge reset) begin
     c_readbuf <= 8'h00;
     scs <= 1'b0;
     bank <= 3'b000;
-    cococtrl <= 4'h0;
+    cococtrl <= 4'h4;
     for (int i=0; i < 8; i = i + 1)
       cocoreg[i] <= 8'h00;
     regidx <= 3'h0;
@@ -173,14 +173,14 @@ always @* begin
  		      req_next[2] = 1'b0;
 		    end
 		    3'b01x: begin // SCS request pending
-          if (c_rw) begin
+/*          if (c_rw) begin
             c_readbuf_next = cocoreg[c_addrbus[2:0]];
           end else begin
             cocoreg_next[c_addrbus[2:0]] = c_databus;
             dirty_next = 1'b1;
-          end
-          state_next = STATE_IDLE;
-/*          actor_next = 1'b0; // Coco
+          end 
+          state_next = STATE_IDLE; */
+          actor_next = 1'b0; // Coco
           scs_next = 1'b1;
           if (c_rw) begin
             state_next = STATE_MEMREAD;
@@ -188,8 +188,8 @@ always @* begin
             state_next = STATE_MEMWRITE;
             dirty_next = 1'b1;
           end
-		      req_next[1] = 1'b0; */
-		    end
+		      req_next[1] = 1'b0;
+  	    end
 		    3'b001: begin // CTS request pending
           actor_next = 1'b0;  // Coco
           scs_next = 1'b0;
